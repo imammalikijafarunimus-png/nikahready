@@ -117,7 +117,7 @@ export function StepWrapper({
                 <span className="text-xs">☪</span>
               </div>
               <span className="text-xs font-medium text-navy-300">
-                TaarufCV
+                NikahReady
               </span>
             </div>
 

@@ -6,7 +6,7 @@
 // Mengatur: routing antar step, progress, save ke Supabase.
 // ============================================================
 
-import { useMemo, useCallback, useState } from 'react'
+import { useMemo, useCallback, useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
 import {
@@ -15,15 +15,34 @@ import {
   useStepNavigation,
   useSaveStatus,
 } from '@/context/FormContext'
+import { useRequireAuth } from '@/context/AuthContext'
 import { STEP_DEFINITIONS } from '@/lib/constants'
 import { saveProfile } from '@/lib/supabase/saveProfile'
 import { StepWrapper } from '@/components/ui/StepWrapper'
 
 // Step components
-import { Step01_DataPribadi }    from '@/components/form/Step01_DataPribadi'
-import { Step02_RiwayatPekerjaan } from '@/components/form/Step02_RiwayatPekerjaan'
-import { Step03_PerjalananHidup }  from '@/components/form/Step03_PerjalananHidup'
-import { Step04_PandanganIsu }     from '@/components/form/Step04_PandanganIsu'
+import { Step01_DataPribadi }        from '@/components/form/Step01_DataPribadi'
+import { Step02_FisikKesehatan }     from '@/components/form/Step02_FisikKesehatan'
+import { Step03_RiwayatPendidikan }  from '@/components/form/Step03_RiwayatPendidikan'
+import { Step04_RiwayatPekerjaan }   from '@/components/form/Step04_RiwayatPekerjaan'
+import { Step05_PerjalananHidup }   from '@/components/form/Step05_PerjalananHidup'
+import { Step06_RiwayatOrganisasi }  from '@/components/form/Step06_RiwayatOrganisasi'
+import { Step07_KarakterKepribadian } from '@/components/form/Step07_KarakterKepribadian'
+import { Step08_IbadahKeislaman }    from '@/components/form/Step08_IbadahKeislaman'
+import { Step09_GayaHidup }          from '@/components/form/Step09_GayaHidup'
+import { Step10_VisiMisiPernikahan } from '@/components/form/Step10_VisiMisiPernikahan'
+import { Step11_KriteriaPasangan }  from '@/components/form/Step11_KriteriaPasangan'
+import { Step12_FinancialPlanning }  from '@/components/form/Step12_FinancialPlanning'
+import { Step13_PandanganIsu }      from '@/components/form/Step13_PandanganIsu'
+import { Step14_AnggotaKeluarga }   from '@/components/form/Step14_AnggotaKeluarga'
+import { Step15_RencanaMasaDepan }  from '@/components/form/Step15_RencanaMasaDepan'
+import { Step16_SosialMedia }       from '@/components/form/Step16_SosialMedia'
+import { Step17_GaleriFoto }       from '@/components/form/Step17_GaleriFoto'
+import { Step18_FotoTemplate }     from '@/components/form/Step18_FotoTemplate'
+import { Step19_SuratTaaruf }    from '@/components/form/Step19_SuratTaaruf'
+import { Step20_Referensi }      from '@/components/form/Step20_Referensi'
+import { Step21_HarapanDoa }     from '@/components/form/Step21_HarapanDoa'
+import { Step22_ReviewSimpan }   from '@/components/form/Step22_ReviewSimpan'
 
 // ── Toast / feedback sederhana ────────────────────────────────
 interface ToastProps {
@@ -89,31 +108,62 @@ export function CreateFormClient() {
   const router   = useRouter()
   const state    = useFormState()
   const dispatch = useFormDispatch()
+  const { userId, isLoading: authLoading } = useRequireAuth()
 
   const nav = useStepNavigation()
   const { isSaving, isDirty, lastSavedLabel } = useSaveStatus()
 
-  // Toast state
+  // ── All hooks must be called before any conditional return ──
   const [toast, setToast] = useState<{
     type: 'success' | 'error'
     message: string
   } | null>(null)
 
-  // Ambil definisi step saat ini
   const stepDef = useMemo(
     () => STEP_DEFINITIONS[nav.currentStep - 1],
     [nav.currentStep]
   )
 
-  // ── Handle next step / save ────────────────────────────────
+  const stepContent = useMemo(() => {
+    switch (nav.currentStep) {
+      case 1:  return <Step01_DataPribadi />
+      case 2:  return <Step02_FisikKesehatan />
+      case 3:  return <Step03_RiwayatPendidikan />
+      case 4:  return <Step04_RiwayatPekerjaan />
+      case 5:  return <Step05_PerjalananHidup />
+      case 6:  return <Step06_RiwayatOrganisasi />
+      case 7:  return <Step07_KarakterKepribadian />
+      case 8:  return <Step08_IbadahKeislaman />
+      case 9:  return <Step09_GayaHidup />
+      case 10: return <Step10_VisiMisiPernikahan />
+      case 11: return <Step11_KriteriaPasangan />
+      case 12: return <Step12_FinancialPlanning />
+      case 13: return <Step13_PandanganIsu />
+      case 14: return <Step14_AnggotaKeluarga />
+      case 15: return <Step15_RencanaMasaDepan />
+      case 16: return <Step16_SosialMedia />
+      case 17: return <Step17_GaleriFoto />
+      case 18: return <Step18_FotoTemplate />
+      case 19: return <Step19_SuratTaaruf />
+      case 20: return <Step20_Referensi />
+      case 21: return <Step21_HarapanDoa />
+      case 22: return <Step22_ReviewSimpan />
+      default: return <StepComingSoon stepTitle={stepDef?.title ?? `Step ${nav.currentStep}`} />
+    }
+  }, [nav.currentStep, stepDef])
+
   const handleNext = useCallback(async () => {
     // Jika step terakhir → simpan ke Supabase
     if (nav.isLastStep) {
       dispatch({ type: 'SET_SAVING', isSaving: true })
 
-      // MVP: gunakan userId dummy (nanti diganti dengan auth.user.id)
-      const DUMMY_USER_ID = 'dummy-user-id'
-      const result = await saveProfile(state, DUMMY_USER_ID)
+      // Gunakan real authenticated user ID
+      if (!userId) {
+        setToast({ type: 'error', message: 'Kamu harus login terlebih dahulu.' })
+        dispatch({ type: 'SET_SAVING', isSaving: false })
+        return
+      }
+      const result = await saveProfile(state, userId)
 
       if (result.success) {
         // Simpan profileId ke context
@@ -140,22 +190,32 @@ export function CreateFormClient() {
 
     // Bukan step terakhir → navigasi ke step berikutnya
     nav.nextStep()
-  }, [nav, state, dispatch, router])
+  }, [nav, state, userId, dispatch, router])
 
-  // ── Render step content ────────────────────────────────────
-  const stepContent = useMemo(() => {
-    switch (nav.currentStep) {
-      case 1:  return <Step01_DataPribadi />
-      case 2:  return <Step02_RiwayatPekerjaan />  // disesuaikan ke step 4 original
-      case 3:  return <Step03_PerjalananHidup />
-      case 4:  return <Step04_PandanganIsu />
-      default: return <StepComingSoon stepTitle={stepDef?.title ?? `Step ${nav.currentStep}`} />
+  // ── Redirect to login if not authenticated ────────────────
+  useEffect(() => {
+    if (!authLoading && !userId) {
+      router.replace('/login?next=/create')
     }
-  }, [nav.currentStep, stepDef])
+  }, [authLoading, userId, router])
 
   // Sembunyikan toast otomatis setelah 4 detik
-  if (toast) {
-    setTimeout(() => setToast(null), 4000)
+  useEffect(() => {
+    if (!toast) return
+    const timer = setTimeout(() => setToast(null), 4000)
+    return () => clearTimeout(timer)
+  }, [toast])
+
+  // ── Show loading while checking auth ──────────────────────
+  if (authLoading || !userId) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-navy-950">
+        <div className="flex flex-col items-center gap-3">
+          <div className="auth-spinner" style={{ width: '2rem', height: '2rem', borderWidth: '3px' }} />
+          <p className="text-sm text-navy-400">Memerikses autentikasi...</p>
+        </div>
+      </div>
+    )
   }
 
   return (

@@ -377,7 +377,7 @@ function Page1({ state }: { state: FormState }) {
             </h1>
             {p.nama_panggilan && (
               <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.6)', marginTop: 2, fontStyle: 'italic' }}>
-                "{p.nama_panggilan}"
+                &lsquo;{p.nama_panggilan}&rsquo;
               </p>
             )}
 
@@ -667,7 +667,7 @@ function Page3({ state }: { state: FormState }) {
             وَعَسَىٰ أَن تَكْرَهُوا شَيْئًا وَهُوَ خَيْرٌ لَّكُمْ
           </p>
           <p style={{ fontSize: 9, color: C.textSoft, marginTop: 4, fontStyle: 'italic' }}>
-            "Boleh jadi kamu membenci sesuatu, padahal ia amat baik bagimu" — QS Al-Baqarah: 216
+            &ldquo;Boleh jadi kamu membenci sesuatu, padahal ia amat baik bagimu&rdquo; — QS Al-Baqarah: 216
           </p>
         </div>
 
@@ -905,7 +905,7 @@ function Page5({ state }: { state: FormState }) {
                   VISI
                 </p>
                 <p style={{ fontSize: 11, color: C.white, lineHeight: 1.6, margin: 0, fontStyle: 'italic' }}>
-                  "{vm.visi}"
+                      &lsquo;{vm.visi}&rsquo;
                 </p>
               </div>
             )}
@@ -1035,8 +1035,8 @@ function Page5({ state }: { state: FormState }) {
             رَبَّنَا هَبْ لَنَا مِنْ أَزْوَاجِنَا وَذُرِّيَّاتِنَا قُرَّةَ أَعْيُنٍ
           </p>
           <p style={{ fontSize: 9, color: 'rgba(255,255,255,0.5)', marginTop: 6, fontStyle: 'italic' }}>
-            "Ya Tuhan kami, anugerahkanlah kepada kami istri-istri dan keturunan kami
-            sebagai penyenang hati kami" — QS Al-Furqan: 74
+            &ldquo;Ya Tuhan kami, anugerahkanlah kepada kami istri-istri dan keturunan kami
+            sebagai penyenang hati kami&rdquo; — QS Al-Furqan: 74
           </p>
           <p style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)', marginTop: 10, letterSpacing: '0.05em' }}>
             CV INI DIBUAT DENGAN TAARUFCV · DOKUMEN BERSIFAT RAHASIA

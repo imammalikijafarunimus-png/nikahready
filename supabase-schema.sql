@@ -1,5 +1,5 @@
 -- ============================================================
--- TaarufCV — Supabase Schema
+-- NikahReady — Supabase Schema
 -- Eksekusi file ini di Supabase SQL Editor
 -- ============================================================
 
@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS public.users (
   updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-COMMENT ON TABLE public.users IS 'Data akun pengguna TaarufCV';
+COMMENT ON TABLE public.users IS 'Data akun pengguna NikahReady';
 COMMENT ON COLUMN public.users.plan IS 'free = 7 step, 1 template; premium = 22 step, 3 template';
 
 -- ============================================================
@@ -341,6 +341,32 @@ CREATE TRIGGER set_updated_at_users
 CREATE TRIGGER set_updated_at_profiles
   BEFORE UPDATE ON public.taaruf_profiles
   FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
+
+-- ============================================================
+-- TRIGGER: auto-create user row on auth.users insert
+-- ============================================================
+-- When a new user signs up via Supabase Auth, automatically
+-- create a matching row in public.users with plan='free'.
+-- This ensures RLS policies work immediately after signup.
+
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.users (id, email, plan)
+  VALUES (
+    NEW.id,
+    NEW.email,
+    'free'::text
+  )
+  ON CONFLICT (id) DO NOTHING;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Supabase Auth fires this trigger on auth.users INSERT
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
 
 -- ============================================================
 -- SUPABASE STORAGE BUCKETS

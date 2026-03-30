@@ -1,8 +1,8 @@
 'use client'
 
 // ============================================================
-// src/components/form/Step04_PandanganIsu.tsx
-// Step 4 (form step): Pandangan tentang Isu Pernikahan
+// src/components/form/Step13_PandanganIsu.tsx
+// Step 13 (form step): Pandangan tentang Isu Pernikahan
 // Semua field scalar menggunakan TextArea
 // ============================================================
 
@@ -61,7 +61,7 @@ const PANDANGAN_FIELDS: Array<{
 ]
 
 // ── Main Component ────────────────────────────────────────────
-export function Step04_PandanganIsu() {
+export function Step13_PandanganIsu() {
   const state    = useFormState()
   const dispatch = useFormDispatch()
   const data     = state.pandanganIsu
@@ -143,8 +143,8 @@ export function Step04_PandanganIsu() {
             وَالَّذِينَ يَقُولُونَ رَبَّنَا هَبْ لَنَا مِنْ أَزْوَاجِنَا
           </p>
           <p className="text-xs text-navy-400 italic">
-            "Dan orang-orang yang berkata: Ya Tuhan kami, anugerahkanlah
-            kepada kami pasangan kami…"
+            &ldquo;Dan orang-orang yang berkata: Ya Tuhan kami, anugerahkanlah
+            kepada kami pasangan kami&hellip;&rdquo;
             <br />
             <span className="text-navy-500">— QS Al-Furqan: 74</span>
           </p>

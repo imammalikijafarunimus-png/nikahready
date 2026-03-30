@@ -8,9 +8,9 @@ import type { Metadata } from 'next'
 import { CreateFormClient } from './CreateFormClient'
 
 export const metadata: Metadata = {
-  title: 'Buat CV Taaruf',
+  title: 'Buat CV NikahReady',
   description:
-    'Isi profil taaruf lengkap kamu — dari data pribadi, karakter, ibadah, hingga visi misi pernikahan.',
+    'Isi profil NikahReady lengkap kamu — dari data pribadi, karakter, ibadah, hingga visi misi pernikahan.',
 }
 
 export default function CreatePage() {

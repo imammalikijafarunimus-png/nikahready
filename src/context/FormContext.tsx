@@ -59,15 +59,23 @@ function formReducer(state: FormState, action: FormAction): FormState {
     case 'SET_STEP':
       return { ...state, currentStep: action.payload }
 
-    // -- Scalar field update ----------------------------------
-    // Mengupdate satu field dalam satu scalar section
+        // -- Scalar field update ----------------------------------
     case 'UPDATE_FIELD': {
       const currentSection = state[action.section as keyof FormState]
+      
+      // Guard: hanya spread object (bukan array/primitive/null)
+      const currentObj = 
+        typeof currentSection === 'object' && 
+        currentSection !== null && 
+        !Array.isArray(currentSection)
+          ? (currentSection as unknown as Record<string, unknown>)
+          : {}
+
       return {
         ...state,
         isDirty: true,
         [action.section]: {
-          ...(currentSection as Record<string, unknown>),
+          ...currentObj,
           [action.field]: action.value,
         },
       }
@@ -117,8 +125,6 @@ function formReducer(state: FormState, action: FormAction): FormState {
 
     // -- Persistence ------------------------------------------
     case 'LOAD_PROFILE':
-      // Deep merge: payload menimpa hanya field yang ada,
-      // field yang tidak ada di payload tetap dari current state
       return {
         ...state,
         ...action.payload,
@@ -172,7 +178,7 @@ function deserializeDraft(raw: string): Partial<FormState> | null {
     const draft = JSON.parse(raw) as DraftData
     // Cek versi — jika berbeda, draft lama diabaikan
     if (draft.version !== FORM_DRAFT_VERSION) {
-      console.info('[TaarufCV] Draft version mismatch, resetting draft.')
+      console.info('[NikahReady] Draft version mismatch, resetting draft.')
       return null
     }
     return draft.state
@@ -210,7 +216,7 @@ export function FormProvider({ children }: FormProviderProps) {
       }
     } catch (e) {
       // localStorage bisa gagal di private mode / storage penuh
-      console.warn('[TaarufCV] Could not load draft from localStorage:', e)
+      console.warn('[NikahReady] Could not load draft from localStorage:', e)
     }
   }, [])
 
@@ -228,7 +234,7 @@ export function FormProvider({ children }: FormProviderProps) {
       try {
         localStorage.setItem(FORM_DRAFT_KEY, serializeDraft(state))
       } catch (e) {
-        console.warn('[TaarufCV] Could not save draft to localStorage:', e)
+        console.warn('[NikahReady] Could not save draft to localStorage:', e)
       }
     }, 800)
 
@@ -259,7 +265,7 @@ export function useFormState(): FormState {
   const ctx = useContext(FormStateContext)
   if (ctx === null) {
     throw new Error(
-      '[TaarufCV] useFormState harus digunakan di dalam <FormProvider>. ' +
+      '[NikahReady] useFormState harus digunakan di dalam <FormProvider>. ' +
       'Pastikan FormProvider ada di root layout.'
     )
   }
@@ -274,7 +280,7 @@ export function useFormDispatch(): React.Dispatch<FormAction> {
   const ctx = useContext(FormDispatchContext)
   if (ctx === null) {
     throw new Error(
-      '[TaarufCV] useFormDispatch harus digunakan di dalam <FormProvider>.'
+      '[NikahReady] useFormDispatch harus digunakan di dalam <FormProvider>.'
     )
   }
   return ctx

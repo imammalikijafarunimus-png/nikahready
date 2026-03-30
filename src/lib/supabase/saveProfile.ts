@@ -256,7 +256,7 @@ export async function saveProfile(
   } catch (err) {
     const message =
       err instanceof Error ? err.message : 'Gagal menyimpan profil'
-    console.error('[TaarufCV] saveProfile error:', err)
+    console.error('[NikahReady] saveProfile error:', err)
     return { success: false, error: message }
   }
 }

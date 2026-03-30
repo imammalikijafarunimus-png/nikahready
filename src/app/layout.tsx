@@ -5,6 +5,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter, Amiri } from 'next/font/google'
 import { FormProvider } from '@/context/FormContext'
+import { AuthProvider } from '@/context/AuthContext'
 import { PWAInstallPrompt } from '@/components/PWAInstallPrompt'
 import './globals.css'
 
@@ -21,30 +22,35 @@ const amiri = Amiri({
   display: 'swap',
 })
 
-export const metadata: Metadata = {
+export const metadata = {
+  metadataBase: new URL(
+    process.env.NODE_ENV === 'development' 
+      ? 'http://localhost:3000' 
+      : 'https://nikahready.vercel.app'
+  ),
   title: {
-    default: 'TaarufCV — Generator CV Taaruf Islami',
-    template: '%s | TaarufCV',
+    default: 'NikahReady — Generator CV Taaruf Islami',
+    template: '%s | NikahReady',
   },
   description:
     'Buat CV Taaruf profesional dan Islami. Isi form, pilih template, download PDF — langsung dari HP.',
   keywords: ['taaruf', 'CV taaruf', 'biodata taaruf', 'pernikahan islami'],
-  authors: [{ name: 'TaarufCV' }],
-  creator: 'TaarufCV',
-  applicationName: 'TaarufCV',
+  authors: [{ name: 'NikahReady' }],
+  creator: 'NikahReady',
+  applicationName: 'NikahReady',
   openGraph: {
     type: 'website',
     locale: 'id_ID',
     url: process.env.NEXT_PUBLIC_APP_URL,
-    siteName: 'TaarufCV',
-    title: 'TaarufCV — Generator CV Taaruf Islami',
+    siteName: 'NikahReady',
+    title: 'NikahReady — Generator CV Taaruf Islami',
     description: 'Buat CV Taaruf profesional dan Islami dalam hitungan menit.',
   },
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'TaarufCV',
+    title: 'NikahReady',
   },
   icons: {
     icon: [
@@ -76,10 +82,12 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className={inter.className}>
-        <FormProvider>
-          {children}
-          <PWAInstallPrompt />
-        </FormProvider>
+        <AuthProvider>
+          <FormProvider>
+            {children}
+            <PWAInstallPrompt />
+          </FormProvider>
+        </AuthProvider>
       </body>
     </html>
   )

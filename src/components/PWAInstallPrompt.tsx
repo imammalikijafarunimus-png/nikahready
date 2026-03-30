@@ -27,8 +27,8 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 // ── Storage Keys ──────────────────────────────────────────────
-const DISMISSED_KEY     = 'taarufcv_pwa_dismissed'
-const DISMISSED_UNTIL   = 'taarufcv_pwa_dismissed_until'
+const DISMISSED_KEY     = 'nikahready_pwa_dismissed'
+const DISMISSED_UNTIL   = 'nikahready_pwa_dismissed_until'
 const DISMISS_DURATION  = 7 * 24 * 60 * 60 * 1000  // 7 hari dalam ms
 
 // ── Helpers ───────────────────────────────────────────────────
@@ -106,7 +106,7 @@ function IOSInstructions({ onClose }: { onClose: () => void }) {
           </div>
           <div>
             <h3 className="font-bold text-white text-base">
-              Install TaarufCV
+              Install NikahReady
             </h3>
             <p className="text-xs text-navy-400">
               Tambahkan ke Home Screen untuk akses cepat
@@ -135,7 +135,7 @@ function IOSInstructions({ onClose }: { onClose: () => void }) {
               text: (
                 <>
                   Scroll ke bawah, pilih{' '}
-                  <strong className="text-white">"Add to Home Screen"</strong>
+                  <strong className="text-white">&ldquo;Add to Home Screen&rdquo;</strong>
                 </>
               ),
             },
@@ -144,7 +144,7 @@ function IOSInstructions({ onClose }: { onClose: () => void }) {
               icon: '✅',
               text: (
                 <>
-                  Tap <strong className="text-white">"Add"</strong> di pojok
+                  Tap <strong className="text-white">&ldquo;Add&rdquo;</strong> di pojok
                   kanan atas — selesai!
                 </>
               ),
@@ -179,7 +179,7 @@ function AndroidBanner({
     <div
       className="fixed bottom-0 left-0 right-0 z-50 animate-slide-up"
       role="dialog"
-      aria-label="Install TaarufCV"
+      aria-label="Install NikahReady"
     >
       <div className="bg-navy-900 border-t border-navy-700 px-4 py-4 flex items-center gap-3 shadow-2xl">
         {/* App icon */}
@@ -190,7 +190,7 @@ function AndroidBanner({
         {/* Text */}
         <div className="flex-1 min-w-0">
           <p className="font-semibold text-white text-sm">
-            Install TaarufCV
+            Install NikahReady
           </p>
           <p className="text-xs text-navy-400 leading-tight mt-0.5">
             Akses lebih cepat langsung dari Home Screen
@@ -304,7 +304,7 @@ export function PWAInstallPrompt() {
         deferredPromptRef.current = null
       }
     } catch (err) {
-      console.warn('[TaarufCV] Install prompt error:', err)
+      console.warn('[NikahReady] Install prompt error:', err)
     } finally {
       setIsInstalling(false)
     }

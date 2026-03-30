@@ -1,7 +1,7 @@
 // ============================================================
 // src/lib/generatePdf.ts
 //
-// PDF Generator untuk TaarufCV
+// PDF Generator untuk NikahReady
 //
 // Strategi: capture setiap page div secara individual
 // menggunakan html2canvas, lalu gabungkan di jsPDF.
@@ -181,7 +181,7 @@ export async function generatePdf({
         .slice(0, 10)
         .replace(/-/g, '')
 
-      const outputFilename = filename ?? `cv_taaruf_${safeName}_${dateStr}.pdf`
+      const outputFilename = filename ?? `cv_nikahready_${safeName}_${dateStr}.pdf`
 
       // ── 8. Download ────────────────────────────────────────
       pdf.save(outputFilename)
@@ -196,7 +196,7 @@ export async function generatePdf({
 
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Gagal membuat PDF'
-    console.error('[TaarufCV] generatePdf error:', err)
+    console.error('[NikahReady] generatePdf error:', err)
     return { success: false, error: message }
   }
 }

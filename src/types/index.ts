@@ -1,6 +1,6 @@
 // ============================================================
 // src/types/index.ts
-// Semua TypeScript interface untuk TaarufCV
+// Semua TypeScript interface untuk NikahReady
 // ============================================================
 
 // ── Step 1: Data Pribadi ─────────────────────────────────────
@@ -233,6 +233,7 @@ export interface SosialMediaItem {
   url: string
   is_primary: boolean         // kontak utama (WA)
   tampil_di_pdf: boolean
+  urutan: number
 }
 
 // ── Step 17: Galeri Foto (array) ─────────────────────────────

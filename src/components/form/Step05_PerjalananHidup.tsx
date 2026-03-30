@@ -1,8 +1,8 @@
 'use client'
 
 // ============================================================
-// src/components/form/Step03_PerjalananHidup.tsx
-// Step 3 (form step): Perjalanan Hidup — DynamicList
+// src/components/form/Step05_PerjalananHidup.tsx
+// Step 5 (form step): Perjalanan Hidup — DynamicList
 // Step paling emosional: user menceritakan fase hidupnya
 // ============================================================
 
@@ -149,7 +149,7 @@ function renderForm(
 }
 
 // ── Main Component ────────────────────────────────────────────
-export function Step03_PerjalananHidup() {
+export function Step05_PerjalananHidup() {
   const { items, addItem, removeItem, updateItem } =
     useArraySection('perjalananHidup')
 
@@ -162,7 +162,7 @@ export function Step03_PerjalananHidup() {
             وَعَسَىٰ أَن تَكْرَهُوا شَيْئًا وَهُوَ خَيْرٌ لَّكُمْ
           </p>
           <p className="text-xs text-center text-navy-400 italic">
-            "Boleh jadi kamu membenci sesuatu, padahal ia amat baik bagimu"
+            &ldquo;Boleh jadi kamu membenci sesuatu, padahal ia amat baik bagimu&rdquo;
             <br />
             <span className="text-navy-500">— QS Al-Baqarah: 216</span>
           </p>

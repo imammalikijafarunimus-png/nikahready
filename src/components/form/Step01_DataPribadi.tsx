@@ -163,7 +163,7 @@ export function Step01_DataPribadi() {
         <p className="text-xs text-navy-400 leading-relaxed">
           Data ini akan ditampilkan di halaman pertama CV Taarufmu.
           Isi dengan jujur dan apa adanya — kejujuran adalah pondasi
-          ta'aruf yang baik.
+          ta&apos;aruf yang baik.
         </p>
       </div>
     </div>

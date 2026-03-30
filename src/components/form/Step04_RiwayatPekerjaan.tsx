@@ -1,8 +1,8 @@
 'use client'
 
 // ============================================================
-// src/components/form/Step02_RiwayatPekerjaan.tsx
-// Step 2 (form step): Riwayat Pekerjaan — DynamicList
+// src/components/form/Step04_RiwayatPekerjaan.tsx
+// Step 4 (form step): Riwayat Pekerjaan — DynamicList
 // ============================================================
 
 import { useArraySection } from '@/context/FormContext'
@@ -128,7 +128,7 @@ function renderForm(
 }
 
 // ── Main Component ────────────────────────────────────────────
-export function Step02_RiwayatPekerjaan() {
+export function Step04_RiwayatPekerjaan() {
   const { items, addItem, removeItem, updateItem } =
     useArraySection('riwayatPekerjaan')
 

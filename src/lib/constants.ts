@@ -488,5 +488,5 @@ export const PROVINSI_INDONESIA = [
 ].map((v) => ({ value: v, label: v }))
 
 // ── Local storage key ────────────────────────────────────────
-export const FORM_DRAFT_KEY = 'taarufcv_form_draft'
+export const FORM_DRAFT_KEY = 'nikahready_form_draft'
 export const FORM_DRAFT_VERSION = '1.0.0' // bump saat schema berubah

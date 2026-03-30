@@ -1,3 +1,5 @@
+'use client' // <--- WAJIB TAMBAHKAN INI DI BARIS PERTAMA
+
 // ============================================================
 // src/app/offline/page.tsx
 // Halaman fallback saat offline (required oleh next-pwa)
@@ -32,7 +34,7 @@ export default function OfflinePage() {
           إِنَّ مَعَ الْعُسْرِ يُسْرًا
         </p>
         <p className="text-xs text-navy-500 italic mb-6">
-          "Sesungguhnya sesudah kesulitan itu ada kemudahan"
+          &ldquo;Sesungguhnya sesudah kesulitan itu ada kemudahan&rdquo;
           <br />— QS Al-Insyirah: 6
         </p>
 
@@ -64,7 +66,7 @@ export default function OfflinePage() {
       {/* Retry button */}
       <button
         type="button"
-        onClick={() => window.location.reload()}
+        onClick={() => window.location.reload()} // Fungsi ini hanya jalan di Browser
         className="flex items-center gap-2 px-6 py-3 rounded-xl bg-navy-800 border border-navy-700 text-white text-sm font-medium hover:bg-navy-700 transition-colors active:scale-95"
       >
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

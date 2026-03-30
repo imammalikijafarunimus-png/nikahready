@@ -1,7 +1,7 @@
 {
-  "name": "TaarufCV — Generator CV Taaruf Islami",
-  "short_name": "TaarufCV",
-  "description": "Buat CV Taaruf profesional dan Islami. Isi form, pilih template, download PDF.",
+  "name": "NikahReady — Generator CV Taaruf Islami",
+  "short_name": "NikahReady",
+  "description": "Buat CV Taaruf profesional dan Islami. Isi form, pilih template, download PDF dengan NikahReady.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -81,14 +81,14 @@
     {
       "name": "Buat CV Baru",
       "short_name": "Buat CV",
-      "description": "Mulai mengisi form CV Taaruf",
+      "description": "Mulai mengisi form NikahReady",
       "url": "/create",
       "icons": [{ "src": "/icons/icon-96.png", "sizes": "96x96" }]
     },
     {
       "name": "Preview CV",
       "short_name": "Preview",
-      "description": "Lihat preview CV Taaruf",
+      "description": "Lihat preview NikahReady",
       "url": "/preview",
       "icons": [{ "src": "/icons/icon-96.png", "sizes": "96x96" }]
     }

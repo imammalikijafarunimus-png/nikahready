@@ -8,7 +8,7 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      // ── Warna Tema TaarufCV ──────────────────────────────
+      // ── Warna Tema NikahReady ──────────────────────────────
       colors: {
         sage: {
           50:  '#ECFDF5',
