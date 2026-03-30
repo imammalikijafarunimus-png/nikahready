@@ -168,6 +168,20 @@
     }
   }
 
+  /* Animasi slide in dari kanan untuk Step Navigator sidebar */
+  .animate-slide-in-right {
+    animation: slideInRight 0.25s ease-out forwards;
+  }
+
+  @keyframes slideInRight {
+    from {
+      transform: translateX(100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+
   /* Spinner (global — used by auth & create form) */
   .auth-spinner {
     border: 2px solid rgba(255, 255, 255, 0.3);

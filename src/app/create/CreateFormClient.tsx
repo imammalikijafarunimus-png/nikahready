@@ -19,6 +19,8 @@ import { useRequireAuth } from '@/context/AuthContext'
 import { STEP_DEFINITIONS } from '@/lib/constants'
 import { saveProfile } from '@/lib/supabase/saveProfile'
 import { StepWrapper } from '@/components/ui/StepWrapper'
+import { StepNavigator } from '@/components/ui/StepNavigator'
+import type { FormState } from '@/types'
 
 // Step components
 import { Step01_DataPribadi }        from '@/components/form/Step01_DataPribadi'
@@ -108,10 +110,19 @@ export function CreateFormClient() {
   const router   = useRouter()
   const state    = useFormState()
   const dispatch = useFormDispatch()
-  const { userId, isLoading: authLoading } = useRequireAuth()
+  const { userId, isLoading: authLoading, plan } = useRequireAuth()
 
   const nav = useStepNavigation()
   const { isSaving, isDirty, lastSavedLabel } = useSaveStatus()
+
+  // ── Navigator state ──────────────────────────────────────
+  const [showNavigator, setShowNavigator] = useState(false)
+  const toggleNavigator = useCallback(() => {
+    setShowNavigator((prev) => !prev)
+  }, [])
+  const closeNavigator = useCallback(() => {
+    setShowNavigator(false)
+  }, [])
 
   // ── All hooks must be called before any conditional return ──
   const [toast, setToast] = useState<{
@@ -192,6 +203,44 @@ export function CreateFormClient() {
     nav.nextStep()
   }, [nav, state, userId, dispatch, router])
 
+  // ── Global Save handler (tanpa navigasi ke preview) ─────
+  const handleGlobalSave = useCallback(async () => {
+    dispatch({ type: 'SET_SAVING', isSaving: true })
+
+    if (!userId) {
+      setToast({ type: 'error', message: 'Kamu harus login terlebih dahulu.' })
+      dispatch({ type: 'SET_SAVING', isSaving: false })
+      return
+    }
+
+    const result = await saveProfile(state, userId)
+
+    if (result.success) {
+      if (result.profileId) {
+        dispatch({ type: 'SET_PROFILE_ID', profileId: result.profileId })
+      }
+      dispatch({ type: 'SET_SAVED', timestamp: new Date().toISOString() })
+      setToast({ type: 'success', message: 'Profil tersimpan!' })
+    } else {
+      dispatch({ type: 'SET_SAVING', isSaving: false })
+      setToast({
+        type: 'error',
+        message: result.error ?? 'Gagal menyimpan. Coba lagi.',
+      })
+    }
+  }, [state, userId, dispatch])
+
+  // ── Go to Dashboard handler ─────────────────────────────
+  const handleGoToDashboard = useCallback(() => {
+    if (isDirty) {
+      const confirmed = window.confirm(
+        'Ada perubahan belum tersimpan. Yakin ingin kembali ke Dashboard?'
+      )
+      if (!confirmed) return
+    }
+    router.push('/dashboard')
+  }, [isDirty, router])
+
   // ── Redirect to login if not authenticated ────────────────
   // Fix: Tambahkan grace period 2 detik setelah auth selesai loading
   // untuk menghindari redirect premature akibat race condition
@@ -247,12 +296,28 @@ export function CreateFormClient() {
         lastSavedLabel={lastSavedLabel}
         onNext={handleNext}
         onPrev={nav.prevStep}
+        onSave={handleGlobalSave}
+        onGoToDashboard={handleGoToDashboard}
+        onToggleNavigator={toggleNavigator}
+        showNavigator={showNavigator}
       >
         {/* Animasi masuk saat ganti step */}
         <div key={nav.currentStep} className="animate-step-in">
           {stepContent}
         </div>
       </StepWrapper>
+
+      {/* Step Navigator Sidebar */}
+      <StepNavigator
+        isOpen={showNavigator}
+        onClose={closeNavigator}
+        currentStep={nav.currentStep}
+        totalSteps={nav.totalSteps}
+        onGoToStep={nav.goToStep}
+        formState={state}
+        stepDefinitions={STEP_DEFINITIONS}
+        plan={plan}
+      />
 
       {/* Toast notification */}
       {toast && (

@@ -28,6 +28,12 @@ interface StepWrapperProps {
   onNext: () => void
   onPrev: () => void
 
+  // New UX callbacks
+  onSave?: () => void
+  onGoToDashboard?: () => void
+  onToggleNavigator?: () => void
+  showNavigator?: boolean
+
   // Content
   children: React.ReactNode
 
@@ -101,6 +107,10 @@ export function StepWrapper({
   lastSavedLabel,
   onNext,
   onPrev,
+  onSave,
+  onGoToDashboard,
+  onToggleNavigator,
+  showNavigator = false,
   children,
   className = '',
 }: StepWrapperProps) {
@@ -109,9 +119,24 @@ export function StepWrapper({
       {/* ── Top Header Bar ─────────────────────────────────── */}
       <header className="sticky top-0 z-30 bg-navy-900/95 backdrop-blur-sm border-b border-navy-800">
         <div className="max-w-2xl mx-auto px-4 py-3">
-          {/* Row 1: Step counter + branding + save status */}
+          {/* Row 1: Dashboard + branding + navigator/save + save status */}
           <div className="flex items-center justify-between mb-2">
+            {/* Left: Dashboard button + Logo */}
             <div className="flex items-center gap-2">
+              {/* Dashboard button */}
+              {onGoToDashboard && (
+                <button
+                  type="button"
+                  onClick={onGoToDashboard}
+                  aria-label="Kembali ke Dashboard"
+                  className="flex items-center gap-1 text-navy-400 hover:text-sage-400 transition-colors duration-200"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955a1.126 1.126 0 011.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                  </svg>
+                  <span className="text-xs hidden sm:inline">Dashboard</span>
+                </button>
+              )}
               {/* Logo kecil */}
               <div className="w-6 h-6 rounded-md bg-gradient-sage flex items-center justify-center">
                 <span className="text-xs">☪</span>
@@ -121,20 +146,52 @@ export function StepWrapper({
               </span>
             </div>
 
-            {/* Step counter */}
-            <span className="text-xs font-semibold text-navy-400 tracking-wide">
-              LANGKAH{' '}
-              <span className="text-sage-400">{stepNumber}</span>
-              {' '}dari{' '}
-              <span className="text-navy-300">{totalSteps}</span>
-            </span>
+            {/* Right: Navigator toggle + Simpan + Save status */}
+            <div className="flex items-center gap-3">
+              {/* Save status */}
+              <SaveStatus
+                isSaving={isSaving}
+                isDirty={isDirty}
+                lastSavedLabel={lastSavedLabel}
+              />
 
-            {/* Save status */}
-            <SaveStatus
-              isSaving={isSaving}
-              isDirty={isDirty}
-              lastSavedLabel={lastSavedLabel}
-            />
+              {/* Simpan button */}
+              {onSave && (
+                <button
+                  type="button"
+                  onClick={onSave}
+                  disabled={isSaving}
+                  aria-label="Simpan profil"
+                  className={[
+                    'flex items-center gap-1 text-navy-400 hover:text-sage-400 transition-colors duration-200',
+                    isSaving ? 'opacity-50 cursor-not-allowed' : '',
+                  ].join(' ')}
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 3.75V16.5L12 14.25 7.5 16.5V3.75m9 0H18A2.25 2.25 0 0120.25 6v12A2.25 2.25 0 0118 20.25H6A2.25 2.25 0 013.75 18V6A2.25 2.25 0 016 3.75h1.5m9 0h-9" />
+                  </svg>
+                  <span className="text-xs hidden sm:inline">Simpan</span>
+                </button>
+              )}
+
+              {/* Navigator toggle button */}
+              {onToggleNavigator && (
+                <button
+                  type="button"
+                  onClick={onToggleNavigator}
+                  aria-label="Buka navigasi langkah"
+                  className={[
+                    'flex items-center gap-1 text-navy-400 hover:text-sage-400 transition-colors duration-200',
+                    showNavigator ? 'text-sage-400' : '',
+                  ].join(' ')}
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M12 17.25h8.25" />
+                  </svg>
+                  <span className="text-xs font-medium">{stepNumber}/{totalSteps}</span>
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Row 2: Progress bar */}
@@ -179,25 +236,36 @@ export function StepWrapper({
       {/* ── Bottom Navigation Bar ──────────────────────────── */}
       <nav className="sticky bottom-0 z-30 bg-navy-900/95 backdrop-blur-sm border-t border-navy-800">
         <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
-          {/* Prev button */}
-          <button
-            type="button"
-            onClick={onPrev}
-            disabled={isFirstStep}
-            aria-label="Langkah sebelumnya"
-            className={[
-              'flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-medium',
-              'border transition-all duration-200',
-              isFirstStep
-                ? 'border-navy-700 text-navy-600 cursor-not-allowed'
-                : 'border-navy-600 text-navy-300 hover:border-sage-600 hover:text-sage-400 active:scale-95',
-            ].join(' ')}
-          >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-            </svg>
-            Kembali
-          </button>
+          {/* Prev button / Dashboard on first step */}
+          {isFirstStep ? (
+            /* On first step: Dashboard button */
+            onGoToDashboard ? (
+              <button
+                type="button"
+                onClick={onGoToDashboard}
+                aria-label="Kembali ke Dashboard"
+                className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-medium border transition-all duration-200 border-navy-600 text-navy-300 hover:border-sage-600 hover:text-sage-400 active:scale-95"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955a1.126 1.126 0 011.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                </svg>
+                Dashboard
+              </button>
+            ) : null
+          ) : (
+            /* Normal: Kembali button */
+            <button
+              type="button"
+              onClick={onPrev}
+              aria-label="Langkah sebelumnya"
+              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-medium border transition-all duration-200 border-navy-600 text-navy-300 hover:border-sage-600 hover:text-sage-400 active:scale-95"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+              </svg>
+              Kembali
+            </button>
+          )}
 
           {/* Step dots (max 7 visible) */}
           <div className="flex-1 flex items-center justify-center gap-1" aria-hidden="true">
