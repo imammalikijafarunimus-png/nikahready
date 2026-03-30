@@ -121,17 +121,25 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const supabase = createClient()
 
     // Get initial session
+    // FIX: Set status='authenticated' SEGERA setelah session valid,
+    // jangan tunggu ensureUserRow & fetchUserPlan (2 DB query berurutan).
+    // Jalankan keduanya di background agar UI tidak stuck di loading.
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session?.user) {
-        await ensureUserRow(session.user.id, session.user.email ?? '')
-        const plan = await fetchUserPlan(session.user.id)
+        // Set authenticated FIRST — user sudah login, jangan block UI
         setState({
           user: session.user,
           session,
           status: 'authenticated',
           userId: session.user.id,
           userEmail: session.user.email ?? null,
-          plan,
+          plan: 'free' as const, // default dulu, nanti di-update
+        })
+
+        // Background tasks — tidak blocking UI
+        ensureUserRow(session.user.id, session.user.email ?? '')
+        fetchUserPlan(session.user.id).then((plan) => {
+          setState((prev) => ({ ...prev, plan }))
         })
       } else {
         setState((prev) => ({ ...prev, status: 'unauthenticated' }))
@@ -140,19 +148,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     // Listen for auth state changes (login, logout, token refresh)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      (event, session) => {
         if (event === 'INITIAL_SESSION') return // already handled above
 
         if (session?.user) {
-          await ensureUserRow(session.user.id, session.user.email ?? '')
-          const plan = await fetchUserPlan(session.user.id)
+          // Set authenticated FIRST
           setState({
             user: session.user,
             session,
             status: 'authenticated',
             userId: session.user.id,
             userEmail: session.user.email ?? null,
-            plan,
+            plan: 'free' as const,
+          })
+
+          // Background tasks
+          ensureUserRow(session.user.id, session.user.email ?? '')
+          fetchUserPlan(session.user.id).then((plan) => {
+            setState((prev) => ({ ...prev, plan }))
           })
         } else {
           setState(DEFAULT_STATE)
@@ -194,15 +207,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
         // If no email confirmation required, user is immediately logged in
         if (data.session?.user) {
-          await ensureUserRow(data.session.user.id, data.session.user.email ?? '')
-          const plan = await fetchUserPlan(data.session.user.id)
           setState({
             user: data.session.user,
             session: data.session,
             status: 'authenticated',
             userId: data.session.user.id,
             userEmail: data.session.user.email ?? null,
-            plan,
+            plan: 'free' as const,
+          })
+          ensureUserRow(data.session.user.id, data.session.user.email ?? '')
+          fetchUserPlan(data.session.user.id).then((plan) => {
+            setState((prev) => ({ ...prev, plan }))
           })
         }
 
@@ -236,15 +251,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
         }
 
         if (data.session?.user) {
-          await ensureUserRow(data.session.user.id, data.session.user.email ?? '')
-          const plan = await fetchUserPlan(data.session.user.id)
+          // Set authenticated FIRST — jangan block UI
           setState({
             user: data.session.user,
             session: data.session,
             status: 'authenticated',
             userId: data.session.user.id,
             userEmail: data.session.user.email ?? null,
-            plan,
+            plan: 'free' as const,
+          })
+          // Background tasks
+          ensureUserRow(data.session.user.id, data.session.user.email ?? '')
+          fetchUserPlan(data.session.user.id).then((plan) => {
+            setState((prev) => ({ ...prev, plan }))
           })
         }
 
