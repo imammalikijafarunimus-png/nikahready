@@ -63,17 +63,20 @@ function LoginForm() {
     if (queryError) setError(queryError)
   }, [queryMessage, queryError])
 
-  // If already authenticated, redirect
-  // Gunakan useRef untuk mencegah redirect ganda saat pertama kali mount
-  // setelah login berhasil (race condition fix)
+  // Redirect setelah login berhasil atau jika sudah authenticated
+  // Gunakan window.location.replace() BUKAN router.replace() karena:
+  // 1. Full page navigation memastikan cookies dikirim ke server
+  // 2. Middleware di server bisa baca session cookie dengan benar
+  // 3. Menghindari PWA service worker yang meny cache redirect response
+  // 4. Tidak ada Next.js router cache yang bisa interferensi
   const hasRedirected = useRef(false)
 
   useEffect(() => {
     if (status === 'authenticated' && !hasRedirected.current) {
       hasRedirected.current = true
-      router.replace(redirectAfter)
+      window.location.replace(redirectAfter)
     }
-  }, [status, router, redirectAfter])
+  }, [status, redirectAfter])
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
@@ -104,7 +107,7 @@ function LoginForm() {
       setError(result.error ?? 'Gagal masuk. Coba lagi.')
       setIsLoading(false)
     }
-  }, [email, password, signIn, redirectAfter])
+  }, [email, password, signIn])
 
   const handleForgotPassword = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
