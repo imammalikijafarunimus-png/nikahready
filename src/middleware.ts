@@ -60,9 +60,18 @@ export async function middleware(request: NextRequest) {
   )
 
   // Refresh session — important for keeping session alive
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  // Fix: Wrap in try-catch agar middleware tidak crash saat
+  // Supabase tidak tersedia atau cookie rusak.
+  // Fail-open untuk public routes, fail-closed untuk protected routes.
+  let user = null
+  try {
+    const { data } = await supabase.auth.getUser()
+    user = data.user
+  } catch (err) {
+    console.error('[NikahReady] Middleware auth error:', err)
+    // Jika gagal membaca session, anggap user belum login
+    // Protected routes akan tetap redirect ke login (fail-closed)
+  }
 
   const { pathname } = request.nextUrl
 
@@ -96,6 +105,6 @@ export const config = {
      * - favicon.ico (favicon file)
      * - public folder assets (icons, images, manifest, etc.)
      */
-    '/((?!_next/static|_next/image|favicon\\.ico|icons/|images/|manifest\\.json|sw\\.js|workbox-*).*)',
+    '/((?!_next/static|_next/image|favicon\\.ico|auth/callback|icons/|images/|manifest\\.json|sw\\.js|workbox-*).*)',
   ],
 }

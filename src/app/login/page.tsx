@@ -12,7 +12,7 @@
 // - Responsive design consistent with brand
 // ============================================================
 
-import { useState, useEffect, useCallback, Suspense } from 'react'
+import { useState, useEffect, useCallback, useRef, Suspense } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -64,8 +64,13 @@ function LoginForm() {
   }, [queryMessage, queryError])
 
   // If already authenticated, redirect
+  // Gunakan useRef untuk mencegah redirect ganda saat pertama kali mount
+  // setelah login berhasil (race condition fix)
+  const hasRedirected = useRef(false)
+
   useEffect(() => {
-    if (status === 'authenticated') {
+    if (status === 'authenticated' && !hasRedirected.current) {
+      hasRedirected.current = true
       router.replace(redirectAfter)
     }
   }, [status, router, redirectAfter])
@@ -90,13 +95,16 @@ function LoginForm() {
     const result = await signIn(email.trim(), password)
 
     if (result.success) {
-      router.push(redirectAfter)
+      // JANGAN router.push() langsung di sini!
+      // Biarkan useEffect yang menunggu status='authenticated'
+      // dari AuthContext agar cookie session sudah tersinkron
+      // dengan middleware sebelum navigasi terjadi.
+      // Loading state tetap aktif menunggu redirect dari useEffect.
     } else {
       setError(result.error ?? 'Gagal masuk. Coba lagi.')
+      setIsLoading(false)
     }
-
-    setIsLoading(false)
-  }, [email, password, signIn, router, redirectAfter])
+  }, [email, password, signIn, redirectAfter])
 
   const handleForgotPassword = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()

@@ -193,9 +193,22 @@ export function CreateFormClient() {
   }, [nav, state, userId, dispatch, router])
 
   // ── Redirect to login if not authenticated ────────────────
+  // Fix: Tambahkan grace period 2 detik setelah auth selesai loading
+  // untuk menghindari redirect premature akibat race condition
+  // antara client-side auth state dan server-side middleware cookie
   useEffect(() => {
-    if (!authLoading && !userId) {
-      router.replace('/login?next=/create')
+    if (authLoading) return // Masih loading, tunggu dulu
+
+    if (!userId) {
+      // Berikan waktu 2 detik setelah auth loading selesai
+      // sebelum benar-benar redirect ke login.
+      // Ini mencegah redirect saat session baru saja tersinkronkan
+      // tetapi onAuthStateChange belum selesai diproses.
+      const timer = setTimeout(() => {
+        router.replace('/login?next=/create')
+      }, 2000)
+
+      return () => clearTimeout(timer)
     }
   }, [authLoading, userId, router])
 
