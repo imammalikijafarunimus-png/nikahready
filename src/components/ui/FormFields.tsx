@@ -67,12 +67,14 @@ const BASE_INPUT_CLASS = [
   'w-full rounded-xl border bg-navy-800/80 px-4 py-3',
   'text-sm text-white placeholder:text-navy-500',
   'transition-all duration-200 outline-none',
-  'focus:ring-2 focus:ring-sage-600/50 focus:border-sage-600',
+  'focus:ring-2 focus:ring-sage-600/50 focus:ring-offset-2 focus:ring-offset-navy-900 focus:border-sage-600',
   'disabled:opacity-50 disabled:cursor-not-allowed',
 ].join(' ')
 
 function inputBorderClass(hasError?: boolean) {
-  return hasError ? 'border-red-500/70' : 'border-navy-700 hover:border-navy-500'
+  return hasError
+    ? 'border-red-500/70 focus:ring-red-500/50 focus:border-red-500 focus:ring-offset-navy-900'
+    : 'border-navy-700 hover:border-navy-500'
 }
 
 // ── TextInput ────────────────────────────────────────────────
@@ -713,7 +715,7 @@ export function SectionCard({
   return (
     <div
       className={[
-        'rounded-2xl border p-4 space-y-4',
+        'rounded-2xl border p-4 space-y-5',
         variant === 'highlight'
           ? 'border-sage-700/50 bg-sage-900/20'
           : 'border-navy-800 bg-navy-900/50',

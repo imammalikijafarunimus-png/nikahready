@@ -112,7 +112,7 @@ export function Step06_RiwayatOrganisasi() {
     useArraySection('riwayatOrganisasi')
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {/* ── Pembuka Arabic ─────────────────────────────────── */}
       <div className="text-center py-3">
         <p className="font-arabic text-xl text-gold-500">

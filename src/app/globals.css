@@ -1,6 +1,7 @@
 /* ============================================================
    src/app/globals.css
    Base styles untuk NikahReady
+   Phase 1: Aligned with design-system.ts
    ============================================================ */
 
 @tailwind base;
@@ -12,11 +13,39 @@
   --font-inter:  'Inter', system-ui, sans-serif;
   --font-amiri:  'Amiri', Georgia, serif;
 
-  /* Brand colors sebagai CSS vars (untuk akses di JS jika perlu) */
-  --color-sage-900:  #064E3B;
-  --color-navy-900:  #0F172A;
+  /* Brand colors — complete palette for JS access if needed */
+  --color-sage-50:  #ECFDF5;
+  --color-sage-100: #D1FAE5;
+  --color-sage-200: #A7F3D0;
+  --color-sage-300: #6EE7B7;
+  --color-sage-400: #34D399;
+  --color-sage-500: #10B981;
+  --color-sage-600: #059669;
+  --color-sage-700: #047857;
+  --color-sage-800: #065F46;
+  --color-sage-900: #064E3B;
+  --color-sage-950: #022C22;
+
+  --color-navy-50:  #F8FAFC;
+  --color-navy-100: #F1F5F9;
+  --color-navy-200: #E2E8F0;
+  --color-navy-300: #CBD5E1;
+  --color-navy-400: #94A3B8;
+  --color-navy-500: #64748B;
+  --color-navy-600: #475569;
+  --color-navy-700: #334155;
+  --color-navy-800: #1E293B;
+  --color-navy-900: #0F172A;
+  --color-navy-950: #020617;
+
+  --color-gold-300: #FCD34D;
+  --color-gold-400: #FBBF24;
+  --color-gold-500: #F59E0B;
+  --color-gold-600: #D97706;
+  --color-gold-700: #B45309;
+  --color-gold-800: #92400E;
+
   --color-cream-100: #FEF3C7;
-  --color-gold-600:  #D97706;
 }
 
 /* ── Base Layer ──────────────────────────────────────────── */
@@ -30,6 +59,7 @@
   html {
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;
+    color-scheme: dark;
   }
 
   body {
@@ -51,9 +81,9 @@
     line-height: 1.8;
   }
 
-  /* Focus outline yang konsisten dan accessible */
+  /* Focus outline — standardized: ring-sage-600/50 (canonical per design-system.ts) */
   :focus-visible {
-    @apply outline-none ring-2 ring-sage-500/60 ring-offset-2 ring-offset-navy-900;
+    @apply outline-none ring-2 ring-sage-600/50 ring-offset-2 ring-offset-navy-900;
   }
 
   /* Scrollbar custom (WebKit) */
@@ -89,13 +119,13 @@
 
   /* Native select styling reset */
   select {
-    background-image: none; /* Tailwind forms plugin might add this */
+    background-image: none;
   }
 }
 
 /* ── Component Layer ─────────────────────────────────────── */
 @layer components {
-  /* Gradient utilities yang sering dipakai */
+  /* Gradient utilities */
   .gradient-sage {
     background: linear-gradient(135deg, #064E3B 0%, #047857 50%, #059669 100%);
   }
@@ -117,26 +147,26 @@
     @apply text-2xl text-gold-500 tracking-wide;
     direction: rtl;
   }
+
+  /* Spinner — now uses animate-spin from Tailwind config */
+  .auth-spinner {
+    @apply border-2 border-white/30 border-t-white rounded-full animate-spin;
+  }
 }
 
 /* ── PDF Print Styles ────────────────────────────────────── */
-/* PENTING: Ini hanya berlaku saat browser print (Ctrl+P),
-   bukan saat html2pdf.js render — html2pdf pakai screenshot.
-   Tetap berguna sebagai fallback. */
 @media print {
   body {
     background: white !important;
     color: black !important;
   }
 
-  /* Sembunyikan UI navigation saat print */
   header,
   nav,
   .no-print {
     display: none !important;
   }
 
-  /* Pastikan konten PDF full width */
   .pdf-page {
     width: 100% !important;
     margin: 0 !important;
@@ -152,48 +182,16 @@
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   }
 
-  /* Animasi fade in untuk step transitions */
+  /* Animasi step transition — now references animate-step-in from Tailwind config */
   .animate-step-in {
-    animation: stepFadeIn 0.25s ease-out forwards;
+    animation: var(--tw-animate-duration, 0.25s) ease-out forwards;
+    animation-name: step-in;
   }
 
-  @keyframes stepFadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(8px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  /* Animasi slide in dari kanan untuk Step Navigator sidebar */
+  /* Animasi sidebar slide-in — references animate-slide-in-right from Tailwind config */
   .animate-slide-in-right {
-    animation: slideInRight 0.25s ease-out forwards;
-  }
-
-  @keyframes slideInRight {
-    from {
-      transform: translateX(100%);
-    }
-    to {
-      transform: translateX(0);
-    }
-  }
-
-  /* Spinner (global — used by auth & create form) */
-  .auth-spinner {
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-top-color: white;
-    border-radius: 50%;
-    animation: authSpin 0.6s linear infinite;
-  }
-
-  @keyframes authSpin {
-    to {
-      transform: rotate(360deg);
-    }
+    animation: var(--tw-animate-duration, 0.25s) ease-out forwards;
+    animation-name: slide-in-right;
   }
 
   /* Safe area untuk mobile (notch, home indicator) */

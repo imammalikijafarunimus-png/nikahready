@@ -5,172 +5,72 @@
 
 /* ── Container ──────────────────────────────────────────── */
 .landing-container {
-  max-width: 72rem;
-  margin: 0 auto;
-  padding-left: 1.25rem;
-  padding-right: 1.25rem;
-}
-
-@media (min-width: 640px) {
-  .landing-container {
-    padding-left: 2rem;
-    padding-right: 2rem;
-  }
+  @apply max-w-6xl mx-auto px-5 sm:px-8;
 }
 
 /* ── Navbar ────────────────────────────────────────────── */
 .landing-nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 50;
-  background: rgba(15, 23, 42, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(30, 41, 59, 0.6);
+  @apply fixed top-0 inset-x-0 z-50 bg-navy-900/85 backdrop-blur-xl border-b border-navy-800/60;
 }
 
 .landing-nav-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 3.5rem;
+  @apply flex items-center justify-between h-14;
 }
 
 .landing-logo-link {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  text-decoration: none;
+  @apply flex items-center gap-2 no-underline;
 }
 
 .landing-logo-img {
-  border-radius: 0.5rem;
+  @apply rounded-lg;
 }
 
 .landing-logo-text {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #F1F5F9;
-  letter-spacing: -0.02em;
+  @apply text-lg font-bold text-navy-100 tracking-tight;
 }
 
 .landing-nav-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  @apply flex items-center gap-2;
 }
 
 /* ── Buttons ────────────────────────────────────────────── */
 .landing-btn-primary {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.65rem 1.25rem;
-  background: linear-gradient(135deg, #064E3B 0%, #047857 100%);
-  color: white;
-  font-size: 0.875rem;
-  font-weight: 600;
-  border-radius: 0.75rem;
-  text-decoration: none;
-  transition: all 0.2s ease;
-  border: none;
-  cursor: pointer;
-}
-
-.landing-btn-primary:hover {
-  background: linear-gradient(135deg, #047857 0%, #059669 100%);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px 0 rgba(6, 78, 59, 0.3);
-}
-
-.landing-btn-primary:active {
-  transform: scale(0.98);
+  @apply inline-flex items-center gap-2 py-2.5 px-5 rounded-xl text-sm font-semibold
+         bg-gradient-to-r from-sage-900 to-sage-700 text-white no-underline border-0
+         cursor-pointer transition-all hover:-translate-y-px hover:shadow-card active:scale-95;
 }
 
 .landing-btn-secondary {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.65rem 1.25rem;
-  background: transparent;
-  color: #F1F5F9;
-  font-size: 0.875rem;
-  font-weight: 500;
-  border-radius: 0.75rem;
-  text-decoration: none;
-  border: 1px solid rgba(100, 116, 139, 0.4);
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.landing-btn-secondary:hover {
-  border-color: #94A3B8;
-  background: rgba(241, 245, 249, 0.05);
+  @apply inline-flex items-center gap-2 py-2.5 px-5 rounded-xl text-sm font-medium
+         bg-transparent text-navy-100 no-underline border border-navy-600/40
+         cursor-pointer transition-all hover:border-navy-400 hover:bg-navy-100/5;
 }
 
 .landing-btn-outline {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.5rem 1rem;
-  background: transparent;
-  color: #D1FAE5;
-  font-size: 0.8rem;
-  font-weight: 600;
-  border-radius: 0.75rem;
-  text-decoration: none;
-  border: 1.5px solid #064E3B;
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.landing-btn-outline:hover {
-  background: rgba(6, 78, 59, 0.1);
+  @apply inline-flex items-center py-2 px-4 bg-transparent text-sage-100 text-xs font-semibold
+         rounded-xl no-underline border border-sage-900 cursor-pointer transition-all
+         hover:bg-sage-900/10;
 }
 
 .landing-btn-ghost {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.5rem 1rem;
-  background: transparent;
-  color: #F1F5F9;
-  font-size: 0.8rem;
-  font-weight: 500;
-  border-radius: 0.75rem;
-  text-decoration: none;
-  border: none;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.landing-btn-ghost:hover {
-  color: #D1FAE5;
+  @apply inline-flex items-center py-2 px-4 bg-transparent text-navy-100 text-xs font-medium
+         rounded-xl no-underline border-0 cursor-pointer transition-all hover:text-sage-100;
 }
 
 .landing-btn-icon {
-  width: 1rem;
-  height: 1rem;
-  flex-shrink: 0;
+  @apply w-4 h-4 shrink-0;
 }
 
 .landing-btn-lg {
-  padding: 0.85rem 2rem;
-  font-size: 1rem;
-  border-radius: 1rem;
+  @apply py-3.5 px-8 text-base rounded-2xl;
 }
 
 /* ── Hero ───────────────────────────────────────────────── */
 .landing-hero {
-  position: relative;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  overflow: hidden;
-  padding-top: 5rem;
-  padding-bottom: 4rem;
+  @apply relative min-h-screen flex items-center overflow-hidden pt-20 pb-16;
 }
 
+/* Background pattern — keep as raw CSS (background-image url not supported in @apply) */
 .landing-hero-pattern {
   position: absolute;
   inset: 0;
@@ -181,6 +81,7 @@
   pointer-events: none;
 }
 
+/* Pseudo-elements — keep as raw CSS */
 .landing-hero::before {
   content: '';
   position: absolute;
@@ -206,57 +107,25 @@
 }
 
 .landing-hero-content {
-  position: relative;
-  z-index: 1;
-  max-width: 42rem;
-  text-align: center;
+  @apply relative z-[1] max-w-2xl text-center;
 }
 
 .landing-hero-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.4rem 1rem;
-  background: rgba(6, 78, 59, 0.15);
-  border: 1px solid rgba(6, 78, 59, 0.3);
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #D1FAE5;
-  letter-spacing: 0.05em;
-  margin-bottom: 1.5rem;
-  animation: fade-in 0.6s ease-out;
+  @apply inline-flex items-center gap-2 px-4 py-1.5 bg-sage-900/15 border border-sage-900/30
+         rounded-full text-xs font-semibold text-sage-100 tracking-widest mb-6 animate-fade-in;
 }
 
 .landing-hero-badge-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #D97706;
+  @apply w-1.5 h-1.5 rounded-full bg-gold-600;
 }
 
+/* Responsive font sizes merged — media queries at original lines 320-330 removed */
 .landing-hero-title {
-  font-size: 2.75rem;
-  font-weight: 800;
-  color: #FFFFFF;
-  line-height: 1.15;
-  letter-spacing: -0.03em;
-  margin-bottom: 1.25rem;
-  animation: fade-in 0.6s ease-out 0.1s both;
+  @apply text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight
+         tracking-tighter mb-5 animate-fade-in;
 }
 
-@media (min-width: 640px) {
-  .landing-hero-title {
-    font-size: 3.5rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .landing-hero-title {
-    font-size: 4rem;
-  }
-}
-
+/* Keep as raw CSS — background-clip:text not reliably doable via @apply */
 .landing-hero-title-accent {
   background: linear-gradient(135deg, #059669, #D97706);
   -webkit-background-clip: text;
@@ -265,192 +134,101 @@
 }
 
 .landing-hero-subtitle {
-  font-size: 1.05rem;
-  color: #94A3B8;
-  line-height: 1.6;
-  max-width: 36rem;
-  margin: 0 auto 1rem;
-  animation: fade-in 0.6s ease-out 0.2s both;
+  @apply text-base text-navy-400 leading-relaxed max-w-2xl mx-auto mb-4 animate-fade-in;
 }
 
 .landing-hero-arabic {
-  font-size: 1.5rem;
-  color: #D97706;
-  margin-bottom: 2rem;
-  opacity: 0.9;
-  animation: fade-in 0.6s ease-out 0.3s both;
+  @apply text-2xl text-gold-600/90 mb-8 animate-fade-in;
 }
 
+/* Responsive flex-direction merged — media query at original line 365-370 removed */
 .landing-hero-ctas {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
-  animation: fade-in 0.6s ease-out 0.4s both;
-}
-
-@media (min-width: 480px) {
-  .landing-hero-ctas {
-    flex-direction: row;
-    justify-content: center;
-  }
+  @apply flex flex-col items-center gap-3 mb-4 animate-fade-in sm:flex-row sm:justify-center;
 }
 
 .landing-hero-note {
-  font-size: 0.8rem;
-  color: #64748B;
-  animation: fade-in 0.6s ease-out 0.5s both;
+  @apply text-xs text-navy-500 animate-fade-in;
 }
 
 /* ── Sections ─────────────────────────────────────────── */
 .landing-section {
-  padding: 5rem 0;
+  @apply py-20;
 }
 
 .landing-section-alt {
-  background: rgba(15, 23, 42, 0.4);
+  @apply bg-navy-900/40;
 }
 
 .landing-section-title {
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: #FFFFFF;
-  text-align: center;
-  margin-bottom: 0.5rem;
+  @apply text-2xl font-bold text-white text-center mb-2;
 }
 
 .landing-section-subtitle {
-  font-size: 0.95rem;
-  color: #94A3B8;
-  text-align: center;
-  margin-bottom: 2.5rem;
+  @apply text-base text-navy-400 text-center mb-10;
 }
 
 /* ── Differentiator ─────────────────────────────────────── */
+/* Gradient background kept as raw CSS; responsive flex merged */
 .landing-diff {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.5rem;
-  padding: 2.5rem;
+  @apply flex flex-col items-center gap-6 p-10 rounded-3xl border border-sage-900/20
+         text-center sm:flex-row sm:text-left;
   background: linear-gradient(135deg, rgba(6, 78, 59, 0.08) 0%, rgba(6, 78, 59, 0.03) 100%);
-  border: 1px solid rgba(6, 78, 59, 0.2);
-  border-radius: 1.5rem;
-  text-align: center;
-}
-
-@media (min-width: 640px) {
-  .landing-diff {
-    flex-direction: row;
-    text-align: left;
-  }
 }
 
 .landing-diff-icon {
-  flex-shrink: 0;
-  width: 4rem;
-  height: 4rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 1rem;
-  background: rgba(6, 78, 59, 0.15);
-  color: #D1FAE5;
+  @apply shrink-0 w-16 h-16 flex items-center justify-center rounded-xl bg-sage-900/15 text-sage-100;
 }
 
 .landing-diff-title {
-  font-size: 1.35rem;
-  font-weight: 700;
-  color: #FFFFFF;
-  margin-bottom: 0.75rem;
+  @apply text-xl font-bold text-white mb-3;
 }
 
 .landing-diff-desc {
-  font-size: 0.925rem;
-  color: #94A3B8;
-  line-height: 1.7;
+  @apply text-sm text-navy-400 leading-relaxed;
 }
 
 /* ── Features ──────────────────────────────────────────── */
+/* Responsive grid merged — media query at original line 454-458 removed */
 .landing-features {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.25rem;
-}
-
-@media (min-width: 768px) {
-  .landing-features {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  @apply grid grid-cols-1 md:grid-cols-3 gap-5;
 }
 
 .landing-feature-card {
-  padding: 2rem 1.5rem;
-  background: rgba(15, 23, 42, 0.6);
-  border: 1px solid rgba(30, 41, 59, 0.6);
-  border-radius: 1.25rem;
-  transition: all 0.2s ease;
-}
-
-.landing-feature-card:hover {
-  border-color: rgba(6, 78, 59, 0.4);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.2);
+  @apply p-8 rounded-2xl border border-navy-800/60 bg-navy-900/60 transition-all
+         hover:-translate-y-0.5 hover:border-sage-900/40 hover:shadow-lg;
 }
 
 .landing-feature-icon-wrap {
-  width: 3rem;
-  height: 3rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 0.75rem;
-  margin-bottom: 1rem;
+  @apply w-12 h-12 flex items-center justify-center rounded-xl mb-4;
 }
 
 .landing-feature-icon-sage {
-  background: rgba(6, 78, 59, 0.15);
-  color: #6EE7B7;
+  @apply bg-sage-900/15 text-sage-300;
 }
 
 .landing-feature-icon-gold {
-  background: rgba(217, 119, 6, 0.15);
-  color: #FCD34D;
+  @apply bg-gold-600/15 text-gold-300;
 }
 
 .landing-feature-icon-navy {
-  background: rgba(30, 41, 59, 0.5);
-  color: #CBD5E1;
+  @apply bg-navy-800/50 text-navy-300;
 }
 
 .landing-feature-card h3 {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: #FFFFFF;
-  margin-bottom: 0.5rem;
+  @apply text-base font-bold text-white mb-2;
 }
 
 .landing-feature-card p {
-  font-size: 0.875rem;
-  color: #94A3B8;
-  line-height: 1.6;
+  @apply text-sm text-navy-400 leading-relaxed;
 }
 
 /* ── Steps ─────────────────────────────────────────────── */
+/* Responsive grid merged — media query at original lines 520-524 removed */
 .landing-steps {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
-  position: relative;
+  @apply grid grid-cols-1 md:grid-cols-3 gap-6 relative;
 }
 
-@media (min-width: 768px) {
-  .landing-steps {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
+/* Pseudo-element connector line — keep as raw CSS */
 .landing-steps::before {
   content: '';
   position: absolute;
@@ -458,7 +236,13 @@
   left: 1.5rem;
   right: 1.5rem;
   height: 2px;
-  background: linear-gradient(90deg, transparent, #064E3B 30%, #064E3B 70%, transparent);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    theme('colors.sage.900') 30%,
+    theme('colors.sage.900') 70%,
+    transparent
+  );
 }
 
 @media (min-width: 768px) {
@@ -468,118 +252,62 @@
 }
 
 .landing-step {
-  text-align: center;
-  padding: 1.5rem 1rem;
-  background: rgba(15, 23, 42, 0.5);
-  border: 1px solid rgba(30, 41, 59, 0.5);
-  border-radius: 1.25rem;
-  position: relative;
+  @apply text-center p-6 rounded-2xl border border-navy-800/50 bg-navy-900/50 relative;
 }
 
 .landing-step-number {
-  width: 3rem;
-  height: 3rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 1rem;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #064E3B, #047857);
-  color: white;
-  font-size: 1.1rem;
-  font-weight: 700;
-  position: relative;
-  z-index: 1;
+  @apply w-12 h-12 flex items-center justify-center mx-auto mb-4 rounded-full
+         bg-gradient-to-br from-sage-900 to-sage-700 text-white text-base font-bold
+         relative z-[1];
 }
 
 .landing-step-number-final {
-  background: linear-gradient(135deg, #D97706, #F59E0B);
+  @apply from-gold-600 to-gold-500;
 }
 
 .landing-step h3 {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: #FFFFFF;
-  margin-bottom: 0.5rem;
+  @apply text-base font-bold text-white mb-2;
 }
 
 .landing-step p {
-  font-size: 0.875rem;
-  color: #94A3B8;
-  line-height: 1.6;
+  @apply text-sm text-navy-400 leading-relaxed;
 }
 
 /* ── Trust ─────────────────────────────────────────────── */
+/* Low-opacity bg not a standard Tailwind stop — keep as raw CSS; responsive merged */
 .landing-trust {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.5rem;
-  padding: 2.5rem;
+  @apply flex flex-col items-center gap-6 p-10 rounded-3xl border border-sage-900/15
+         sm:flex-row sm:text-left;
   background: rgba(6, 78, 59, 0.06);
-  border: 1px solid rgba(6, 78, 59, 0.15);
-  border-radius: 1.5rem;
-}
-
-@media (min-width: 640px) {
-  .landing-trust {
-    flex-direction: row;
-    text-align: left;
-  }
 }
 
 .landing-trust-icon {
-  flex-shrink: 0;
-  width: 4rem;
-  height: 4rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 1rem;
-  background: rgba(217, 119, 6, 0.1);
-  border: 1px solid rgba(217, 119, 6, 0.2);
-  color: #FCD34D;
+  @apply shrink-0 w-16 h-16 flex items-center justify-center rounded-xl
+         bg-gold-600/10 border border-gold-600/20 text-gold-300;
 }
 
 .landing-trust-title {
-  font-size: 1.35rem;
-  font-weight: 700;
-  color: #FFFFFF;
-  margin-bottom: 0.75rem;
+  @apply text-xl font-bold text-white mb-3;
 }
 
 .landing-trust-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.65rem;
+  @apply list-none p-0 m-0 flex flex-col gap-2.5;
 }
 
 .landing-trust-list li {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.5rem;
-  font-size: 0.9rem;
-  color: #CBD5E1;
-  line-height: 1.5;
+  @apply flex items-start gap-2 text-sm text-navy-300 leading-relaxed;
 }
 
 .landing-trust-check {
-  flex-shrink: 0;
-  color: #10B981;
-  margin-top: 2px;
+  @apply shrink-0 text-sage-500 mt-0.5;
 }
 
 /* ── CTA ───────────────────────────────────────────────── */
 .landing-cta {
-  padding: 5rem 0 6rem;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
+  @apply py-20 pb-24 text-center relative overflow-hidden;
 }
 
+/* Pseudo-element — keep as raw CSS */
 .landing-cta::before {
   content: '';
   position: absolute;
@@ -592,105 +320,60 @@
 }
 
 .landing-cta-content {
-  position: relative;
-  z-index: 1;
+  @apply relative z-[1];
 }
 
 .landing-cta-arabic {
-  font-size: 1.5rem;
-  color: #D97706;
-  margin-bottom: 1rem;
-  opacity: 0.8;
+  @apply text-2xl text-gold-600/80 mb-4;
 }
 
 .landing-cta-title {
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: #FFFFFF;
-  margin-bottom: 0.5rem;
+  @apply text-2xl font-bold text-white mb-2;
 }
 
 .landing-cta-subtitle {
-  font-size: 0.95rem;
-  color: #94A3B8;
-  margin-bottom: 1.75rem;
+  @apply text-base text-navy-400 mb-7;
 }
 
 /* ── Footer ────────────────────────────────────────────── */
 .landing-footer {
-  border-top: 1px solid rgba(30, 41, 59, 0.5);
-  padding: 2.5rem 0;
+  @apply border-t border-navy-800/50 py-10;
 }
 
 .landing-footer-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1.5rem;
+  @apply flex items-center justify-between mb-6;
 }
 
 .landing-footer-brand {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  @apply flex items-center gap-2;
 }
 
 .landing-footer-name {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #F1F5F9;
+  @apply text-sm font-bold text-navy-100;
 }
 
 .landing-footer-links {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.85rem;
+  @apply flex items-center gap-2 text-xs;
 }
 
 .landing-footer-links a {
-  color: #94A3B8;
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-.landing-footer-links a:hover {
-  color: #D1FAE5;
+  @apply text-navy-400 no-underline transition-colors hover:text-sage-100;
 }
 
 .landing-footer-sep {
-  color: #475569;
+  @apply text-navy-600;
 }
 
 .landing-footer-bottom {
-  text-align: center;
-  padding-top: 1.5rem;
-  border-top: 1px solid rgba(30, 41, 59, 0.3);
+  @apply text-center pt-6 border-t border-navy-800/30;
 }
 
 .landing-footer-bottom p {
-  font-size: 0.8rem;
-  color: #64748B;
-  margin: 0;
+  @apply text-xs text-navy-500 m-0;
 }
 
 .landing-footer-tagline {
-  font-size: 0.75rem;
-  color: #475569;
-  letter-spacing: 0.1em;
-  margin-top: 0.25rem;
-}
-
-/* ── Animations ───────────────────────────────────────── */
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  @apply text-[0.625rem] text-navy-600 tracking-widest mt-1;
 }
 
 /* ── Safe areas ──────────────────────────────────────── */
@@ -700,18 +383,11 @@
   padding-top: env(safe-area-inset-top, 0px);
 }
 
-.pb-safe {
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-}
+/* NOTE: .pb-safe removed — already defined in globals.css */
 
 /* ── Landing page body override ─────────────────────────── */
 .landing-page {
-  background: #020617;
-  overflow-x: hidden;
-}
-
-.landing-page body {
-  background: #020617;
+  @apply bg-navy-950 overflow-x-hidden;
 }
 
 .landing-page h1,
@@ -728,3 +404,6 @@
     display: none !important;
   }
 }
+
+/* NOTE: @keyframes fade-in removed — canonical definition lives in tailwind.config.ts.
+   All animations use @apply animate-fade-in above. */

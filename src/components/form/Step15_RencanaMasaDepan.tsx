@@ -33,24 +33,33 @@ function createDefaultRencanaMasaDepan(): Omit<RencanaMasaDepanItem, 'id' | 'uru
 
 // ── Summary renderer (collapsed state) ───────────────────────
 function renderSummary(item: RencanaMasaDepanItem, _index: number) {
-  const tipeLabel = item.tipe === 'pendek' ? 'Pendek' : 'Panjang'
+  const isPendek = item.tipe === 'pendek'
 
   return (
     <div className="flex flex-col gap-0.5 min-w-0">
       <span className="font-medium text-white truncate">
         {item.rencana || (
-          <span className="text-navy-500 italic">Belum diisi</span>
+          <span className="text-navy-500 italic font-normal">Rencana belum diisi</span>
         )}
       </span>
-      <span className="text-xs text-navy-400 truncate">
-        <span className="text-sage-400">{tipeLabel}</span>
+      <div className="flex items-center gap-1.5 text-xs text-navy-400">
+        <span 
+          className={[
+            'px-1.5 py-0.5 rounded border text-xs font-medium',
+            isPendek 
+              ? 'bg-emerald-900/40 text-emerald-400 border-emerald-800/50' 
+              : 'bg-purple-900/40 text-purple-400 border-purple-800/50'
+          ].join(' ')}
+        >
+          {isPendek ? 'Jangka Pendek' : 'Jangka Panjang'}
+        </span>
         {item.waktu && (
           <>
-            <span className="mx-1 text-navy-600">·</span>
-            <span>{item.waktu}</span>
+            <span className="text-navy-600">•</span>
+            <span className="truncate">{item.waktu}</span>
           </>
         )}
-      </span>
+      </div>
     </div>
   )
 }
@@ -61,12 +70,13 @@ function renderForm(
   onChange: (field: keyof RencanaMasaDepanItem, value: RencanaMasaDepanItem[keyof RencanaMasaDepanItem]) => void
 ) {
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <SelectInput
           label="Jangka Waktu"
           value={item.tipe}
-          onChange={(v) => onChange('tipe', v)}
+          // Type casting ke tipe spesifik untuk menghindari error TS string assignment
+          onChange={(v) => onChange('tipe', v as 'pendek' | 'panjang')}
           options={OPTIONS_TIPE_RENCANA}
           placeholder="Pilih jangka waktu…"
         />
@@ -90,7 +100,7 @@ function renderForm(
       />
 
       <TextInput
-        label="Target / Tujuan"
+        label="Target / Tujuan Utama"
         value={item.target}
         onChange={(v) => onChange('target', v)}
         placeholder="Contoh: Menikah, Beli rumah, Naik haji, dll"
@@ -105,19 +115,21 @@ export function Step15_RencanaMasaDepan() {
     useArraySection('rencanaMasaDepan')
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Intro card */}
-      <div className="flex gap-3 p-3 rounded-xl bg-navy-900/60 border border-navy-800">
-        <span className="text-lg flex-shrink-0">🗓️</span>
-        <p className="text-xs text-navy-400 leading-relaxed">
-          Rencana masa depan menunjukkan <strong className="text-white">visi dan ambisimu</strong> untuk
-          1-10 tahun ke depan. Bagikan rencana yang realistis — ini membantu calon pasangan
-          memahami arah hidupmu.
-        </p>
+      <div className="flex gap-3 p-4 rounded-2xl bg-navy-900/40 border border-navy-800/60">
+        <span className="text-xl flex-shrink-0">🗓️</span>
+        <div className="space-y-1">
+          <p className="text-sm font-medium text-white">Visi & Rencana Masa Depan</p>
+          <p className="text-xs text-navy-400 leading-relaxed">
+            Bagikan rencana yang realistis untuk 1-10 tahun ke depan. Ini membantu calon pasangan
+            memahami apakah arah dan ritme hidup kalian berdua sejalan.
+          </p>
+        </div>
       </div>
 
       <DynamicList<RencanaMasaDepanItem>
-        items={items}
+        items={items as RencanaMasaDepanItem[]}
         sectionTitle="Rencana Masa Depan"
         itemLabel="Rencana"
         emptyIcon="🗓️"
@@ -132,13 +144,14 @@ export function Step15_RencanaMasaDepan() {
       />
 
       {/* Tips */}
-      <div className="flex gap-3 p-3 rounded-xl bg-gold-900/20 border border-gold-800/30">
-        <span className="text-lg flex-shrink-0">💡</span>
-        <p className="text-xs text-gold-400/80 leading-relaxed">
-          Tuliskan rencana yang <strong className="text-gold-400">realistis dan terukur</strong> —
-          ini menunjukkan bahwa kamu serius mempersiapkan masa depan. Rencana bisa berubah,
-          tapi punya arah itu penting.
-        </p>
+      <div className="flex gap-3 p-4 rounded-2xl bg-gold-900/20 border border-gold-800/30">
+        <span className="text-xl flex-shrink-0">💡</span>
+        <div className="space-y-0.5">
+          <p className="text-sm font-medium text-gold-400">Tips Mengisi</p>
+          <p className="text-xs text-gold-400/80 leading-relaxed">
+            Tuliskan rencana yang <strong className="text-gold-300">realistis dan terukur</strong>. Rencana bisa berubah seiring waktu, tetapi memiliki peta hidup yang jelas menunjukkan kesiapanmu dalam memimpin atau membangun rumah tangga.
+          </p>
+        </div>
       </div>
     </div>
   )

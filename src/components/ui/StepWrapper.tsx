@@ -214,7 +214,7 @@ export function StepWrapper({
               </span>
             )}
             <div>
-              <h1 className="text-xl font-bold text-white leading-tight">
+              <h1 className="text-2xl font-bold text-white leading-tight">
                 {title}
               </h1>
               <p className="text-sm text-navy-400 mt-0.5">{subtitle}</p>
@@ -230,7 +230,7 @@ export function StepWrapper({
         </div>
 
         {/* Form content */}
-        <div className={`space-y-4 ${className}`}>{children}</div>
+        <div className={`space-y-5 ${className}`}>{children}</div>
       </main>
 
       {/* ── Bottom Navigation Bar ──────────────────────────── */}

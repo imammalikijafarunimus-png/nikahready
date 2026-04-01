@@ -12,7 +12,6 @@ import Link from 'next/link'
 import { useFormState } from '@/context/FormContext'
 import { SectionCard } from '@/components/ui/FormFields'
 
-// ── Helper: cek apakah object punya data bermakna ────────────
 function isEmpty(obj: Record<string, unknown>): boolean {
   return Object.values(obj).every((v) =>
     v === '' ||
@@ -23,13 +22,11 @@ function isEmpty(obj: Record<string, unknown>): boolean {
   )
 }
 
-// ── Helper: truncasi string ──────────────────────────────────
 function truncate(str: string, max: number = 50): string {
   if (!str) return ''
   return str.length > max ? str.slice(0, max) + '…' : str
 }
 
-// ── Definisi langkah review ──────────────────────────────────
 interface ReviewStep {
   step: number
   title: string
@@ -38,12 +35,10 @@ interface ReviewStep {
   summary: string
 }
 
-// ── Main Component ────────────────────────────────────────────
 export function Step22_ReviewSimpan() {
   const state = useFormState()
   const [expandedStep, setExpandedStep] = useState<number | null>(null)
 
-  // Hitung ringkasan tiap langkah
   const reviewSteps = useMemo<ReviewStep[]>(() => {
     const s = state
 
@@ -218,12 +213,10 @@ export function Step22_ReviewSimpan() {
   const percentComplete = Math.round((filledCount / totalCount) * 100)
   const isMostlyComplete = filledCount >= Math.ceil(totalCount * 0.7)
 
-  // Template yang dipilih
   const selectedTemplate = state.fotoTemplate.template_pilihan
 
   return (
-    <div className="space-y-4">
-      {/* ── Pembuka: Completion Ceremony ──────────────────── */}
+    <div className="space-y-5">
       <div className="text-center py-4">
         <div className="text-5xl mb-3" role="img" aria-hidden="true">
           {isMostlyComplete ? '🎉' : '📝'}
@@ -240,7 +233,6 @@ export function Step22_ReviewSimpan() {
         </p>
       </div>
 
-      {/* ── Progress Bar Besar ─────────────────────────────── */}
       <SectionCard>
         <div className="space-y-3">
           <div className="flex items-center justify-between">
@@ -268,7 +260,6 @@ export function Step22_ReviewSimpan() {
         </div>
       </SectionCard>
 
-      {/* ── Template Info ──────────────────────────────────── */}
       <SectionCard title="Template CV Pilihan" icon="🎨">
         <div className="p-3 rounded-xl bg-navy-800/60 border border-navy-700 flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-sage-600 to-sage-800 flex items-center justify-center flex-shrink-0">
@@ -287,7 +278,6 @@ export function Step22_ReviewSimpan() {
         </div>
       </SectionCard>
 
-      {/* ── Daftar Review Step ─────────────────────────────── */}
       <SectionCard title="Ringkasan Per Langkah" icon="📋">
         <div className="space-y-2 max-h-96 overflow-y-auto pr-1">
           {reviewSteps.map((rs) => (
@@ -303,7 +293,6 @@ export function Step22_ReviewSimpan() {
               ].join(' ')}
             >
               <div className="flex items-center gap-3">
-                {/* Status indicator */}
                 <span
                   className={[
                     'flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold',
@@ -321,7 +310,6 @@ export function Step22_ReviewSimpan() {
                   )}
                 </span>
 
-                {/* Icon + Title */}
                 <span className="text-base flex-shrink-0">{rs.icon}</span>
                 <div className="flex-1 min-w-0">
                   <p className={`text-sm font-medium ${rs.filled ? 'text-white' : 'text-navy-400'}`}>
@@ -334,7 +322,6 @@ export function Step22_ReviewSimpan() {
                   )}
                 </div>
 
-                {/* Expand indicator */}
                 <svg
                   className={[
                     'w-4 h-4 flex-shrink-0 text-navy-500 transition-transform duration-200',
@@ -353,7 +340,6 @@ export function Step22_ReviewSimpan() {
         </div>
       </SectionCard>
 
-      {/* ── Warning / Success Message ──────────────────────── */}
       {isMostlyComplete ? (
         <SectionCard variant="highlight">
           <div className="text-center space-y-2 py-2">
@@ -379,7 +365,6 @@ export function Step22_ReviewSimpan() {
         </div>
       )}
 
-      {/* ── CTA: Instruksi ─────────────────────────────────── */}
       <div className="flex gap-3 p-3 rounded-xl bg-navy-900/60 border border-navy-800">
         <span className="text-lg flex-shrink-0">💡</span>
         <p className="text-xs text-navy-400 leading-relaxed">
@@ -388,7 +373,7 @@ export function Step22_ReviewSimpan() {
           Pastikan data yang kamu isi sudah benar sebelum menyimpan.
         </p>
       </div>
-      {/* ── Quick Navigation ─────────────────────────────── */}
+      
       <div className="flex flex-col sm:flex-row gap-2 pt-2">
         <Link
           href="/create"

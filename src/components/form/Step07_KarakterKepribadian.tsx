@@ -54,7 +54,7 @@ export function Step07_KarakterKepribadian() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {/* ── Pembuka Arabic ─────────────────────────────────── */}
       <div className="text-center py-3">
         <p className="font-arabic text-xl text-gold-500">
@@ -83,24 +83,26 @@ export function Step07_KarakterKepribadian() {
 
       {/* ── 2. Kelebihan & Kekurangan ────────────────────── */}
       <SectionCard title="Kelebihan & Kekurangan" icon="⚖️">
-        <TagInput
-          label="Kelebihanmu"
-          tags={data.kelebihan}
-          onChange={(v) => update('kelebihan', v)}
-          placeholder="Ketik kelebihanmu lalu Enter…"
-          maxTags={10}
-          suggestions={SUGGESTIONS_KELEBIHAN}
-          hint="Pilih atau ketik kelebihan yang paling mencerminkan dirimu"
-        />
-        <TagInput
-          label="Kekuranganmu"
-          tags={data.kekurangan}
-          onChange={(v) => update('kekurangan', v)}
-          placeholder="Ketik kekuranganmu lalu Enter…"
-          maxTags={10}
-          suggestions={SUGGESTIONS_KEKURANGAN}
-          hint="Jujur tentang kekurangan menunjukkan kedewasaan — bukan kelemahan"
-        />
+        <div className="space-y-5">
+          <TagInput
+            label="Kelebihanmu"
+            tags={data.kelebihan}
+            onChange={(v) => update('kelebihan', v)}
+            placeholder="Ketik kelebihanmu lalu Enter…"
+            maxTags={10}
+            suggestions={SUGGESTIONS_KELEBIHAN}
+            hint="Pilih atau ketik kelebihan yang paling mencerminkan dirimu"
+          />
+          <TagInput
+            label="Kekuranganmu"
+            tags={data.kekurangan}
+            onChange={(v) => update('kekurangan', v)}
+            placeholder="Ketik kekuranganmu lalu Enter…"
+            maxTags={10}
+            suggestions={SUGGESTIONS_KEKURANGAN}
+            hint="Jujur tentang kekurangan menunjukkan kedewasaan — bukan kelemahan"
+          />
+        </div>
       </SectionCard>
 
       {/* ── 3. Minat & Hobi ───────────────────────────────── */}
@@ -118,22 +120,24 @@ export function Step07_KarakterKepribadian() {
 
       {/* ── 4. Kepribadian ───────────────────────────────── */}
       <SectionCard title="Kepribadian" icon="🧠">
-        <SelectInput
-          label="Tipe MBTI"
-          value={data.mbti_type}
-          onChange={(v) => update('mbti_type', v)}
-          options={OPTIONS_MBTI}
-          placeholder="Pilih tipe MBTI…"
-          hint="Opsional — bisa diisi nanti di 16personalities.com"
-        />
-        <RadioGroup
-          label="Bahasa Cinta"
-          value={data.bahasa_cinta}
-          onChange={(v) => update('bahasa_cinta', v)}
-          options={OPTIONS_BAHASA_CINTA}
-          layout="grid"
-          hint="Cara kamu merasa dicintai dan mencintai — ini membantu pasangan memahamimu"
-        />
+        <div className="space-y-5">
+          <SelectInput
+            label="Tipe MBTI"
+            value={data.mbti_type}
+            onChange={(v) => update('mbti_type', v)}
+            options={OPTIONS_MBTI}
+            placeholder="Pilih tipe MBTI…"
+            hint="Opsional — bisa diisi nanti di 16personalities.com"
+          />
+          <RadioGroup
+            label="Bahasa Cinta"
+            value={data.bahasa_cinta}
+            onChange={(v) => update('bahasa_cinta', v)}
+            options={OPTIONS_BAHASA_CINTA}
+            layout="grid"
+            hint="Cara kamu merasa dicintai dan mencintai — ini membantu pasangan memahamimu"
+          />
+        </div>
       </SectionCard>
 
       {/* ── Tips ──────────────────────────────────────────── */}

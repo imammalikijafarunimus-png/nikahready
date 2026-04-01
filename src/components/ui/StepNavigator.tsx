@@ -178,7 +178,7 @@ export function StepNavigator({
         {/* ── Panel Header ──────────────────────────────────── */}
         <div className="flex items-center justify-between px-4 py-4 border-b border-navy-800">
           <div>
-            <h2 className="text-base font-bold text-white">Langkah Form</h2>
+            <h2 className="text-xl font-bold text-white">Langkah Form</h2>
             <p className="text-xs text-navy-400 mt-0.5">
               {completedCount} dari {totalSteps} langkah selesai
             </p>

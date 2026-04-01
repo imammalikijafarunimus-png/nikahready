@@ -2,8 +2,7 @@
 
 // ============================================================
 // src/components/form/Step09_GayaHidup.tsx
-// Step 9 (form step): Gaya Hidup — scalar
-// Menampilkan kebiasaan sehari-hari, pola makan, olahraga, dan kepribadian
+// Refactored: space-y-5 root
 // ============================================================
 
 import { useFormState, useFormDispatch } from '@/context/FormContext'
@@ -17,13 +16,11 @@ import {
 import { OPTIONS_TIPE_KEPRIBADIAN } from '@/lib/constants'
 import type { GayaHidup } from '@/types'
 
-// ── Main Component ────────────────────────────────────────────
 export function Step09_GayaHidup() {
   const state    = useFormState()
   const dispatch = useFormDispatch()
   const data     = state.gayaHidup
 
-  // Type-safe field updater
   function update<K extends keyof GayaHidup>(field: K, value: GayaHidup[K]) {
     dispatch({
       type: 'UPDATE_FIELD',
@@ -34,7 +31,7 @@ export function Step09_GayaHidup() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {/* ── Pembuka Arabic ─────────────────────────────────── */}
       <div className="text-center py-3">
         <p className="font-arabic text-xl text-gold-500">
@@ -49,54 +46,58 @@ export function Step09_GayaHidup() {
 
       {/* ── 1. Gaya Hidup ────────────────────────────────── */}
       <SectionCard title="Gaya Hidup" icon="🌱">
-        <TextArea
-          label="Gaya Hidup Sehari-hari"
-          value={data.gaya_hidup}
-          onChange={(v) => update('gaya_hidup', v)}
-          placeholder="Ceritakan bagaimana aktivitas harianmu — dari bangun pagi hingga tidur malam, apa yang kamu lakukan di waktu senggang, bagaimana kamu mengatur hidup…"
-          rows={4}
-          maxLength={500}
-          showCount
-          hint="Deskripsikan secara umum — ini membantu calon pasangan membayangkan kehidupan bersamamu"
-        />
-        <TextInput
-          label="Pola Makan"
-          value={data.pola_makan}
-          onChange={(v) => update('pola_makan', v)}
-          placeholder="Rumahan, restoran sering, suka masakan Padang, dll"
-          maxLength={200}
-          hint="Preferensi makananmu — penting untuk keharmonisan di rumah tangga"
-        />
+        <div className="space-y-3">
+          <TextArea
+            label="Gaya Hidup Sehari-hari"
+            value={data.gaya_hidup}
+            onChange={(v) => update('gaya_hidup', v)}
+            placeholder="Ceritakan bagaimana aktivitas harianmu — dari bangun pagi hingga tidur malam..."
+            rows={4}
+            maxLength={500}
+            showCount
+            hint="Deskripsikan secara umum — ini membantu calon pasangan membayangkan kehidupan bersamamu"
+          />
+          <TextInput
+            label="Pola Makan"
+            value={data.pola_makan}
+            onChange={(v) => update('pola_makan', v)}
+            placeholder="Rumahan, restoran sering, suka masakan Padang, dll"
+            maxLength={200}
+            hint="Preferensi makananmu — penting untuk keharmonisan di rumah tangga"
+          />
+        </div>
       </SectionCard>
 
       {/* ── 2. Kebiasaan ─────────────────────────────────── */}
       <SectionCard title="Kebiasaan" icon="🏃">
-        <ToggleSwitch
-          label="Berolahraga secara rutin"
-          description="Aktifkan jika kamu memiliki rutinitas olahraga yang konsisten"
-          checked={data.olahraga_rutin}
-          onChange={(v) => update('olahraga_rutin', v)}
-        />
-        <TextArea
-          label="Kebiasaan Positif"
-          value={data.kebiasaan_positif}
-          onChange={(v) => update('kebiasaan_positif', v)}
-          placeholder="Contoh: bangun pagi sebelum subuh, menabung rutin, membaca buku sebelum tidur, menjaga kebersihan, dll"
-          rows={3}
-          maxLength={500}
-          showCount
-          hint="Sebutkan kebiasaan baik yang sudah menjadi bagian dari hidupmu"
-        />
-        <TextArea
-          label="Hal yang Tidak Disukai"
-          value={data.hal_tidak_disukai}
-          onChange={(v) => update('hal_tidak_disukai', v)}
-          placeholder="Contoh: suka menunda pekerjaan, tempat berantakan, terlambat, dll — agar calon pasangan bisa memahami dan beradaptasi"
-          rows={3}
-          maxLength={500}
-          showCount
-          hint="Jujur tentang ini membantu pasangan memahami batasan dan preferensimu"
-        />
+        <div className="space-y-3">
+          <ToggleSwitch
+            label="Berolahraga secara rutin"
+            description="Aktifkan jika kamu memiliki rutinitas olahraga yang konsisten"
+            checked={data.olahraga_rutin}
+            onChange={(v) => update('olahraga_rutin', v)}
+          />
+          <TextArea
+            label="Kebiasaan Positif"
+            value={data.kebiasaan_positif}
+            onChange={(v) => update('kebiasaan_positif', v)}
+            placeholder="Contoh: bangun pagi sebelum subuh, menabung rutin, membaca buku sebelum tidur..."
+            rows={3}
+            maxLength={500}
+            showCount
+            hint="Sebutkan kebiasaan baik yang sudah menjadi bagian dari hidupmu"
+          />
+          <TextArea
+            label="Hal yang Tidak Disukai"
+            value={data.hal_tidak_disukai}
+            onChange={(v) => update('hal_tidak_disukai', v)}
+            placeholder="Contoh: suka menunda pekerjaan, tempat berantakan..."
+            rows={3}
+            maxLength={500}
+            showCount
+            hint="Jujur tentang ini membantu pasangan memahami batasan dan preferensimu"
+          />
+        </div>
       </SectionCard>
 
       {/* ── 3. Kepribadian ───────────────────────────────── */}

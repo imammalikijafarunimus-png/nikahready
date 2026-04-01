@@ -19,7 +19,6 @@ import {
 } from '@/lib/constants'
 import type { DataPribadi } from '@/types'
 
-// Daftar suku bangsa umum di Indonesia
 const OPTIONS_SUKU = [
   'Jawa', 'Sunda', 'Batak', 'Madura', 'Melayu', 'Minangkabau',
   'Bugis', 'Makassar', 'Betawi', 'Dayak', 'Sasak', 'Bali',
@@ -31,7 +30,6 @@ export function Step01_DataPribadi() {
   const dispatch = useFormDispatch()
   const data     = state.dataPribadi
 
-  // Type-safe field updater
   function update<K extends keyof DataPribadi>(
     field: K,
     value: DataPribadi[K]
@@ -45,7 +43,7 @@ export function Step01_DataPribadi() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5"> {/* ← was space-y-4 */}
       {/* ── Pembuka Arabic ─────────────────────────────────── */}
       <div className="text-center py-3">
         <p className="font-arabic text-xl text-gold-500">
@@ -79,7 +77,7 @@ export function Step01_DataPribadi() {
 
       {/* ── 2. Tanggal Lahir & Asal ────────────────────────── */}
       <SectionCard title="Kelahiran & Asal Daerah" icon="🗓️">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2"> {/* ← was grid-cols-2 */}
           <TextInput
             label="Tempat Lahir"
             value={data.tempat_lahir}
@@ -142,7 +140,6 @@ export function Step01_DataPribadi() {
           required
         />
 
-        {/* Tampilkan jumlah anak hanya jika bukan lajang */}
         {data.status_pernikahan !== '' &&
           data.status_pernikahan !== 'lajang' && (
             <NumberInput

@@ -2,8 +2,7 @@
 
 // ============================================================
 // src/components/form/Step10_VisiMisiPernikahan.tsx
-// Step 10 (form step): Visi & Misi Pernikahan — scalar
-// Langkah krusial: visi, peran suami/istri, dan tujuan pernikahan
+// Refactored: space-y-5 root
 // ============================================================
 
 import { useFormState, useFormDispatch } from '@/context/FormContext'
@@ -14,7 +13,6 @@ import {
 } from '@/components/ui/FormFields'
 import type { VisiMisi } from '@/types'
 
-// ── Suggestions untuk tujuan pernikahan ──────────────────────
 const SUGGESTIONS_TUJUAN = [
   'Membangun rumah tangga sakinah',
   'Mengamalkan sunnah Rasulullah',
@@ -28,13 +26,11 @@ const SUGGESTIONS_TUJUAN = [
   'Membangun keluarga sakinah mawaddah',
 ]
 
-// ── Main Component ────────────────────────────────────────────
 export function Step10_VisiMisiPernikahan() {
   const state    = useFormState()
   const dispatch = useFormDispatch()
   const data     = state.visiMisi
 
-  // Type-safe field updater
   function update<K extends keyof VisiMisi>(field: K, value: VisiMisi[K]) {
     dispatch({
       type: 'UPDATE_FIELD',
@@ -45,7 +41,7 @@ export function Step10_VisiMisiPernikahan() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {/* ── Pembuka Arabic ─────────────────────────────────── */}
       <div className="text-center py-3">
         <p className="font-arabic text-xl text-gold-500">
@@ -74,26 +70,28 @@ export function Step10_VisiMisiPernikahan() {
 
       {/* ── 2. Peran & Harapan ───────────────────────────── */}
       <SectionCard title="Peran & Harapan" icon="👫">
-        <TextArea
-          label="Misi sebagai Suami / Pendamping"
-          value={data.misi_suami}
-          onChange={(v) => update('misi_suami', v)}
-          placeholder="Apa yang kamu ingin wujudkan sebagai suami atau pendamping? Bagaimana kamu akan menjadi pemimpin yang adil, pelindung, dan penyayang?"
-          rows={4}
-          maxLength={600}
-          showCount
-          hint="Tuliskan konkrit — bukan hanya cita-cita, tapi juga langkah nyata yang akan kamu ambil"
-        />
-        <TextArea
-          label="Harapan dari Pasangan (Istri / Pendamping)"
-          value={data.misi_istri}
-          onChange={(v) => update('misi_istri', v)}
-          placeholder="Apa yang kamu harapkan dari pasangan? Seperti apa istri atau pendamping yang akan melengkapi hidupmu?"
-          rows={4}
-          maxLength={600}
-          showCount
-          hint="Harapan yang realistis dan komunikatif membangun fondasi yang kuat"
-        />
+        <div className="space-y-3">
+          <TextArea
+            label="Misi sebagai Suami / Pendamping"
+            value={data.misi_suami}
+            onChange={(v) => update('misi_suami', v)}
+            placeholder="Apa yang kamu ingin wujudkan sebagai suami atau pendamping? Bagaimana kamu akan menjadi pemimpin yang adil, pelindung, dan penyayang?"
+            rows={4}
+            maxLength={600}
+            showCount
+            hint="Tuliskan konkrit — bukan hanya cita-cita, tapi juga langkah nyata yang akan kamu ambil"
+          />
+          <TextArea
+            label="Harapan dari Pasangan (Istri / Pendamping)"
+            value={data.misi_istri}
+            onChange={(v) => update('misi_istri', v)}
+            placeholder="Apa yang kamu harapkan dari pasangan? Seperti apa istri atau pendamping yang akan melengkapi hidupmu?"
+            rows={4}
+            maxLength={600}
+            showCount
+            hint="Harapan yang realistis dan komunikatif membangun fondasi yang kuat"
+          />
+        </div>
       </SectionCard>
 
       {/* ── 3. Tujuan Pernikahan ────────────────────────── */}
@@ -114,8 +112,7 @@ export function Step10_VisiMisiPernikahan() {
         <span className="text-lg flex-shrink-0">💡</span>
         <p className="text-xs text-navy-400 leading-relaxed">
           Visi misi yang jelas menunjukkan <strong className="text-white">kedewasaan dan kesiapanmu</strong> untuk
-          berumah tangga. Diskusikan hal ini dengan orang tua atau mentor terlebih dahulu
-          — input mereka sangat berharga dalam membentuk visi pernikahan yang realistis.
+          berumah tangga. Diskusikan hal ini dengan orang tua atau mentor terlebih dahulu.
         </p>
       </div>
     </div>

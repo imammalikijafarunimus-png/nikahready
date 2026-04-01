@@ -15,7 +15,6 @@ import {
 import { OPTIONS_KATEGORI_GALERI } from '@/lib/constants'
 import type { GaleriFotoItem } from '@/types'
 
-// ── Default item factory ──────────────────────────────────────
 function createDefaultGaleri(): Omit<GaleriFotoItem, 'id' | 'urutan'> {
   return {
     kategori: 'formal',
@@ -24,7 +23,6 @@ function createDefaultGaleri(): Omit<GaleriFotoItem, 'id' | 'urutan'> {
   }
 }
 
-// ── Summary renderer (collapsed state) ───────────────────────
 function renderSummary(item: GaleriFotoItem, _index: number) {
   const truncate = (text: string, max: number) =>
     text.length > max ? `${text.slice(0, max)}…` : text
@@ -45,7 +43,6 @@ function renderSummary(item: GaleriFotoItem, _index: number) {
   )
 }
 
-// ── Form renderer (expanded state) ───────────────────────────
 function renderForm(
   item: GaleriFotoItem,
   onChange: (field: keyof GaleriFotoItem, value: GaleriFotoItem[keyof GaleriFotoItem]) => void
@@ -81,14 +78,12 @@ function renderForm(
   )
 }
 
-// ── Main Component ────────────────────────────────────────────
 export function Step17_GaleriFoto() {
   const { items, addItem, removeItem, updateItem } =
     useArraySection('galeriFoto')
 
   return (
-    <div className="space-y-4">
-      {/* Intro card */}
+    <div className="space-y-5">
       <div className="flex gap-3 p-3 rounded-xl bg-navy-900/60 border border-navy-800">
         <span className="text-lg flex-shrink-0">📸</span>
         <p className="text-xs text-navy-400 leading-relaxed">
@@ -113,7 +108,6 @@ export function Step17_GaleriFoto() {
         onUpdate={updateItem}
       />
 
-      {/* Tips */}
       <div className="flex gap-3 p-3 rounded-xl bg-gold-900/20 border border-gold-800/30">
         <span className="text-lg flex-shrink-0">💡</span>
         <p className="text-xs text-gold-400/80 leading-relaxed">

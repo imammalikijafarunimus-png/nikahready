@@ -15,14 +15,12 @@ import {
 import { OPTIONS_TEMPLATE } from '@/lib/constants'
 import type { FotoTemplate, TemplatePilihan } from '@/types'
 
-// ── Main Component ────────────────────────────────────────────
 export function Step18_FotoTemplate() {
   const state    = useFormState()
   const dispatch = useFormDispatch()
   const { plan } = useRequireAuth()
   const data     = state.fotoTemplate
 
-  // Type-safe field updater
   function update<K extends keyof FotoTemplate>(
     field: K,
     value: FotoTemplate[K]
@@ -36,8 +34,7 @@ export function Step18_FotoTemplate() {
   }
 
   return (
-    <div className="space-y-4">
-      {/* ── Islamic guidance ──────────────────────────────────── */}
+    <div className="space-y-5">
       <div className="text-center py-3">
         <p className="font-arabic text-xl text-gold-500">
           إِنَّمَا أُنْزِلَ مِنَ الْقُرْآنِ فَهُو هُدًى وَرَحْمَة
@@ -47,7 +44,6 @@ export function Step18_FotoTemplate() {
         </p>
       </div>
 
-      {/* ── 1. Foto Utama ─────────────────────────────────────── */}
       <SectionCard title="Foto Utama" icon="🖼️">
         <TextInput
           label="Foto Pribadi (Profil)"
@@ -68,7 +64,6 @@ export function Step18_FotoTemplate() {
         />
       </SectionCard>
 
-      {/* ── 2. Pilih Template CV ─────────────────────────────── */}
       <SectionCard title="Pilih Template CV" icon="🎨">
         <div className="space-y-3">
           {OPTIONS_TEMPLATE.map((tmpl) => {
@@ -121,7 +116,6 @@ export function Step18_FotoTemplate() {
         </div>
       </SectionCard>
 
-      {/* ── Tips ──────────────────────────────────────────────── */}
       <div className="flex gap-3 p-3 rounded-xl bg-gold-900/20 border border-gold-800/30">
         <span className="text-lg flex-shrink-0">💡</span>
         <p className="text-xs text-gold-400/80 leading-relaxed">

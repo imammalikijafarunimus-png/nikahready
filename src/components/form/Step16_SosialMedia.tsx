@@ -16,7 +16,6 @@ import {
 import { OPTIONS_PLATFORM_SOSMED } from '@/lib/constants'
 import type { SosialMediaItem } from '@/types'
 
-// ── Default item factory ──────────────────────────────────────
 function createDefaultSosmed(): Omit<SosialMediaItem, 'id' | 'urutan'> {
   return {
     platform: '',
@@ -27,7 +26,6 @@ function createDefaultSosmed(): Omit<SosialMediaItem, 'id' | 'urutan'> {
   }
 }
 
-// ── Summary renderer (collapsed state) ───────────────────────
 function renderSummary(item: SosialMediaItem, _index: number) {
   return (
     <div className="flex flex-col gap-0.5 min-w-0">
@@ -60,7 +58,6 @@ function renderSummary(item: SosialMediaItem, _index: number) {
   )
 }
 
-// ── Form renderer (expanded state) ───────────────────────────
 function renderForm(
   item: SosialMediaItem,
   onChange: (field: keyof SosialMediaItem, value: SosialMediaItem[keyof SosialMediaItem]) => void
@@ -110,14 +107,12 @@ function renderForm(
   )
 }
 
-// ── Main Component ────────────────────────────────────────────
 export function Step16_SosialMedia() {
   const { items, addItem, removeItem, updateItem } =
     useArraySection('sosialMedia')
 
   return (
-    <div className="space-y-4">
-      {/* Intro card */}
+    <div className="space-y-5">
       <div className="flex gap-3 p-3 rounded-xl bg-navy-900/60 border border-navy-800">
         <span className="text-lg flex-shrink-0">📱</span>
         <p className="text-xs text-navy-400 leading-relaxed">
@@ -142,7 +137,6 @@ export function Step16_SosialMedia() {
         onUpdate={updateItem}
       />
 
-      {/* Tips */}
       <div className="flex gap-3 p-3 rounded-xl bg-gold-900/20 border border-gold-800/30">
         <span className="text-lg flex-shrink-0">💡</span>
         <p className="text-xs text-gold-400/80 leading-relaxed">
