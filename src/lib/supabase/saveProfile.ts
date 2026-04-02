@@ -153,7 +153,7 @@ export async function saveProfile(
       }
     }
 
-    // Riwayat Pendidikan
+    // Riwayat Pendidikan — exclude client-side `id` (Supabase auto-generates)
     await replaceArray(
       'riwayat_pendidikan',
       state.riwayatPendidikan.map((item) => ({

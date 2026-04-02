@@ -509,4 +509,4 @@ export const PROVINSI_INDONESIA = [
 
 // ── Local storage key ────────────────────────────────────────
 export const FORM_DRAFT_KEY = 'nikahready_form_draft'
-export const FORM_DRAFT_VERSION = '1.0.0' // bump saat schema berubah
+export const FORM_DRAFT_VERSION = '2.0.0' // bumped: TF-1 added 3 free templates, schema changed

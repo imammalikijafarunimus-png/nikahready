@@ -98,18 +98,20 @@ export default function DashboardPage() {
   const userName = user?.user_metadata?.nama || userEmail?.split('@')[0] || 'User'
 
   // ── Load profile from Supabase on mount ───────────────────
+  // FIX: Hanya override form state jika Supabase punya data.
+  // Jika profile kosong, jangan timpa draft dari localStorage.
   useEffect(() => {
     if (!userId) return
 
     async function load() {
       setProfileLoading(true)
       const result = await loadProfile(userId!)
-      if (result.success && result.profile) {
+      if (result.success && result.profile && result.profileId) {
+        // Hanya dispatch jika ada data di Supabase
         dispatch({ type: 'LOAD_PROFILE', payload: result.profile })
-        if (result.profileId) {
-          dispatch({ type: 'SET_PROFILE_ID', profileId: result.profileId })
-        }
+        dispatch({ type: 'SET_PROFILE_ID', profileId: result.profileId })
       }
+      // Jika tidak ada profile (belum pernah save), biarkan state dari localStorage
       setProfileLoading(false)
     }
 

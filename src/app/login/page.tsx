@@ -4,12 +4,10 @@
 // src/app/login/page.tsx
 // Login Page NikahReady — email + password authentication
 //
-// Features:
-// - Email & password login
-// - "Lupa Password" reset flow
-// - Friendly error messages in Indonesian
-// - Redirect to `?next=` param or /dashboard after login
-// - Responsive design consistent with brand
+// Refactored:
+// 1. Arabic + terjemahan: ukuran lebih kecil, spasi lebih lega
+// 2. Trust indicators: horizontal row, ikon hijau
+// 3. Footer copy: selaras dengan brand identity landing page
 // ============================================================
 
 import { useState, useEffect, useCallback, useRef, Suspense } from 'react'
@@ -17,7 +15,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuthActions, useAuthState } from '@/context/AuthContext'
-import { ShieldCheck, Lock, Eye, ArrowRight } from 'lucide-react'
+import { ShieldCheck, Lock, EyeOff } from 'lucide-react'
 import '../auth.css'
 
 // ── Password visibility toggle icon ─────────────────────────
@@ -53,25 +51,16 @@ function LoginForm() {
   const [showForgotPassword, setShowForgotPassword] = useState(false)
   const [forgotEmailSent, setForgotEmailSent] = useState(false)
 
-  // Read query params
   const redirectAfter = searchParams.get('next') || '/dashboard'
   const queryMessage = searchParams.get('message')
   const queryError = searchParams.get('error')
 
-  // Set initial message/error from query params
   useEffect(() => {
     if (queryMessage) setMessage(queryMessage)
     if (queryError) setError(queryError)
   }, [queryMessage, queryError])
 
-  // Redirect setelah login berhasil atau jika sudah authenticated
-  // Gunakan window.location.replace() BUKAN router.replace() karena:
-  // 1. Full page navigation memastikan cookies dikirim ke server
-  // 2. Middleware di server bisa baca session cookie dengan benar
-  // 3. Menghindari PWA service worker yang meny cache redirect response
-  // 4. Tidak ada Next.js router cache yang bisa interferensi
   const hasRedirected = useRef(false)
-
   useEffect(() => {
     if (status === 'authenticated' && !hasRedirected.current) {
       hasRedirected.current = true
@@ -83,28 +72,11 @@ function LoginForm() {
     e.preventDefault()
     setError(null)
     setMessage(null)
-
-    // Validation
-    if (!email.trim()) {
-      setError('Email wajib diisi.')
-      return
-    }
-    if (!password) {
-      setError('Password wajib diisi.')
-      return
-    }
-
+    if (!email.trim()) { setError('Email wajib diisi.'); return }
+    if (!password) { setError('Password wajib diisi.'); return }
     setIsLoading(true)
-
     const result = await signIn(email.trim(), password)
-
-    if (result.success) {
-      // JANGAN router.push() langsung di sini!
-      // Biarkan useEffect yang menunggu status='authenticated'
-      // dari AuthContext agar cookie session sudah tersinkron
-      // dengan middleware sebelum navigasi terjadi.
-      // Loading state tetap aktif menunggu redirect dari useEffect.
-    } else {
+    if (!result.success) {
       setError(result.error ?? 'Gagal masuk. Coba lagi.')
       setIsLoading(false)
     }
@@ -113,26 +85,18 @@ function LoginForm() {
   const handleForgotPassword = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
-
-    if (!email.trim()) {
-      setError('Masukkan email untuk reset password.')
-      return
-    }
-
+    if (!email.trim()) { setError('Masukkan email untuk reset password.'); return }
     setIsLoading(true)
-
     const result = await resetPassword(email.trim())
-
     if (result.success) {
       setForgotEmailSent(true)
     } else {
       setError(result.error ?? 'Gagal mengirim email reset.')
     }
-
     setIsLoading(false)
   }, [email, resetPassword])
 
-  // ── Loading state while checking auth ─────────────────────
+  // ── Loading state ──────────────────────────────────────────
   if (status === 'loading') {
     return (
       <div className="auth-page">
@@ -151,13 +115,7 @@ function LoginForm() {
         <div className="auth-card">
           <div className="auth-header">
             <Link href="/" className="auth-logo">
-              <Image
-                src="/icons/icon-192.png"
-                alt="NikahReady"
-                width={32}
-                height={32}
-                style={{ borderRadius: '0.5rem' }}
-              />
+              <Image src="/icons/icon-192.png" alt="NikahReady" width={32} height={32} style={{ borderRadius: '0.5rem' }} />
               <span className="auth-logo-text">NikahReady</span>
             </Link>
             <h1 className="auth-title">Lupa Password</h1>
@@ -176,10 +134,7 @@ function LoginForm() {
               </div>
               <button
                 type="button"
-                onClick={() => {
-                  setShowForgotPassword(false)
-                  setForgotEmailSent(false)
-                }}
+                onClick={() => { setShowForgotPassword(false); setForgotEmailSent(false) }}
                 className="auth-submit"
                 style={{ marginTop: '1rem' }}
               >
@@ -196,44 +151,18 @@ function LoginForm() {
                   <span>{error}</span>
                 </div>
               )}
-
               <div className="auth-field">
-                <label htmlFor="forgot-email" className="auth-label">Alamat Email</label>
-                <input
-                  id="forgot-email"
-                  type="email"
-                  className="auth-input"
-                  placeholder="Email aktif kamu"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  disabled={isLoading}
-                  autoComplete="email"
-                  autoFocus
-                />
+                <label htmlFor="forgot-email" className="auth-label">Email</label>
+                <input id="forgot-email" type="email" className="auth-input" placeholder="nama@email.com"
+                  value={email} onChange={(e) => setEmail(e.target.value)} disabled={isLoading} autoComplete="email" autoFocus />
               </div>
-
-              <button
-                type="submit"
-                className="auth-submit"
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <div className="auth-spinner" />
-                ) : (
-                  <span>Kirim Link Reset</span>
-                )}
+              <button type="submit" className="auth-submit" disabled={isLoading}>
+                {isLoading ? <div className="auth-spinner" /> : <span>Kirim Link Reset</span>}
               </button>
-
               <div className="auth-links">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowForgotPassword(false)
-                    setError(null)
-                  }}
+                <button type="button" onClick={() => { setShowForgotPassword(false); setError(null) }}
                   className="auth-link auth-link-primary"
-                  style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.8rem' }}
-                >
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.8rem' }}>
                   ← Kembali ke Login
                 </button>
               </div>
@@ -250,31 +179,33 @@ function LoginForm() {
       <div className="auth-card">
         <div className="auth-header">
           <Link href="/" className="auth-logo">
-            <Image
-              src="/icons/icon-192.png"
-              alt="NikahReady"
-              width={32}
-              height={32}
-              style={{ borderRadius: '0.5rem' }}
-            />
+            <Image src="/icons/icon-192.png" alt="NikahReady" width={32} height={32} style={{ borderRadius: '0.5rem' }} />
             <span className="auth-logo-text">NikahReady</span>
           </Link>
 
-          <p className="font-arabic auth-arabic">
-            بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيم
-          </p>
-          <p className="auth-arabic-translation">
-            Dengan nama Allah Yang Maha Pengasih, Maha Penyayang
-          </p>
+          {/* ── FIX 1: Arabic + terjemahan — ukuran lebih kecil, spasi lebih proporsional ── */}
+          <div style={{ margin: '1rem 0 1.5rem', textAlign: 'center' }}>
+            <p
+              className="font-arabic auth-arabic"
+              style={{ fontSize: '1.05rem', lineHeight: 1.8, marginBottom: '0.3rem' }}
+            >
+              بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيم
+            </p>
+            <p
+              className="auth-arabic-translation"
+              style={{ fontSize: '0.72rem', opacity: 0.6, marginTop: 0, marginBottom: 0, letterSpacing: '0.01em' }}
+            >
+              Dengan nama Allah Yang Maha Pengasih, Maha Penyayang
+            </p>
+          </div>
 
           <h1 className="auth-title">Selamat Datang Kembali</h1>
           <p className="auth-subtitle">
-            CV taarufmu menunggumu. Masuk dan lanjutkan perjalananmu dengan tenang.
+            Masuk untuk melanjutkan CV taarufmu. Data tersimpan aman dan terenkripsi.
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="auth-form">
-          {/* Message / Error banner */}
           {message && (
             <div className="auth-message auth-message-success">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
@@ -283,7 +214,6 @@ function LoginForm() {
               <span>{message}</span>
             </div>
           )}
-
           {error && (
             <div className="auth-message auth-message-error">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
@@ -295,18 +225,9 @@ function LoginForm() {
 
           {/* Email */}
           <div className="auth-field">
-            <label htmlFor="email" className="auth-label">Alamat Email</label>
-            <input
-              id="email"
-              type="email"
-              className="auth-input"
-              placeholder="Email aktif kamu"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={isLoading}
-              autoComplete="email"
-              autoFocus
-            />
+            <label htmlFor="email" className="auth-label">Email</label>
+            <input id="email" type="email" className="auth-input" placeholder="nama@email.com"
+              value={email} onChange={(e) => setEmail(e.target.value)} disabled={isLoading} autoComplete="email" autoFocus />
           </div>
 
           {/* Password */}
@@ -317,86 +238,79 @@ function LoginForm() {
                 id="password"
                 type={showPassword ? 'text' : 'password'}
                 className="auth-input"
-                placeholder="Password yang kamu ingat"
+                placeholder="Masukkan password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isLoading}
                 autoComplete="current-password"
+                style={{ paddingRight: '2.75rem' }}
               />
-              <button
-                type="button"
-                className="auth-password-toggle"
+              <button type="button" className="auth-password-toggle"
                 onClick={() => setShowPassword(!showPassword)}
                 aria-label={showPassword ? 'Sembunyikan password' : 'Tampilkan password'}
-                tabIndex={-1}
-              >
+                tabIndex={-1}>
                 <EyeIcon open={showPassword} />
               </button>
             </div>
           </div>
 
-          {/* Forgot password link */}
+          {/* Forgot password */}
           <div style={{ textAlign: 'right' }}>
-            <button
-              type="button"
-              onClick={() => {
-                setShowForgotPassword(true)
-                setError(null)
-              }}
+            <button type="button" onClick={() => { setShowForgotPassword(true); setError(null) }}
               className="auth-link"
-              style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.75rem', color: '#94A3B8' }}
-            >
+              style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.75rem', color: '#94A3B8' }}>
               Lupa Password?
             </button>
           </div>
 
           {/* Submit */}
-          <button
-            type="submit"
-            className="auth-submit"
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <div className="auth-spinner" />
-            ) : (
-              <>
-                <span>Masuk ke Akun Saya</span>
-                <ArrowRight size={15} strokeWidth={2.5} />
-              </>
-            )}
+          <button type="submit" className="auth-submit" disabled={isLoading}>
+            {isLoading ? <div className="auth-spinner" /> : <span>Masuk</span>}
           </button>
 
           {/* Links */}
           <div className="auth-links">
             <span style={{ fontSize: '0.8rem', color: '#64748B' }}>
               Belum punya akun?{' '}
-              <Link href="/signup" className="auth-link auth-link-primary">
-                Buat Akun
-              </Link>
+              <Link href="/signup" className="auth-link auth-link-primary">Buat Akun</Link>
             </span>
           </div>
         </form>
 
-        {/* Trust indicators */}
-        <div className="auth-trust">
-          <span className="auth-trust-item">
-            <ShieldCheck className="auth-trust-icon" />
+        {/* ── FIX 4: Trust indicators — horizontal row, ikon hijau ── */}
+        <div
+          className="auth-trust"
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '1.25rem',
+            flexWrap: 'wrap',
+            marginTop: '1.25rem',
+            paddingTop: '1rem',
+            borderTop: '1px solid rgba(100,116,139,0.15)',
+          }}
+        >
+          <span className="auth-trust-item" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.72rem', color: '#6EE7B7', fontWeight: 500 }}>
+            <ShieldCheck size={14} style={{ color: '#10B981', flexShrink: 0 }} />
             Data Terenkripsi
           </span>
-          <span className="auth-trust-item">
-            <Lock className="auth-trust-icon" />
+          <span className="auth-trust-item" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.72rem', color: '#6EE7B7', fontWeight: 500 }}>
+            <Lock size={14} style={{ color: '#10B981', flexShrink: 0 }} />
             Server Aman
           </span>
-          <span className="auth-trust-item">
-            <Eye className="auth-trust-icon" />
+          <span className="auth-trust-item" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.72rem', color: '#6EE7B7', fontWeight: 500 }}>
+            <EyeOff size={14} style={{ color: '#10B981', flexShrink: 0 }} />
             Tanpa Profil Publik
           </span>
         </div>
       </div>
 
+      {/* ── FIX 5: Footer — selaras brand identity landing page ── */}
       <div className="auth-footer">
-        <p className="auth-footer-brand">NikahReady · Alat Bantu CV Taaruf</p>
-        <p className="auth-footer-values">Jujur · Bermartabat · Aman</p>
+        <p className="auth-footer-brand">NikahReady · CV Taaruf Profesional</p>
+        <p className="auth-footer-values">Bukan Dating App · Bermartabat · Kamu yang Pegang Kendali</p>
       </div>
     </div>
   )
