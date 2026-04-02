@@ -113,7 +113,7 @@ export const INITIAL_PANDANGAN_ISU: PandanganIsu = {
 export const INITIAL_FOTO_TEMPLATE: FotoTemplate = {
   foto_pribadi_url: '',
   foto_formal_url: '',
-  template_pilihan: 'akademik',
+  template_pilihan: 'ringkas',
 }
 
 // ── Full Initial Form State ──────────────────────────────────
@@ -184,7 +184,7 @@ export const STEP_DEFINITIONS: StepDefinition[] = [
     subtitle: 'Karir dan pengalaman profesional',
     icon: '💼',
     section: 'riwayatPekerjaan',
-    isPremiumOnly: true,
+    isPremiumOnly: false,
   },
   {
     step: 5,
@@ -192,7 +192,7 @@ export const STEP_DEFINITIONS: StepDefinition[] = [
     subtitle: 'Fase-fase penting dalam hidupmu',
     icon: '🛤️',
     section: 'perjalananHidup',
-    isPremiumOnly: true,
+    isPremiumOnly: false,
   },
   {
     step: 6,
@@ -200,7 +200,7 @@ export const STEP_DEFINITIONS: StepDefinition[] = [
     subtitle: 'Pengalaman berorganisasi dan komunitas',
     icon: '🤝',
     section: 'riwayatOrganisasi',
-    isPremiumOnly: true,
+    isPremiumOnly: false,
   },
   {
     step: 7,
@@ -224,7 +224,7 @@ export const STEP_DEFINITIONS: StepDefinition[] = [
     subtitle: 'Keseharian dan kebiasaan hidupmu',
     icon: '🌱',
     section: 'gayaHidup',
-    isPremiumOnly: true,
+    isPremiumOnly: false,
   },
   {
     step: 10,
@@ -232,7 +232,7 @@ export const STEP_DEFINITIONS: StepDefinition[] = [
     subtitle: 'Tujuan dan arah kehidupan berumah tangga',
     icon: '🌟',
     section: 'visiMisi',
-    isPremiumOnly: true,
+    isPremiumOnly: false,
   },
   {
     step: 11,
@@ -429,22 +429,42 @@ export const OPTIONS_KATEGORI_GALERI = [
 ]
 
 export const OPTIONS_TEMPLATE = [
+  // ── FREE templates (3) ──
+  {
+    value: 'ringkas',
+    label: 'Ringkas',
+    description: '1 halaman padat. Cukup untuk first impression taaruf.',
+    isPremiumOnly: false,
+  },
+  {
+    value: 'sederhana',
+    label: 'Sederhana',
+    description: '2 halaman. Data inti dengan nuansa sage-green.',
+    isPremiumOnly: false,
+  },
+  {
+    value: 'minimal_islami',
+    label: 'Minimal Islami',
+    description: '1 halaman ornamental. Cream, gold, nuansa Islami.',
+    isPremiumOnly: false,
+  },
+  // ── PREMIUM templates (3) ──
   {
     value: 'akademik',
     label: 'Akademik',
-    description: 'Formal, clean, hijau-navy-gold. Cocok untuk profesional.',
-    isPremiumOnly: false,
+    description: '5 halaman komprehensif. Formal, lengkap, semua data.',
+    isPremiumOnly: true,
   },
   {
     value: 'elegant_islamic',
     label: 'Elegant Islamic',
-    description: 'Ornamen islami, cream & gold. Elegan dan hangat.',
+    description: '4 halaman ornamental. Gold, deep green, hangat & elegan.',
     isPremiumOnly: true,
   },
   {
     value: 'modern_dark',
     label: 'Modern Dark',
-    description: 'Dark mode, aksen emas. Modern dan berkarakter.',
+    description: '4 halaman. Sidebar gelap, personal branding modern.',
     isPremiumOnly: true,
   },
 ]

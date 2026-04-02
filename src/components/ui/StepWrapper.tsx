@@ -7,6 +7,7 @@
 // ============================================================
 
 import React from 'react'
+import '../../app/create/create.css'
 
 interface StepWrapperProps {
   // Metadata step
@@ -44,9 +45,9 @@ interface StepWrapperProps {
 // ── Progress Bar ─────────────────────────────────────────────
 function ProgressBar({ percent }: { percent: number }) {
   return (
-    <div className="w-full bg-navy-800 rounded-full h-1.5" role="progressbar" aria-valuenow={percent} aria-valuemin={0} aria-valuemax={100}>
+    <div className="form-progress-track" role="progressbar" aria-valuenow={percent} aria-valuemin={0} aria-valuemax={100}>
       <div
-        className="h-1.5 rounded-full bg-gradient-to-r from-sage-600 to-sage-400 transition-all duration-500 ease-out"
+        className="form-progress-bar"
         style={{ width: `${percent}%` }}
       />
     </div>
@@ -115,10 +116,14 @@ export function StepWrapper({
   className = '',
 }: StepWrapperProps) {
   return (
-    <div className="min-h-screen bg-navy-950 flex flex-col">
+    <div className="form-page">
+      {/* Pattern overlay & ambient glow */}
+      <div className="form-pattern" aria-hidden="true" />
+      <div className="form-glow" aria-hidden="true" />
+
       {/* ── Top Header Bar ─────────────────────────────────── */}
-      <header className="sticky top-0 z-30 bg-navy-900/95 backdrop-blur-sm border-b border-navy-800">
-        <div className="max-w-2xl mx-auto px-4 py-3">
+      <header className="form-header">
+        <div className="form-header-inner">
           {/* Row 1: Dashboard + branding + navigator/save + save status */}
           <div className="flex items-center justify-between mb-2">
             {/* Left: Dashboard button + Logo */}
@@ -200,9 +205,9 @@ export function StepWrapper({
       </header>
 
       {/* ── Main Content Area ──────────────────────────────── */}
-      <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-6">
+      <main className="flex-1 max-w-2xl mx-auto w-full px-4 py-6 relative z-10">
         {/* Step title card */}
-        <div className="mb-6">
+        <div className="form-step-title-area">
           <div className="flex items-start gap-3">
             {icon && (
               <span
@@ -214,10 +219,10 @@ export function StepWrapper({
               </span>
             )}
             <div>
-              <h1 className="text-2xl font-bold text-white leading-tight">
+              <h1 className="form-step-title">
                 {title}
               </h1>
-              <p className="text-sm text-navy-400 mt-0.5">{subtitle}</p>
+              <p className="text-sm text-navy-400 mt-1">{subtitle}</p>
             </div>
           </div>
 
@@ -234,8 +239,8 @@ export function StepWrapper({
       </main>
 
       {/* ── Bottom Navigation Bar ──────────────────────────── */}
-      <nav className="sticky bottom-0 z-30 bg-navy-900/95 backdrop-blur-sm border-t border-navy-800">
-        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center gap-3">
+      <nav className="form-bottom-nav">
+        <div className="form-bottom-nav-inner">
           {/* Prev button / Dashboard on first step */}
           {isFirstStep ? (
             /* On first step: Dashboard button */
@@ -244,7 +249,7 @@ export function StepWrapper({
                 type="button"
                 onClick={onGoToDashboard}
                 aria-label="Kembali ke Dashboard"
-                className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-medium border transition-all duration-200 border-navy-600 text-navy-300 hover:border-sage-600 hover:text-sage-400 active:scale-95"
+                className="form-btn-prev"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955a1.126 1.126 0 011.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
@@ -258,7 +263,7 @@ export function StepWrapper({
               type="button"
               onClick={onPrev}
               aria-label="Langkah sebelumnya"
-              className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-medium border transition-all duration-200 border-navy-600 text-navy-300 hover:border-sage-600 hover:text-sage-400 active:scale-95"
+              className="form-btn-prev"
             >
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
@@ -276,14 +281,13 @@ export function StepWrapper({
               return (
                 <div
                   key={dotStep}
-                  className={[
-                    'rounded-full transition-all duration-300',
+                  className={
                     isActive
-                      ? 'w-6 h-2 bg-sage-500'
+                      ? 'form-step-dot form-step-dot-active'
                       : isPast
-                      ? 'w-2 h-2 bg-sage-800'
-                      : 'w-2 h-2 bg-navy-700',
-                  ].join(' ')}
+                      ? 'form-step-dot form-step-dot-past'
+                      : 'form-step-dot form-step-dot-upcoming'
+                  }
                 />
               )
             })}
@@ -297,13 +301,7 @@ export function StepWrapper({
             type="button"
             onClick={onNext}
             aria-label={isLastStep ? 'Simpan dan selesai' : 'Langkah berikutnya'}
-            className={[
-              'flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-semibold',
-              'transition-all duration-200 active:scale-95',
-              isLastStep
-                ? 'bg-gradient-to-r from-gold-600 to-gold-500 text-white shadow-gold hover:shadow-lg'
-                : 'bg-gradient-to-r from-sage-700 to-sage-600 text-white hover:from-sage-600 hover:to-sage-500',
-            ].join(' ')}
+            className={isLastStep ? 'form-btn-submit' : 'form-btn-next'}
           >
             {isLastStep ? (
               <>

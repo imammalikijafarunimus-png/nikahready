@@ -17,6 +17,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuthActions, useAuthState } from '@/context/AuthContext'
+import { ShieldCheck, Lock, Eye, ArrowRight } from 'lucide-react'
 import '../auth.css'
 
 // ── Password visibility toggle icon ─────────────────────────
@@ -197,12 +198,12 @@ function LoginForm() {
               )}
 
               <div className="auth-field">
-                <label htmlFor="forgot-email" className="auth-label">Email</label>
+                <label htmlFor="forgot-email" className="auth-label">Alamat Email</label>
                 <input
                   id="forgot-email"
                   type="email"
                   className="auth-input"
-                  placeholder="nama@email.com"
+                  placeholder="Email aktif kamu"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   disabled={isLoading}
@@ -262,10 +263,13 @@ function LoginForm() {
           <p className="font-arabic auth-arabic">
             بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيم
           </p>
+          <p className="auth-arabic-translation">
+            Dengan nama Allah Yang Maha Pengasih, Maha Penyayang
+          </p>
 
-          <h1 className="auth-title">Masuk ke NikahReady</h1>
+          <h1 className="auth-title">Selamat Datang Kembali</h1>
           <p className="auth-subtitle">
-            Lanjutkan Perjalanan Pengenalanmu
+            CV taarufmu menunggumu. Masuk dan lanjutkan perjalananmu dengan tenang.
           </p>
         </div>
 
@@ -291,12 +295,12 @@ function LoginForm() {
 
           {/* Email */}
           <div className="auth-field">
-            <label htmlFor="email" className="auth-label">Email</label>
+            <label htmlFor="email" className="auth-label">Alamat Email</label>
             <input
               id="email"
               type="email"
               className="auth-input"
-              placeholder="nama@email.com"
+              placeholder="Email aktif kamu"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               disabled={isLoading}
@@ -313,7 +317,7 @@ function LoginForm() {
                 id="password"
                 type={showPassword ? 'text' : 'password'}
                 className="auth-input"
-                placeholder="Masukkan password"
+                placeholder="Password yang kamu ingat"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isLoading}
@@ -355,7 +359,10 @@ function LoginForm() {
             {isLoading ? (
               <div className="auth-spinner" />
             ) : (
-              <span>Masuk</span>
+              <>
+                <span>Masuk ke Akun Saya</span>
+                <ArrowRight size={15} strokeWidth={2.5} />
+              </>
             )}
           </button>
 
@@ -364,15 +371,32 @@ function LoginForm() {
             <span style={{ fontSize: '0.8rem', color: '#64748B' }}>
               Belum punya akun?{' '}
               <Link href="/signup" className="auth-link auth-link-primary">
-                Daftar Gratis
+                Buat Akun
               </Link>
             </span>
           </div>
         </form>
+
+        {/* Trust indicators */}
+        <div className="auth-trust">
+          <span className="auth-trust-item">
+            <ShieldCheck className="auth-trust-icon" />
+            Data Terenkripsi
+          </span>
+          <span className="auth-trust-item">
+            <Lock className="auth-trust-icon" />
+            Server Aman
+          </span>
+          <span className="auth-trust-item">
+            <Eye className="auth-trust-icon" />
+            Tanpa Profil Publik
+          </span>
+        </div>
       </div>
 
       <div className="auth-footer">
-        <p>Jujur · Bermartabat · Hangat</p>
+        <p className="auth-footer-brand">NikahReady · Alat Bantu CV Taaruf</p>
+        <p className="auth-footer-values">Jujur · Bermartabat · Aman</p>
       </div>
     </div>
   )
