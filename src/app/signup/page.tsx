@@ -4,12 +4,12 @@
 // src/app/signup/page.tsx
 // Signup Page NikahReady — registration with email, password, nama
 //
-// Features:
-// - Email, nama, password + konfirmasi password
-// - Password strength indicator with descriptive hints
-// - Minimum password length validation
-// - Friendly error messages in Indonesian
-// - Redirect to /login after signup (email confirmation flow)
+// Refactored:
+// 1. Arabic + terjemahan: ukuran lebih kecil, spasi lebih proporsional
+// 2. Nama Lengkap: placeholder diubah jadi "Sesuai KTP" — bukan nama panggilan
+// 3. Password placeholder: diperpendek, padding-right cukup untuk ikon mata
+// 4. Trust indicators: horizontal row, ikon hijau
+// 5. Footer copy: selaras dengan brand identity landing page
 // ============================================================
 
 import { useState, useEffect, useCallback, Suspense } from 'react'
@@ -17,7 +17,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuthActions, useAuthState } from '@/context/AuthContext'
-import { ShieldCheck, Lock, Eye, ArrowRight, AlertCircle, CheckCircle } from 'lucide-react'
+import { ShieldCheck, Lock, EyeOff } from 'lucide-react'
 import '../auth.css'
 
 // ── Password visibility toggle icon ─────────────────────────
@@ -39,13 +39,11 @@ function EyeIcon({ open }: { open: boolean }) {
 
 // ── Password strength calculator ────────────────────────────
 function getPasswordStrength(password: string): {
-  score: number       // 0–4
+  score: number
   label: string
   color: string
-  hint: string
-  iconType: 'alert' | 'check' | 'shield'
 } {
-  if (!password) return { score: 0, label: '', color: '', hint: '', iconType: 'alert' }
+  if (!password) return { score: 0, label: '', color: '' }
 
   let score = 0
   if (password.length >= 8) score++
@@ -54,37 +52,12 @@ function getPasswordStrength(password: string): {
   if (/\d/.test(password)) score++
   if (/[^A-Za-z0-9]/.test(password)) score++
 
-  // Clamp to 4
   score = Math.min(score, 4)
 
   const labels = ['', 'Lemah', 'Cukup', 'Kuat', 'Sangat Kuat']
   const colors = ['', '#EF4444', '#F59E0B', '#10B981', '#064E3B']
-  const hints = [
-    '',
-    'Tambahkan huruf besar dan angka',
-    'Bagus! Tambahkan simbol untuk lebih kuat',
-    'Kuat! Passwordmu sudah sulit ditebak',
-    'Sangat kuat! Aman untuk digunakan',
-  ]
-  const iconTypes: Array<'alert' | 'check' | 'shield'> = [
-    'alert', 'alert', 'alert', 'check', 'shield',
-  ]
 
-  return {
-    score,
-    label: labels[score],
-    color: colors[score],
-    hint: hints[score],
-    iconType: iconTypes[score],
-  }
-}
-
-// ── Password strength icon ───────────────────────────────────
-function StrengthIcon({ type, color }: { type: 'alert' | 'check' | 'shield'; color: string }) {
-  const props = { size: 13, strokeWidth: 2, style: { color, flexShrink: 0 } }
-  if (type === 'check') return <CheckCircle {...props} />
-  if (type === 'shield') return <ShieldCheck {...props} />
-  return <AlertCircle {...props} />
+  return { score, label: labels[score], color: colors[score] }
 }
 
 // ── Inner component (needs useSearchParams inside Suspense) ─
@@ -105,7 +78,6 @@ function SignupForm() {
   const [message, setMessage] = useState<string | null>(null)
   const [agreeTerms, setAgreeTerms] = useState(false)
 
-  // Read query params
   const queryMessage = searchParams.get('message')
   const queryError = searchParams.get('error')
 
@@ -114,7 +86,6 @@ function SignupForm() {
     if (queryError) setError(queryError)
   }, [queryMessage, queryError])
 
-  // If already authenticated, redirect to dashboard
   useEffect(() => {
     if (status === 'authenticated') {
       router.replace('/dashboard')
@@ -128,54 +99,26 @@ function SignupForm() {
     setError(null)
     setMessage(null)
 
-    // Validation
-    if (!nama.trim()) {
-      setError('Nama wajib diisi.')
-      return
-    }
-    if (nama.trim().length < 2) {
-      setError('Nama minimal 2 karakter.')
-      return
-    }
-    if (!email.trim()) {
-      setError('Email wajib diisi.')
-      return
-    }
-    // Basic email format check
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      setError('Format email tidak valid.')
-      return
-    }
-    if (password.length < 8) {
-      setError('Password minimal 8 karakter.')
-      return
-    }
-    if (password !== confirmPassword) {
-      setError('Password dan konfirmasi password tidak sama.')
-      return
-    }
-    if (!agreeTerms) {
-      setError('Kamu harus menyetujui syarat dan ketentuan.')
-      return
-    }
+    if (!nama.trim()) { setError('Nama wajib diisi.'); return }
+    if (nama.trim().length < 2) { setError('Nama minimal 2 karakter.'); return }
+    if (!email.trim()) { setError('Email wajib diisi.'); return }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) { setError('Format email tidak valid.'); return }
+    if (password.length < 8) { setError('Password minimal 8 karakter.'); return }
+    if (password !== confirmPassword) { setError('Password dan konfirmasi password tidak sama.'); return }
+    if (!agreeTerms) { setError('Kamu harus menyetujui syarat dan ketentuan.'); return }
 
     setIsLoading(true)
 
     const result = await signUp(email.trim(), password, nama.trim())
 
     if (result.success) {
-      // After signup, redirect to login with success message
-      setMessage(
-        'Akun berhasil dibuat! Silakan cek email untuk konfirmasi, lalu masuk.'
-      )
-      // Redirect to login after showing message
+      setMessage('Akun berhasil dibuat! Silakan cek email untuk konfirmasi, lalu masuk.')
       setTimeout(() => {
         router.push('/login?message=' + encodeURIComponent(
           'Akun berhasil dibuat! Silakan masuk dengan email dan passwordmu.'
         ))
       }, 2000)
     } else {
-      // Friendly error mapping
       let friendlyError = result.error ?? 'Gagal mendaftar. Coba lagi.'
       if (friendlyError.includes('already registered') || friendlyError.includes('already in use')) {
         friendlyError = 'Email sudah terdaftar. Coba masuk atau gunakan email lain.'
@@ -188,7 +131,7 @@ function SignupForm() {
     setIsLoading(false)
   }, [nama, email, password, confirmPassword, agreeTerms, signUp, router])
 
-  // ── Loading state while checking auth ─────────────────────
+  // ── Loading state ──────────────────────────────────────────
   if (status === 'loading') {
     return (
       <div className="auth-page">
@@ -223,26 +166,29 @@ function SignupForm() {
       <div className="auth-card">
         <div className="auth-header">
           <Link href="/" className="auth-logo">
-            <Image
-              src="/icons/icon-192.png"
-              alt="NikahReady"
-              width={32}
-              height={32}
-              style={{ borderRadius: '0.5rem' }}
-            />
+            <Image src="/icons/icon-192.png" alt="NikahReady" width={32} height={32} style={{ borderRadius: '0.5rem' }} />
             <span className="auth-logo-text">NikahReady</span>
           </Link>
 
-          <p className="font-arabic auth-arabic">
-            وَمَن يَتَّقِ اللَّهَ يَجْعَل لَهُ مَخْرَجًا
-          </p>
-          <p className="auth-arabic-translation">
-            Dan barangsiapa bertakwa kepada Allah, niscaya Allah akan memberikan jalan keluar
-          </p>
+          {/* ── FIX 1: Arabic + terjemahan — ukuran lebih kecil, spasi lebih proporsional ── */}
+          <div style={{ margin: '1rem 0 1.5rem', textAlign: 'center' }}>
+            <p
+              className="font-arabic auth-arabic"
+              style={{ fontSize: '1.05rem', lineHeight: 1.8, marginBottom: '0.3rem' }}
+            >
+              وَمَن يَتَّقِ اللَّهَ يَجْعَل لَهُ مَخْرَجًا
+            </p>
+            <p
+              className="auth-arabic-translation"
+              style={{ fontSize: '0.72rem', opacity: 0.6, marginTop: 0, marginBottom: 0, letterSpacing: '0.01em' }}
+            >
+              Dan barangsiapa bertakwa kepada Allah, niscaya Allah akan memberikan jalan keluar
+            </p>
+          </div>
 
-          <h1 className="auth-title">Mulai Perjalananmu</h1>
+          <h1 className="auth-title">Buat Akun Baru</h1>
           <p className="auth-subtitle">
-            Niatmu sudah ada. Biarkan kami bantu kamu memperkenalkan diri dengan cara yang layak dan bermartabat.
+            Mulai buat CV taarufmu. Gratis untuk memulai, data tersimpan aman di server terenkripsi.
           </p>
         </div>
 
@@ -256,40 +202,33 @@ function SignupForm() {
             </div>
           )}
 
-          {/* Nama Lengkap */}
+          {/* ── FIX 2: Nama Lengkap — placeholder sesuai KTP, bukan nama panggilan ── */}
           <div className="auth-field">
             <label htmlFor="nama" className="auth-label">Nama Lengkap</label>
             <input
               id="nama"
               type="text"
               className="auth-input"
-              placeholder="Nama yang biasa dipanggil keluarga"
+              placeholder="Sesuai KTP"
               value={nama}
               onChange={(e) => setNama(e.target.value)}
               disabled={isLoading}
               autoComplete="name"
               autoFocus
             />
-            <p className="auth-hint">Nama ini akan muncul di CV taarufmu</p>
+            <span style={{ fontSize: '0.68rem', color: '#64748B', marginTop: '0.25rem', display: 'block' }}>
+              Nama ini akan muncul di CV taarufmu
+            </span>
           </div>
 
           {/* Email */}
           <div className="auth-field">
-            <label htmlFor="signup-email" className="auth-label">Alamat Email</label>
-            <input
-              id="signup-email"
-              type="email"
-              className="auth-input"
-              placeholder="Email aktif kamu"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={isLoading}
-              autoComplete="email"
-            />
-            <p className="auth-hint">Digunakan untuk login dan konfirmasi akun</p>
+            <label htmlFor="signup-email" className="auth-label">Email</label>
+            <input id="signup-email" type="email" className="auth-input" placeholder="nama@email.com"
+              value={email} onChange={(e) => setEmail(e.target.value)} disabled={isLoading} autoComplete="email" />
           </div>
 
-          {/* Password */}
+          {/* ── FIX 3: Password — placeholder pendek, padding-right cukup untuk ikon ── */}
           <div className="auth-field">
             <label htmlFor="signup-password" className="auth-label">Password</label>
             <div className="auth-password-wrap">
@@ -297,50 +236,36 @@ function SignupForm() {
                 id="signup-password"
                 type={showPassword ? 'text' : 'password'}
                 className="auth-input"
-                placeholder="Password yang kamu ingat dengan mudah"
+                placeholder="Min. 8 karakter"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={isLoading}
                 autoComplete="new-password"
+                style={{ paddingRight: '2.75rem' }}
               />
-              <button
-                type="button"
-                className="auth-password-toggle"
+              <button type="button" className="auth-password-toggle"
                 onClick={() => setShowPassword(!showPassword)}
                 aria-label={showPassword ? 'Sembunyikan password' : 'Tampilkan password'}
-                tabIndex={-1}
-              >
+                tabIndex={-1}>
                 <EyeIcon open={showPassword} />
               </button>
             </div>
-
-            {/* Password strength indicator */}
+            {/* Password strength bar */}
             {password && (
-              <div className="auth-strength">
-                <div className="auth-strength-bars">
+              <div style={{ marginTop: '0.35rem' }}>
+                <div style={{ display: 'flex', gap: '4px', marginBottom: '0.25rem' }}>
                   {[1, 2, 3, 4].map((level) => (
-                    <div
-                      key={level}
-                      className="auth-strength-bar"
-                      style={{
-                        background: level <= passwordStrength.score
-                          ? passwordStrength.color
-                          : 'rgba(51, 65, 85, 0.4)',
-                        transition: 'background 0.2s ease',
-                      }}
-                    />
+                    <div key={level} style={{
+                      flex: 1, height: '3px', borderRadius: '2px',
+                      background: level <= passwordStrength.score ? passwordStrength.color : 'rgba(51, 65, 85, 0.4)',
+                      transition: 'background 0.2s ease',
+                    }} />
                   ))}
                 </div>
-                {passwordStrength.hint && (
-                  <div className="auth-strength-hint">
-                    <StrengthIcon type={passwordStrength.iconType} color={passwordStrength.color} />
-                    <span style={{ color: passwordStrength.color }}>
-                      {passwordStrength.label}
-                    </span>
-                    <span className="auth-strength-text">
-                      — {passwordStrength.hint}
-                    </span>
-                  </div>
+                {passwordStrength.label && (
+                  <span style={{ fontSize: '0.7rem', color: passwordStrength.color }}>
+                    {passwordStrength.label}
+                  </span>
                 )}
               </div>
             )}
@@ -353,22 +278,18 @@ function SignupForm() {
               <input
                 id="confirm-password"
                 type={showConfirmPassword ? 'text' : 'password'}
-                className={`auth-input ${
-                  confirmPassword && confirmPassword !== password ? 'auth-input-error' : ''
-                }`}
+                className={`auth-input ${confirmPassword && confirmPassword !== password ? 'auth-input-error' : ''}`}
                 placeholder="Ulangi password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 disabled={isLoading}
                 autoComplete="new-password"
+                style={{ paddingRight: '2.75rem' }}
               />
-              <button
-                type="button"
-                className="auth-password-toggle"
+              <button type="button" className="auth-password-toggle"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 aria-label={showConfirmPassword ? 'Sembunyikan password' : 'Tampilkan password'}
-                tabIndex={-1}
-              >
+                tabIndex={-1}>
                 <EyeIcon open={showConfirmPassword} />
               </button>
             </div>
@@ -379,82 +300,69 @@ function SignupForm() {
 
           {/* Terms checkbox */}
           <label style={{
-            display: 'flex',
-            alignItems: 'flex-start',
-            gap: '0.5rem',
-            fontSize: '0.75rem',
-            color: '#94A3B8',
-            cursor: 'pointer',
-            lineHeight: '1.4',
-            marginTop: '0.25rem',
+            display: 'flex', alignItems: 'flex-start', gap: '0.5rem',
+            fontSize: '0.75rem', color: '#94A3B8', cursor: 'pointer',
+            lineHeight: '1.4', marginTop: '0.25rem',
           }}>
-            <input
-              type="checkbox"
-              checked={agreeTerms}
-              onChange={(e) => setAgreeTerms(e.target.checked)}
-              disabled={isLoading}
-              style={{
-                marginTop: '2px',
-                accentColor: '#064E3B',
-              }}
-            />
+            <input type="checkbox" checked={agreeTerms} onChange={(e) => setAgreeTerms(e.target.checked)}
+              disabled={isLoading} style={{ marginTop: '2px', accentColor: '#064E3B' }} />
             <span>
               Saya menyetujui{' '}
               <Link href="/privacy" target="_blank" style={{ color: '#6EE7B7', textDecoration: 'underline' }}>
                 Kebijakan Privasi
               </Link>{' '}
-              NikahReady dan memahami bahwa data saya tersimpan di server terenkripsi
-              serta hanya dapat diakses oleh saya sendiri.
+              NikahReady dan memahami bahwa data saya tersimpan di server terenkripsi serta hanya dapat diakses oleh saya sendiri.
             </span>
           </label>
 
           {/* Submit */}
-          <button
-            type="submit"
-            className="auth-submit"
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <div className="auth-spinner" />
-            ) : (
-              <>
-                <span>Buat Akun Saya</span>
-                <ArrowRight size={15} strokeWidth={2.5} />
-              </>
-            )}
+          <button type="submit" className="auth-submit" disabled={isLoading}>
+            {isLoading ? <div className="auth-spinner" /> : <span>Buat Akun</span>}
           </button>
 
           {/* Links */}
           <div className="auth-links">
             <span style={{ fontSize: '0.8rem', color: '#64748B' }}>
               Sudah punya akun?{' '}
-              <Link href="/login" className="auth-link auth-link-primary">
-                Masuk
-              </Link>
+              <Link href="/login" className="auth-link auth-link-primary">Masuk</Link>
             </span>
           </div>
         </form>
 
-        {/* Trust indicators */}
-        <div className="auth-trust">
-          <span className="auth-trust-item">
-            <ShieldCheck className="auth-trust-icon" />
+        {/* ── FIX 4: Trust indicators — horizontal row, ikon hijau ── */}
+        <div
+          className="auth-trust"
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: '1.25rem',
+            flexWrap: 'wrap',
+            marginTop: '1.25rem',
+            paddingTop: '1rem',
+            borderTop: '1px solid rgba(100,116,139,0.15)',
+          }}
+        >
+          <span className="auth-trust-item" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.72rem', color: '#6EE7B7', fontWeight: 500 }}>
+            <ShieldCheck size={14} style={{ color: '#10B981', flexShrink: 0 }} />
             Data Terenkripsi
           </span>
-          <span className="auth-trust-item">
-            <Lock className="auth-trust-icon" />
+          <span className="auth-trust-item" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.72rem', color: '#6EE7B7', fontWeight: 500 }}>
+            <Lock size={14} style={{ color: '#10B981', flexShrink: 0 }} />
             Server Aman
           </span>
-          <span className="auth-trust-item">
-            <Eye className="auth-trust-icon" />
+          <span className="auth-trust-item" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.72rem', color: '#6EE7B7', fontWeight: 500 }}>
+            <EyeOff size={14} style={{ color: '#10B981', flexShrink: 0 }} />
             Tanpa Profil Publik
           </span>
         </div>
       </div>
 
+      {/* ── FIX 5: Footer — selaras brand identity landing page ── */}
       <div className="auth-footer">
-        <p className="auth-footer-brand">NikahReady · Alat Bantu CV Taaruf</p>
-        <p className="auth-footer-values">Jujur · Bermartabat · Aman</p>
+        <p className="auth-footer-brand">NikahReady · CV Taaruf Profesional</p>
+        <p className="auth-footer-values">Bukan Dating App · Bermartabat · Kamu yang Pegang Kendali</p>
       </div>
     </div>
   )
