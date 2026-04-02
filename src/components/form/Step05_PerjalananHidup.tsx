@@ -32,11 +32,11 @@ const FASE_CONFIG: Record<
 // ── Default item factory ──────────────────────────────────────
 function createDefaultPerjalanan(): Omit<PerjalananHidupItem, 'id' | 'urutan'> {
   return {
-    fase:         '',
-    judul:        '',
-    cerita:       '',
-    pelajaran:    '',
-    tahun_mulai:  '',
+    fase:          '',
+    judul:         '',
+    cerita:        '',
+    pelajaran:     '',
+    tahun_mulai:   '',
     tahun_selesai: '',
   }
 }
@@ -154,14 +154,14 @@ export function Step05_PerjalananHidup() {
     useArraySection('perjalananHidup')
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {/* Intro dengan nuansa Islami */}
       <SectionCard variant="highlight">
-        <div className="space-y-2">
-          <p className="font-arabic text-base text-center text-gold-400">
+        <div className="space-y-2 text-center py-1">
+          <p className="font-arabic text-xl text-gold-400">
             وَعَسَىٰ أَن تَكْرَهُوا شَيْئًا وَهُوَ خَيْرٌ لَّكُمْ
           </p>
-          <p className="text-xs text-center text-navy-400 italic">
+          <p className="text-xs text-navy-400 italic">
             &ldquo;Boleh jadi kamu membenci sesuatu, padahal ia amat baik bagimu&rdquo;
             <br />
             <span className="text-navy-500">— QS Al-Baqarah: 216</span>
@@ -195,15 +195,15 @@ export function Step05_PerjalananHidup() {
 
       {/* Panduan pengisian */}
       {items.length === 0 && (
-        <div className="space-y-2">
+        <div className="space-y-3">
           <p className="text-xs font-medium text-navy-400 text-center">
             Saran fase yang bisa kamu ceritakan:
           </p>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-3">
             {Object.entries(FASE_CONFIG).map(([key, config]) => (
               <div
                 key={key}
-                className="flex items-center gap-2 p-2.5 rounded-xl border border-navy-800 bg-navy-900/40"
+                className="flex items-center gap-2.5 p-3 rounded-xl border border-navy-800 bg-navy-900/40"
               >
                 <span className="text-base">{config.emoji}</span>
                 <span className={`text-xs font-medium ${config.color}`}>

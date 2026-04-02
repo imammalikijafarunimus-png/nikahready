@@ -9,14 +9,12 @@
 import { useState } from 'react'
 import { TextArea, SectionCard } from '@/components/ui/FormFields'
 
-// ── Main Component ────────────────────────────────────────────
 export function Step21_HarapanDoa() {
   const [harapan, setHarapan] = useState('')
   const [doa, setDoa] = useState('')
 
   return (
-    <div className="space-y-4">
-      {/* ── Pembuka Arabic ─────────────────────────────────── */}
+    <div className="space-y-5">
       <div className="text-center py-3">
         <p className="font-arabic text-xl text-gold-500">
           وَقُل رَّبِّ ارْزُقْنِي مِنْ لَّدُنْكَ ذُرِّيَّةً طَيِّبَةً
@@ -28,17 +26,15 @@ export function Step21_HarapanDoa() {
         </p>
       </div>
 
-      {/* ── Info Box ────────────────────────────────────────── */}
       <div className="flex gap-3 p-3 rounded-xl bg-navy-900/60 border border-navy-800">
         <span className="text-lg flex-shrink-0">🤲</span>
         <p className="text-xs text-navy-400 leading-relaxed">
-          Tulis doa dengan ikhlas. <strong className="text-white">Allah SWT mendengunkan setiap doa</strong> hamba-Nya.
+          Tulis doa dengan ikhlas. <strong className="text-white">Allah SWT mengabulkan setiap doa</strong> hamba-Nya.
           Bagian ini bersifat pribadi dan bisa menjadi pengingat yang indah
           di masa mendatang.
         </p>
       </div>
 
-      {/* ── 1. Harapan Pernikahan ──────────────────────────── */}
       <SectionCard title="Harapan untuk Pernikahan" icon="🌟" variant="highlight">
         <TextArea
           label="Harapanmu"
@@ -52,7 +48,6 @@ export function Step21_HarapanDoa() {
         />
       </SectionCard>
 
-      {/* ── 2. Doa ─────────────────────────────────────────── */}
       <SectionCard title="Doa untuk Proses Ta'aruf & Pernikahan" icon="🤲">
         <TextArea
           label="Doamu"
@@ -66,7 +61,6 @@ export function Step21_HarapanDoa() {
         />
       </SectionCard>
 
-      {/* ── Doa Pilihan ────────────────────────────────────── */}
       <SectionCard title="Doa-Doa Pilihan" icon="📖">
         <div className="space-y-3">
           <div className="p-3 rounded-xl bg-navy-800/60 border border-navy-700">
@@ -95,7 +89,6 @@ export function Step21_HarapanDoa() {
         </div>
       </SectionCard>
 
-      {/* ── Tips ──────────────────────────────────────────── */}
       <div className="flex gap-3 p-3 rounded-xl bg-navy-900/60 border border-navy-800">
         <span className="text-lg flex-shrink-0">💡</span>
         <p className="text-xs text-navy-400 leading-relaxed">

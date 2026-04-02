@@ -286,7 +286,7 @@ export function DynamicList<T extends BaseItem>({
       )}
 
       {/* ── Items List ─────────────────────────────────── */}
-      <div className="space-y-2">
+      <div className="space-y-3">
         {items.map((item, index) => (
           <ItemCard<T>
             key={item.id}

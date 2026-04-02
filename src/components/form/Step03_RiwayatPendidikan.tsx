@@ -17,7 +17,6 @@ import {
 import { OPTIONS_JENJANG_PENDIDIKAN } from '@/lib/constants'
 import type { RiwayatPendidikanItem } from '@/types'
 
-// ── Default item factory ──────────────────────────────────────
 function createDefaultPendidikan(): Omit<RiwayatPendidikanItem, 'id' | 'urutan'> {
   return {
     jenjang:          '',
@@ -29,7 +28,6 @@ function createDefaultPendidikan(): Omit<RiwayatPendidikanItem, 'id' | 'urutan'>
   }
 }
 
-// ── Summary renderer (collapsed state) ───────────────────────
 function renderSummary(item: RiwayatPendidikanItem, _index: number) {
   const yearRange =
     item.tahun_mulai
@@ -58,14 +56,12 @@ function renderSummary(item: RiwayatPendidikanItem, _index: number) {
   )
 }
 
-// ── Form renderer (expanded state) ───────────────────────────
 function renderForm(
   item: RiwayatPendidikanItem,
   onChange: (field: keyof RiwayatPendidikanItem, value: RiwayatPendidikanItem[keyof RiwayatPendidikanItem]) => void
 ) {
   return (
     <div className="space-y-3">
-      {/* Jenjang + Nama Institusi */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <SelectInput
           label="Jenjang Pendidikan"
@@ -84,7 +80,6 @@ function renderForm(
         />
       </div>
 
-      {/* Jurusan */}
       <TextInput
         label="Jurusan / Program Studi"
         value={item.jurusan}
@@ -93,7 +88,6 @@ function renderForm(
         hint="Bisa dikosongkan untuk jenjang SD/SMP"
       />
 
-      {/* Tahun mulai & selesai */}
       <div className="grid grid-cols-2 gap-3">
         <NumberInput
           label="Tahun Mulai"
@@ -113,7 +107,6 @@ function renderForm(
         />
       </div>
 
-      {/* Prestasi */}
       <TextArea
         label="Prestasi (opsional)"
         value={item.prestasi}
@@ -128,13 +121,12 @@ function renderForm(
   )
 }
 
-// ── Main Component ────────────────────────────────────────────
 export function Step03_RiwayatPendidikan() {
   const { items, addItem, removeItem, updateItem } =
     useArraySection('riwayatPendidikan')
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5"> {/* ← was space-y-4 */}
       {/* Intro card */}
       <div className="flex gap-3 p-3 rounded-xl bg-navy-900/60 border border-navy-800">
         <span className="text-lg flex-shrink-0">🎓</span>
@@ -161,7 +153,6 @@ export function Step03_RiwayatPendidikan() {
         onUpdate={updateItem}
       />
 
-      {/* Tips tentang pendidikan */}
       {items.length === 0 && (
         <div className="flex gap-3 p-3 rounded-xl bg-gold-900/20 border border-gold-800/30">
           <span className="text-lg flex-shrink-0">💡</span>

@@ -117,80 +117,42 @@ export default function DashboardPage() {
     return (
       <div className="flex items-center justify-center min-h-screen bg-navy-950">
         <div className="flex flex-col items-center gap-3">
-          <div className="auth-spinner" style={{ width: '2.5rem', height: '2.5rem' }} />
+          <div className="auth-spinner w-10 h-10" />
           <p className="text-sm text-navy-400">Memuat dashboard...</p>
         </div>
       </div>
     )
   }
 
-  // ── Completion color ──────────────────────────────────────
-  const completionColor = completion >= 80 ? '#10B981' : completion >= 50 ? '#F59E0B' : '#F87171'
+  // ── Completion color classes ──────────────────────────────
+  const completionClass = completion >= 80 ? 'text-sage-500' : completion >= 50 ? 'text-gold-500' : 'text-red-400'
+  const completionBg = completion >= 80 ? 'bg-sage-500' : completion >= 50 ? 'bg-gold-500' : 'bg-red-400'
 
   return (
-    <div style={{ minHeight: '100vh', background: '#020617' }}>
+    <div className="min-h-screen bg-navy-950">
       {/* ── Dashboard Nav ──────────────────────────────────── */}
-      <nav style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 50,
-        background: 'rgba(15, 23, 42, 0.85)',
-        backdropFilter: 'blur(12px)',
-        borderBottom: '1px solid rgba(30, 41, 59, 0.6)',
-      }}>
-        <div style={{
-          maxWidth: '72rem',
-          margin: '0 auto',
-          padding: '0 1.25rem',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          height: '3.5rem',
-        }}>
-          <Link href="/" style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            textDecoration: 'none',
-          }}>
+      <nav className="sticky top-0 z-50 bg-navy-900/85 backdrop-blur-sm border-b border-navy-800/60">
+        <div className="max-w-5xl mx-auto px-5 flex items-center justify-between h-14">
+          <Link href="/" className="flex items-center gap-2 no-underline">
             <Image
               src="/icons/icon-192.png"
               alt="NikahReady"
               width={28}
               height={28}
-              style={{ borderRadius: '0.5rem' }}
+              className="rounded"
             />
-            <span style={{ fontSize: '1rem', fontWeight: 700, color: '#F1F5F9' }}>
+            <span className="text-sm font-bold text-navy-100">
               NikahReady
             </span>
           </Link>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <span style={{ fontSize: '0.75rem', color: '#94A3B8', display: 'none' }} className="sm-hide">
+          <div className="flex items-center gap-3">
+            <span className="hidden sm:block text-xs text-navy-400">
               {userEmail}
             </span>
             <button
               onClick={() => setShowLogoutConfirm(true)}
-              style={{
-                background: 'transparent',
-                border: '1px solid rgba(100, 116, 139, 0.4)',
-                color: '#94A3B8',
-                fontSize: '0.75rem',
-                padding: '0.35rem 0.75rem',
-                borderRadius: '0.5rem',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-              }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.borderColor = '#EF4444'
-                e.currentTarget.style.color = '#FCA5A5'
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.borderColor = 'rgba(100, 116, 139, 0.4)'
-                e.currentTarget.style.color = '#94A3B8'
-              }}
+              className="px-3 py-1.5 rounded-lg text-xs border border-navy-600/40 text-navy-400 bg-transparent hover:border-red-400 hover:text-red-300 active:scale-95 transition-all cursor-pointer"
             >
               Keluar
             </button>
@@ -199,68 +161,34 @@ export default function DashboardPage() {
       </nav>
 
       {/* ── Dashboard Content ─────────────────────────────── */}
-      <main style={{
-        maxWidth: '48rem',
-        margin: '0 auto',
-        padding: '5rem 1.25rem 3rem',
-      }}>
+      <main className="max-w-3xl mx-auto px-5 pt-20 pb-12">
         {/* Welcome */}
-        <div style={{ marginBottom: '2rem' }}>
-          <h1 style={{
-            fontSize: '1.75rem',
-            fontWeight: 700,
-            color: '#FFFFFF',
-            marginBottom: '0.25rem',
-            letterSpacing: '-0.02em',
-          }}>
+        <div className="mb-8">
+          <h1 className="text-xl font-bold text-white mb-1 tracking-tight">
             Assalamu&apos;alaikum, {userName} 👋
           </h1>
-          <p style={{ fontSize: '0.875rem', color: '#94A3B8' }}>
+          <p className="text-sm text-navy-400">
             Lanjutkan Perjalanan Pengenalanmu
           </p>
         </div>
 
         {/* Completion Card */}
-        <div style={{
-          background: 'rgba(15, 23, 42, 0.6)',
-          border: '1px solid rgba(30, 41, 59, 0.6)',
-          borderRadius: '1.25rem',
-          padding: '1.5rem',
-          marginBottom: '1.5rem',
-        }}>
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '0.75rem',
-          }}>
-            <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#F1F5F9' }}>
+        <div className="rounded-2xl border border-navy-800/60 bg-navy-900/60 p-6 mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-sm font-semibold text-navy-100">
               Kelengkapan Profil
             </span>
-            <span style={{
-              fontSize: '0.85rem',
-              fontWeight: 700,
-              color: completionColor,
-            }}>
+            <span className={`text-sm font-bold ${completionClass}`}>
               {completion}%
             </span>
           </div>
-          <div style={{
-            width: '100%',
-            height: '8px',
-            background: 'rgba(30, 41, 59, 0.6)',
-            borderRadius: '4px',
-            overflow: 'hidden',
-          }}>
-            <div style={{
-              width: `${completion}%`,
-              height: '100%',
-              background: completionColor,
-              borderRadius: '4px',
-              transition: 'width 0.5s ease',
-            }} />
+          <div className="w-full h-2 bg-navy-800/60 rounded-full overflow-hidden">
+            <div
+              className={`h-full rounded-full transition-[width] duration-500 ${completionBg}`}
+              style={{ width: `${completion}%` }}
+            />
           </div>
-          <p style={{ fontSize: '0.75rem', color: '#64748B', marginTop: '0.5rem' }}>
+          <p className="text-xs text-navy-500 mt-2">
             {completion >= 80
               ? 'Profil hampir lengkap! Lanjutkan ke preview.'
               : completion >= 50
@@ -271,165 +199,69 @@ export default function DashboardPage() {
         </div>
 
         {/* Quick Actions */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-          gap: '1rem',
-          marginBottom: '2rem',
-        }}>
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4 mb-8">
           {/* Edit Profile */}
-          <Link href="/create" style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '0.75rem',
-            padding: '1.5rem',
-            background: 'rgba(15, 23, 42, 0.6)',
-            border: '1px solid rgba(30, 41, 59, 0.6)',
-            borderRadius: '1.25rem',
-            textDecoration: 'none',
-            transition: 'all 0.2s ease',
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.borderColor = 'rgba(6, 78, 59, 0.4)'
-            e.currentTarget.style.transform = 'translateY(-2px)'
-            e.currentTarget.style.boxShadow = '0 8px 24px -4px rgba(0, 0, 0, 0.2)'
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.borderColor = 'rgba(30, 41, 59, 0.6)'
-            e.currentTarget.style.transform = 'none'
-            e.currentTarget.style.boxShadow = 'none'
-          }}
+          <Link
+            href="/create"
+            className="flex flex-col items-center gap-3 p-6 rounded-2xl border border-navy-800/60 bg-navy-900/60 no-underline transition-all hover:-translate-y-0.5 hover:shadow-lg hover:border-sage-800/40"
           >
-            <div style={{
-              width: '3rem',
-              height: '3rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: '0.75rem',
-              background: 'rgba(6, 78, 59, 0.15)',
-            }}>
+            <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-sage-900/15">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6EE7B7" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
               </svg>
             </div>
-            <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#FFFFFF' }}>
+            <span className="text-sm font-semibold text-white">
               Edit Profil
             </span>
-            <span style={{ fontSize: '0.75rem', color: '#64748B', textAlign: 'center' }}>
+            <span className="text-xs text-navy-500 text-center">
               Isi atau lengkapi 22 langkah pengenalan
             </span>
           </Link>
 
           {/* Preview CV */}
-          <Link href="/preview" style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '0.75rem',
-            padding: '1.5rem',
-            background: 'rgba(15, 23, 42, 0.6)',
-            border: '1px solid rgba(30, 41, 59, 0.6)',
-            borderRadius: '1.25rem',
-            textDecoration: 'none',
-            transition: 'all 0.2s ease',
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.borderColor = 'rgba(217, 119, 6, 0.3)'
-            e.currentTarget.style.transform = 'translateY(-2px)'
-            e.currentTarget.style.boxShadow = '0 8px 24px -4px rgba(0, 0, 0, 0.2)'
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.borderColor = 'rgba(30, 41, 59, 0.6)'
-            e.currentTarget.style.transform = 'none'
-            e.currentTarget.style.boxShadow = 'none'
-          }}
+          <Link
+            href="/preview"
+            className="flex flex-col items-center gap-3 p-6 rounded-2xl border border-navy-800/60 bg-navy-900/60 no-underline transition-all hover:-translate-y-0.5 hover:shadow-lg hover:border-gold-700/30"
           >
-            <div style={{
-              width: '3rem',
-              height: '3rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: '0.75rem',
-              background: 'rgba(217, 119, 6, 0.15)',
-            }}>
+            <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-gold-600/15">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FCD34D" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
             </div>
-            <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#FFFFFF' }}>
+            <span className="text-sm font-semibold text-white">
               Preview CV
             </span>
-            <span style={{ fontSize: '0.75rem', color: '#64748B', textAlign: 'center' }}>
+            <span className="text-xs text-navy-500 text-center">
               Lihat tampilan Lembar Taarufmu
             </span>
           </Link>
 
           {/* Download PDF */}
-          <Link href="/preview" style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '0.75rem',
-            padding: '1.5rem',
-            background: 'rgba(15, 23, 42, 0.6)',
-            border: '1px solid rgba(30, 41, 59, 0.6)',
-            borderRadius: '1.25rem',
-            textDecoration: 'none',
-            transition: 'all 0.2s ease',
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.borderColor = 'rgba(30, 41, 59, 0.8)'
-            e.currentTarget.style.transform = 'translateY(-2px)'
-            e.currentTarget.style.boxShadow = '0 8px 24px -4px rgba(0, 0, 0, 0.2)'
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.borderColor = 'rgba(30, 41, 59, 0.6)'
-            e.currentTarget.style.transform = 'none'
-            e.currentTarget.style.boxShadow = 'none'
-          }}
+          <Link
+            href="/preview"
+            className="flex flex-col items-center gap-3 p-6 rounded-2xl border border-navy-800/60 bg-navy-900/60 no-underline transition-all hover:-translate-y-0.5 hover:shadow-lg hover:border-navy-700"
           >
-            <div style={{
-              width: '3rem',
-              height: '3rem',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: '0.75rem',
-              background: 'rgba(30, 41, 59, 0.5)',
-            }}>
+            <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-navy-800/50">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#CBD5E1" strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
               </svg>
             </div>
-            <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#FFFFFF' }}>
+            <span className="text-sm font-semibold text-white">
               Download PDF
             </span>
-            <span style={{ fontSize: '0.75rem', color: '#64748B', textAlign: 'center' }}>
+            <span className="text-xs text-navy-500 text-center">
               Download Lembar Taaruf siap bagikan
             </span>
           </Link>
         </div>
 
         {/* Steps Overview */}
-        <div style={{
-          background: 'rgba(15, 23, 42, 0.6)',
-          border: '1px solid rgba(30, 41, 59, 0.6)',
-          borderRadius: '1.25rem',
-          padding: '1.5rem',
-          marginBottom: '2rem',
-        }}>
-          <h2 style={{ fontSize: '1rem', fontWeight: 700, color: '#F1F5F9', marginBottom: '1rem' }}>
+        <div className="rounded-2xl border border-navy-800/60 bg-navy-900/60 p-6 mb-8">
+          <h2 className="text-base font-bold text-navy-100 mb-4">
             Langkah Pengenalan
           </h2>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
-            gap: '0.5rem',
-          }}>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
             {STEP_DEFINITIONS.map((step) => {
               const isAccessible = plan === 'premium' || !step.isPremiumOnly
               const isCurrentStep = step.step === state.currentStep
@@ -437,43 +269,21 @@ export default function DashboardPage() {
                 <Link
                   key={step.step}
                   href={isAccessible ? `/create` : '#'}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    padding: '0.5rem 0.65rem',
-                    borderRadius: '0.5rem',
-                    fontSize: '0.75rem',
-                    textDecoration: 'none',
-                    color: isAccessible ? '#CBD5E1' : '#475569',
-                    background: isCurrentStep
-                      ? 'rgba(6, 78, 59, 0.15)'
-                      : 'transparent',
-                    border: isCurrentStep
-                      ? '1px solid rgba(6, 78, 59, 0.3)'
-                      : '1px solid transparent',
-                    transition: 'all 0.15s ease',
-                    cursor: isAccessible ? 'pointer' : 'default',
-                  }}
+                  className={[
+                    'flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs no-underline transition-all duration-150',
+                    isAccessible ? 'text-navy-300' : 'text-navy-500 cursor-default',
+                    isCurrentStep
+                      ? 'bg-sage-900/15 border border-sage-900/30'
+                      : 'border border-transparent',
+                  ].join(' ')}
                   title={!isAccessible ? 'Fitur premium — upgrade untuk akses' : step.title}
                 >
-                  <span style={{ fontSize: '0.85rem' }}>{step.icon}</span>
-                  <span style={{
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                  }}>
+                  <span className="text-sm shrink-0">{step.icon}</span>
+                  <span className="truncate">
                     {step.title}
                   </span>
                   {step.isPremiumOnly && plan === 'free' && (
-                    <span style={{
-                      fontSize: '0.55rem',
-                      padding: '0.1rem 0.3rem',
-                      borderRadius: '0.25rem',
-                      background: 'rgba(217, 119, 6, 0.15)',
-                      color: '#FCD34D',
-                      flexShrink: 0,
-                    }}>
+                    <span className="text-2xs px-1 py-0.5 rounded bg-gold-600/15 text-gold-300 shrink-0">
                       PRO
                     </span>
                   )}
@@ -484,33 +294,24 @@ export default function DashboardPage() {
         </div>
 
         {/* Account Info */}
-        <div style={{
-          background: 'rgba(15, 23, 42, 0.4)',
-          border: '1px solid rgba(30, 41, 59, 0.4)',
-          borderRadius: '1.25rem',
-          padding: '1.25rem',
-          marginBottom: '2rem',
-        }}>
-          <h2 style={{ fontSize: '0.9rem', fontWeight: 600, color: '#F1F5F9', marginBottom: '0.75rem' }}>
+        <div className="rounded-2xl border border-navy-800/40 bg-navy-900/40 p-5 mb-8">
+          <h2 className="text-sm font-semibold text-navy-100 mb-3">
             Informasi Akun
           </h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem' }}>
-              <span style={{ color: '#64748B' }}>Email</span>
-              <span style={{ color: '#CBD5E1' }}>{userEmail}</span>
+          <div className="flex flex-col gap-2">
+            <div className="flex justify-between text-xs">
+              <span className="text-navy-500">Email</span>
+              <span className="text-navy-300">{userEmail}</span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem' }}>
-              <span style={{ color: '#64748B' }}>Paket</span>
-              <span style={{
-                color: plan === 'premium' ? '#FCD34D' : '#6EE7B7',
-                fontWeight: 600,
-              }}>
+            <div className="flex justify-between text-xs">
+              <span className="text-navy-500">Paket</span>
+              <span className={`font-semibold ${plan === 'premium' ? 'text-gold-300' : 'text-sage-300'}`}>
                 {plan === 'premium' ? 'NikahReady Pro ✨' : 'Gratis'}
               </span>
             </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem' }}>
-              <span style={{ color: '#64748B' }}>Langkah Tersedia</span>
-              <span style={{ color: '#CBD5E1' }}>
+            <div className="flex justify-between text-xs">
+              <span className="text-navy-500">Langkah Tersedia</span>
+              <span className="text-navy-300">
                 {plan === 'premium'
                   ? `${STEP_DEFINITIONS.length} langkah`
                   : `${STEP_DEFINITIONS.filter(s => !s.isPremiumOnly).length} / ${STEP_DEFINITIONS.length} langkah`
@@ -519,29 +320,15 @@ export default function DashboardPage() {
             </div>
           </div>
           {plan === 'free' && (
-            <button
-              style={{
-                width: '100%',
-                marginTop: '1rem',
-                padding: '0.65rem',
-                background: 'linear-gradient(135deg, #D97706, #F59E0B)',
-                color: 'white',
-                fontSize: '0.8rem',
-                fontWeight: 600,
-                border: 'none',
-                borderRadius: '0.625rem',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-              }}
-            >
+            <button className="w-full mt-4 py-2.5 rounded-xl text-xs font-semibold bg-gradient-to-r from-gold-600 to-gold-500 text-white shadow-gold active:scale-95 transition-all cursor-pointer border-0">
               Upgrade ke NikahReady Pro
             </button>
           )}
         </div>
 
         {/* Footer */}
-        <div style={{ textAlign: 'center', paddingBottom: '2rem' }}>
-          <p style={{ fontSize: '0.7rem', color: '#475569' }}>
+        <div className="text-center pb-8">
+          <p className="text-2xs text-navy-600">
             &copy; {new Date().getFullYear()} NikahReady · Jujur · Bermartabat · Hangat
           </p>
         </div>
@@ -549,65 +336,30 @@ export default function DashboardPage() {
 
       {/* ── Logout Confirmation Modal ─────────────────────── */}
       {showLogoutConfirm && (
-        <div style={{
-          position: 'fixed',
-          inset: 0,
-          zIndex: 100,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: 'rgba(2, 6, 23, 0.8)',
-          backdropFilter: 'blur(4px)',
-        }}
-        onClick={() => setShowLogoutConfirm(false)}
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-navy-950/80 backdrop-blur-sm"
+          onClick={() => setShowLogoutConfirm(false)}
         >
           <div
-            style={{
-              width: '90%',
-              maxWidth: '20rem',
-              background: 'rgba(15, 23, 42, 0.95)',
-              border: '1px solid rgba(30, 41, 59, 0.6)',
-              borderRadius: '1.25rem',
-              padding: '1.5rem',
-            }}
+            className="w-[90%] max-w-80 rounded-2xl border border-navy-800/60 bg-navy-900/95 p-6"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#FFFFFF', marginBottom: '0.5rem' }}>
+            <h3 className="text-base font-bold text-white mb-2">
               Keluar dari NikahReady?
             </h3>
-            <p style={{ fontSize: '0.8rem', color: '#94A3B8', marginBottom: '1.25rem', lineHeight: '1.5' }}>
+            <p className="text-xs text-navy-400 mb-5 leading-relaxed">
               Data profilmu tetap tersimpan. Kamu bisa masuk kembali kapan saja.
             </p>
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <div className="flex gap-2">
               <button
                 onClick={() => setShowLogoutConfirm(false)}
-                style={{
-                  flex: 1,
-                  padding: '0.6rem',
-                  background: 'transparent',
-                  border: '1px solid rgba(100, 116, 139, 0.4)',
-                  color: '#94A3B8',
-                  fontSize: '0.8rem',
-                  fontWeight: 500,
-                  borderRadius: '0.625rem',
-                  cursor: 'pointer',
-                }}
+                className="flex-1 py-2.5 px-4 rounded-xl bg-transparent border border-navy-600/40 text-navy-400 text-xs font-medium cursor-pointer transition-all hover:border-navy-500 active:scale-95"
               >
                 Batal
               </button>
               <button
                 onClick={handleLogout}
-                style={{
-                  flex: 1,
-                  padding: '0.6rem',
-                  background: 'rgba(220, 38, 38, 0.15)',
-                  border: '1px solid rgba(220, 38, 38, 0.3)',
-                  color: '#FCA5A5',
-                  fontSize: '0.8rem',
-                  fontWeight: 600,
-                  borderRadius: '0.625rem',
-                  cursor: 'pointer',
-                }}
+                className="flex-1 py-2.5 px-4 rounded-xl bg-red-900/15 border border-red-800/30 text-red-300 text-xs font-semibold cursor-pointer transition-all hover:bg-red-900/25 active:scale-95"
               >
                 Keluar
               </button>

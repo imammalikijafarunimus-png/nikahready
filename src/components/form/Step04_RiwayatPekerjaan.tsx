@@ -15,7 +15,6 @@ import {
 } from '@/components/ui/FormFields'
 import type { RiwayatPekerjaanItem } from '@/types'
 
-// ── Default item factory ──────────────────────────────────────
 function createDefaultPekerjaan(): Omit<RiwayatPekerjaanItem, 'id' | 'urutan'> {
   return {
     nama_perusahaan:     '',
@@ -27,7 +26,6 @@ function createDefaultPekerjaan(): Omit<RiwayatPekerjaanItem, 'id' | 'urutan'> {
   }
 }
 
-// ── Summary renderer (collapsed state) ───────────────────────
 function renderSummary(item: RiwayatPekerjaanItem, _index: number) {
   const yearRange = item.is_masih_aktif
     ? `${item.tahun_mulai || '?'} – sekarang`
@@ -55,7 +53,6 @@ function renderSummary(item: RiwayatPekerjaanItem, _index: number) {
   )
 }
 
-// ── Form renderer (expanded state) ───────────────────────────
 function renderForm(
   item: RiwayatPekerjaanItem,
   onChange: (field: keyof RiwayatPekerjaanItem, value: RiwayatPekerjaanItem[keyof RiwayatPekerjaanItem]) => void
@@ -89,7 +86,6 @@ function renderForm(
         showCount
       />
 
-      {/* Toggle: masih aktif */}
       <ToggleSwitch
         label="Masih bekerja di sini"
         description="Aktifkan jika ini adalah pekerjaan saat ini"
@@ -97,7 +93,6 @@ function renderForm(
         onChange={(v) => onChange('is_masih_aktif', v)}
       />
 
-      {/* Tahun masuk & keluar */}
       <div className="grid grid-cols-2 gap-3">
         <NumberInput
           label="Tahun Mulai"
@@ -127,13 +122,12 @@ function renderForm(
   )
 }
 
-// ── Main Component ────────────────────────────────────────────
 export function Step04_RiwayatPekerjaan() {
   const { items, addItem, removeItem, updateItem } =
     useArraySection('riwayatPekerjaan')
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5"> {/* ← was space-y-4 */}
       {/* Intro card */}
       <div className="flex gap-3 p-3 rounded-xl bg-navy-900/60 border border-navy-800">
         <span className="text-lg flex-shrink-0">💼</span>
@@ -159,7 +153,6 @@ export function Step04_RiwayatPekerjaan() {
         onUpdate={updateItem}
       />
 
-      {/* Tips untuk fresh graduate */}
       {items.length === 0 && (
         <div className="flex gap-3 p-3 rounded-xl bg-gold-900/20 border border-gold-800/30">
           <span className="text-lg flex-shrink-0">🎓</span>

@@ -14,133 +14,115 @@ import {
   SelectInput,
 } from '@/components/ui/FormFields'
 import { OPTIONS_HUBUNGAN_KELUARGA } from '@/lib/constants'
-import type { AnggotaKeluargaItem } from '@/types'
+import type { AnggotaKeluargaItem, HubunganKeluarga } from '@/types'
 
-// ── Default item factory ──────────────────────────────────────
-function createDefaultAnggotaKeluarga(): Omit<AnggotaKeluargaItem, 'id' | 'urutan'> {
-  return {
-    hubungan: '',
-    nama: '',
-    pekerjaan: '',
-    pendidikan: '',
-    keterangan: '',
-  }
-}
-
-// ── Summary renderer (collapsed state) ───────────────────────
-function renderSummary(item: AnggotaKeluargaItem, _index: number) {
-  return (
-    <div className="flex flex-col gap-0.5 min-w-0">
-      <span className="font-medium text-white truncate">
-        {item.nama || (
-          <span className="text-navy-500 italic">Belum diisi</span>
-        )}
+/**
+ * Helper untuk merender ringkasan (collapsed state)
+ */
+const renderSummary = (item: AnggotaKeluargaItem) => (
+  <div className="flex flex-col gap-0.5">
+    <span className="font-medium text-white truncate">
+      {item.nama || <span className="text-navy-500 italic font-normal">Nama belum diisi</span>}
+    </span>
+    <div className="flex items-center gap-1.5 text-xs text-navy-400">
+      <span className="px-1.5 py-0.5 rounded bg-sage-900/40 text-sage-400 border border-sage-800/50">
+        {item.hubungan}
       </span>
-      <span className="text-xs text-navy-400 truncate">
-        {item.hubungan && (
-          <span className="text-sage-400">{item.hubungan}</span>
-        )}
-        {item.hubungan && item.nama && (
-          <span className="mx-1 text-navy-600">·</span>
-        )}
-        {item.pekerjaan && <span>{item.pekerjaan}</span>}
-      </span>
+      {item.pekerjaan && (
+        <>
+          <span className="text-navy-600">•</span>
+          <span className="truncate">{item.pekerjaan}</span>
+        </>
+      )}
     </div>
-  )
-}
+  </div>
+)
 
-// ── Form renderer (expanded state) ───────────────────────────
-function renderForm(
+/**
+ * Helper untuk merender form input (expanded state)
+ */
+const renderForm = (
   item: AnggotaKeluargaItem,
-  onChange: (field: keyof AnggotaKeluargaItem, value: AnggotaKeluargaItem[keyof AnggotaKeluargaItem]) => void
-) {
-  return (
-    <div className="space-y-3">
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <SelectInput
-          label="Hubungan"
-          value={item.hubungan}
-          onChange={(v) => onChange('hubungan', v)}
-          options={OPTIONS_HUBUNGAN_KELUARGA}
-          placeholder="Pilih hubungan…"
-          required
-        />
-        <TextInput
-          label="Nama Lengkap"
-          value={item.nama}
-          onChange={(v) => onChange('nama', v)}
-          placeholder="Nama anggota keluarga"
-          required
-        />
-      </div>
-
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <TextInput
-          label="Pekerjaan"
-          value={item.pekerjaan}
-          onChange={(v) => onChange('pekerjaan', v)}
-          placeholder="PNS, Wiraswasta, IRT, dll"
-        />
-        <TextInput
-          label="Pendidikan Terakhir"
-          value={item.pendidikan}
-          onChange={(v) => onChange('pendidikan', v)}
-          placeholder="SMA, S1, S2, dll"
-        />
-      </div>
-
+  onChange: (field: keyof AnggotaKeluargaItem, value: any) => void
+) => (
+  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <SelectInput
+      label="Hubungan Keluarga"
+      value={item.hubungan}
+      onChange={(val) => onChange('hubungan', val as HubunganKeluarga)}
+      options={OPTIONS_HUBUNGAN_KELUARGA}
+      placeholder="Pilih hubungan..."
+    />
+    <TextInput
+      label="Nama Lengkap"
+      value={item.nama}
+      onChange={(val) => onChange('nama', val)}
+      placeholder="Contoh: Budi Santoso"
+    />
+    <TextInput
+      label="Pendidikan Terakhir"
+      value={item.pendidikan || ''}
+      onChange={(val) => onChange('pendidikan', val)}
+      placeholder="Contoh: S1 Hukum"
+    />
+    <TextInput
+      label="Pekerjaan"
+      value={item.pekerjaan || ''}
+      onChange={(val) => onChange('pekerjaan', val)}
+      placeholder="Contoh: Karyawan Swasta"
+    />
+    <div className="sm:col-span-2">
       <TextArea
-        label="Keterangan Tambahan"
-        value={item.keterangan}
-        onChange={(v) => onChange('keterangan', v)}
-        placeholder="Informasi tambahan (opsional) — status kesehatan, tempat tinggal, dll"
-        rows={3}
-        maxLength={300}
-        showCount
+        label="Keterangan (Opsional)"
+        value={item.keterangan || ''}
+        onChange={(val) => onChange('keterangan', val)}
+        placeholder="Informasi tambahan (domisili, hobi, atau status khusus)"
+        rows={2}
       />
     </div>
-  )
-}
+  </div>
+)
 
-// ── Main Component ────────────────────────────────────────────
 export function Step14_AnggotaKeluarga() {
-  const { items, addItem, removeItem, updateItem } =
-    useArraySection('anggotaKeluarga')
+  const { items, addItem, removeItem, updateItem } = useArraySection('anggotaKeluarga')
 
   return (
-    <div className="space-y-4">
-      {/* Intro card */}
-      <div className="flex gap-3 p-3 rounded-xl bg-navy-900/60 border border-navy-800">
-        <span className="text-lg flex-shrink-0">👨‍👩‍👧‍👦</span>
-        <p className="text-xs text-navy-400 leading-relaxed">
-          Struktur keluarga penting untuk mengetahui <strong className="text-white">latar belakang seseorang</strong>.
-          Sertakan orang tua, saudara kandung, dan wali jika berbeda dengan ayah/ibu kandung.
-        </p>
+    <div className="space-y-6">
+      {/* Edu Info Box */}
+      <div className="p-4 rounded-2xl bg-navy-900/40 border border-navy-800/60 flex gap-3">
+        <span className="text-xl">👨‍👩‍👧‍👦</span>
+        <div className="space-y-1">
+          <p className="text-sm font-medium text-white">Informasi Keluarga</p>
+          <p className="text-xs text-navy-400 leading-relaxed">
+            Berikan gambaran singkat mengenai keluarga inti Anda (Ayah, Ibu, dan Saudara). 
+            Ini membantu calon pasangan memahami lingkungan tempat Anda tumbuh.
+          </p>
+        </div>
       </div>
 
       <DynamicList<AnggotaKeluargaItem>
-        items={items}
-        sectionTitle="Anggota Keluarga"
+        sectionTitle="Daftar Keluarga Inti"
         itemLabel="Anggota Keluarga"
-        emptyIcon="👨‍👩‍👧‍👦"
-        emptyMessage="Belum ada data anggota keluarga. Tambahkan anggota keluargamu."
-        maxItems={15}
-        createDefaultItem={createDefaultAnggotaKeluarga}
+        items={items as AnggotaKeluargaItem[]}
+        emptyIcon="👪"
+        emptyMessage="Anda belum menambahkan daftar keluarga. Mulai dengan menambahkan Ayah atau Ibu."
+        
+        // Sesuai dengan prop createDefaultItem di DynamicList.tsx
+        createDefaultItem={() => ({
+          hubungan: 'Lainnya',
+          nama: '',
+          pekerjaan: '',
+          pendidikan: '',
+          keterangan: '',
+        })}
+
         renderSummary={renderSummary}
         renderForm={renderForm}
+        
         onAdd={addItem}
         onRemove={removeItem}
         onUpdate={updateItem}
       />
-
-      {/* Tips tentang wali */}
-      <div className="flex gap-3 p-3 rounded-xl bg-gold-900/20 border border-gold-800/30">
-        <span className="text-lg flex-shrink-0">💡</span>
-        <p className="text-xs text-gold-400/80 leading-relaxed">
-          <strong className="text-gold-400">Sertakan wali</strong> jika berbeda dengan ayah/ibu kandung — wali adalah
-          pihak yang bertanggung jawab dalam proses ta&apos;aruf. Ini penting menurut syariat Islam.
-        </p>
-      </div>
     </div>
   )
 }

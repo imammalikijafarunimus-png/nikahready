@@ -22,7 +22,6 @@ export function Step02_FisikKesehatan() {
   const dispatch = useFormDispatch()
   const data     = state.fisikKesehatan
 
-  // Type-safe field updater
   function update<K extends keyof FisikKesehatan>(
     field: K,
     value: FisikKesehatan[K]
@@ -36,7 +35,7 @@ export function Step02_FisikKesehatan() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5"> {/* ← was space-y-4 */}
       {/* ── Islamic guidance ──────────────────────────────────── */}
       <div className="text-center py-3">
         <p className="font-arabic text-xl text-gold-500">
@@ -49,7 +48,7 @@ export function Step02_FisikKesehatan() {
 
       {/* ── 1. Data Fisik ─────────────────────────────────────── */}
       <SectionCard title="Data Fisik" icon="💪">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2"> {/* ← was grid-cols-2 */}
           <NumberInput
             label="Tinggi Badan"
             value={data.tinggi_badan}

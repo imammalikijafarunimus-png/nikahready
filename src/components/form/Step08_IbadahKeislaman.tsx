@@ -43,7 +43,7 @@ export function Step08_IbadahKeislaman() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-5">
       {/* ── Pembuka Arabic ─────────────────────────────────── */}
       <div className="text-center py-3">
         <p className="font-arabic text-xl text-gold-500">
@@ -58,61 +58,69 @@ export function Step08_IbadahKeislaman() {
 
       {/* ── 1. Amalan Ibadah ─────────────────────────────── */}
       <SectionCard title="Amalan Ibadah" icon="🕌">
-        <SelectInput
-          label="Mazhab"
-          value={data.mazhab}
-          onChange={(v) => update('mazhab', v)}
-          options={OPTIONS_MAZHAB}
-          placeholder="Pilih mazhab…"
-          hint="Mayoritas umat Islam Indonesia mengikuti mazhab Syafii"
-        />
-        <TextInput
-          label="Cara Berpakaian"
-          value={data.cara_berpakaian}
-          onChange={(v) => update('cara_berpakaian', v)}
-          placeholder="Menutup aurat, longgar, tidak ketat, dll"
-          maxLength={200}
-          hint="Deskripsikan cara kamu berpakaian sehari-hari"
-        />
-        <RadioGroup
-          label="Kualitas Shalat Fardhu"
-          value={data.shalat_fardhu}
-          onChange={(v) => update('shalat_fardhu', v as typeof data.shalat_fardhu)}
-          options={OPTIONS_SHALAT_FARDHU}
-          layout="vertical"
-        />
-        <TextInput
-          label="Shalat Sunnah"
-          value={data.shalat_sunnah}
-          onChange={(v) => update('shalat_sunnah', v)}
-          placeholder="Tahajud, Dhuha, Rawatib, dll"
-          maxLength={200}
-          hint="Sebutkan shalat sunnah yang rutin kamu kerjakan"
-        />
+        <div className="space-y-5">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <SelectInput
+              label="Mazhab"
+              value={data.mazhab}
+              onChange={(v) => update('mazhab', v)}
+              options={OPTIONS_MAZHAB}
+              placeholder="Pilih mazhab…"
+              hint="Mayoritas umat Islam Indonesia mengikuti mazhab Syafii"
+            />
+            <TextInput
+              label="Cara Berpakaian"
+              value={data.cara_berpakaian}
+              onChange={(v) => update('cara_berpakaian', v)}
+              placeholder="Menutup aurat, longgar, tidak ketat, dll"
+              maxLength={200}
+              hint="Deskripsikan cara kamu berpakaian sehari-hari"
+            />
+          </div>
+          
+          <RadioGroup
+            label="Kualitas Shalat Fardhu"
+            value={data.shalat_fardhu}
+            onChange={(v) => update('shalat_fardhu', v as typeof data.shalat_fardhu)}
+            options={OPTIONS_SHALAT_FARDHU}
+            layout="vertical"
+          />
+          
+          <TextInput
+            label="Shalat Sunnah"
+            value={data.shalat_sunnah}
+            onChange={(v) => update('shalat_sunnah', v)}
+            placeholder="Tahajud, Dhuha, Rawatib, dll"
+            maxLength={200}
+            hint="Sebutkan shalat sunnah yang rutin kamu kerjakan"
+          />
+        </div>
       </SectionCard>
 
       {/* ── 2. Al-Quran & Kajian ─────────────────────────── */}
       <SectionCard title="Al-Quran & Kajian" icon="📖">
-        <ToggleSwitch
-          label="Membaca Al-Quran secara rutin"
-          description="Aktifkan jika kamu memiliki kebiasaan membaca Al-Quran setiap hari"
-          checked={data.tilawah_rutin}
-          onChange={(v) => update('tilawah_rutin', v)}
-        />
-        <TextInput
-          label="Hafalan Al-Quran"
-          value={data.hafalan_quran}
-          onChange={(v) => update('hafalan_quran', v)}
-          placeholder="Contoh: Juz 30, 5 Juz, Surat Al-Baqarah, dll"
-          maxLength={200}
-          hint="Jujur tentang hafalan — yang penting konsistensi, bukan jumlah"
-        />
-        <ToggleSwitch
-          label="Mengikuti kajian rutin"
-          description="Aktifkan jika kamu rutin menghadiri kajian (online/offline)"
-          checked={data.kajian_rutin}
-          onChange={(v) => update('kajian_rutin', v)}
-        />
+        <div className="space-y-5">
+          <ToggleSwitch
+            label="Membaca Al-Quran secara rutin"
+            description="Aktifkan jika kamu memiliki kebiasaan membaca Al-Quran setiap hari"
+            checked={data.tilawah_rutin}
+            onChange={(v) => update('tilawah_rutin', v)}
+          />
+          <TextInput
+            label="Hafalan Al-Quran"
+            value={data.hafalan_quran}
+            onChange={(v) => update('hafalan_quran', v)}
+            placeholder="Contoh: Juz 30, 5 Juz, Surat Al-Baqarah, dll"
+            maxLength={200}
+            hint="Jujur tentang hafalan — yang penting konsistensi, bukan jumlah"
+          />
+          <ToggleSwitch
+            label="Mengikuti kajian rutin"
+            description="Aktifkan jika kamu rutin menghadiri kajian (online/offline)"
+            checked={data.kajian_rutin}
+            onChange={(v) => update('kajian_rutin', v)}
+          />
+        </div>
       </SectionCard>
 
       {/* ── 3. Cerita Ibadah ─────────────────────────────── */}
@@ -129,7 +137,7 @@ export function Step08_IbadahKeislaman() {
         />
       </SectionCard>
 
-      {/* ── Tips ──────────────────────────────────────────── */}
+      {/* Tips */}
       <div className="flex gap-3 p-3 rounded-xl bg-navy-900/60 border border-navy-800">
         <span className="text-lg flex-shrink-0">💡</span>
         <p className="text-xs text-navy-400 leading-relaxed">

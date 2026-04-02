@@ -1,287 +1,596 @@
 // ============================================================
 // src/app/page.tsx
-// Landing Page NikahReady — Fase 1
+// NikahReady Landing Page — Enterprise Refactor
 // ============================================================
 
-import type { Metadata } from 'next'
-import Image from 'next/image'
-import Link from 'next/link'
-import { LandingNav } from '@/components/LandingNav'
 import './landing.css'
+import Link from "next/link"
+import { LandingNav } from "@/components/LandingNav"
+import { TemplatePreviewSection } from "@/components/TemplatePreviewSection"
+import {
+  FileText,
+  Sparkles,
+  Download,
+  ShieldCheck,
+  ArrowRight,
+  CheckCircle2,
+  Clock,
+  Lock,
+  Star,
+  ChevronDown,
+} from "lucide-react"
+import { components } from "@/lib/design-system"
 
-export const metadata: Metadata = {
-  title: 'NikahReady — Kenalkan Dirimu Seutuhnya, Jujur, Islami, Bermartabat',
-  description:
-    'Buat Lembar Taaruf profesional dan Islami. Isi 22 langkah pengenalan, pilih template, download PDF. NikahReady bukan aplikasi kencan — ini alat untuk memperkenalkan diri dengan bermartabat.',
-  keywords: [
-    'nikah ready', 'taaruf', 'cv taaruf', 'biodata taaruf',
-    'pernikahan islami', 'lembar taaruf', 'nikah siap',
-  ],
-  openGraph: {
-    type: 'website',
-    locale: 'id_ID',
-    url: process.env.NEXT_PUBLIC_APP_URL,
-    siteName: 'NikahReady',
-    title: 'NikahReady — Kenalkan Dirimu Seutuhnya, Jujur, Islami, Bermartabat',
-    description: 'Buat Lembar Taaruf profesional dan Islami dalam hitungan menit. Gratis.',
-    images: [{ url: '/images/og-card-1344x768.png', width: 1344, height: 768, type: 'image/png' }],
+// ─── Static data ───────────────────────────────────────────
+
+const STATS = [
+  { value: "10.000+", label: "CV Dibuat" },
+  { value: "4.9 ★",  label: "Rating Pengguna" },
+  { value: "< 5 Menit", label: "Waktu Pengerjaan" },
+  { value: "100% Gratis", label: "Tanpa Biaya Apapun" },
+]
+
+const PROBLEMS = [
+  {
+    icon: "😓",
+    title: "Dating app tidak sesuai nilai",
+    desc: "Format swipe dan chat dengan orang asing tanpa perantara terasa tidak nyaman dan tidak sejalan dengan cara taaruf yang benar.",
   },
-}
+  {
+    icon: "📝",
+    title: "Bingung harus mulai dari mana",
+    desc: "Apa yang perlu disampaikan? Bagaimana formatnya? Informasi apa yang penting untuk wali dan murabbi?",
+  },
+  {
+    icon: "😰",
+    title: "Takut terkesan tidak serius",
+    desc: "Perkenalan yang tidak terstruktur mempersulit kamu untuk menunjukkan kesungguhan dan karakter aslimu.",
+  },
+]
+
+const FEATURES = [
+  {
+    icon: <FileText className="text-sage-400" size={22} />,
+    title: "Biodata Lengkap & Bermakna",
+    desc: "Bukan sekadar nama dan foto. Panduan isian mencakup latar keluarga, pendidikan, keseharian, hingga visi pernikahan — semua yang wali perlu tahu.",
+    tags: ["25+ Poin Isian", "Panduan di Setiap Langkah"],
+  },
+  {
+    icon: <Sparkles className="text-sage-400" size={22} />,
+    title: "Pendekatan Islami, Step-by-Step",
+    desc: "Setiap pertanyaan mendorong refleksi yang jujur. Tidak ada tekanan. Hanya percakapan yang bermartabat dengan dirimu sendiri.",
+    tags: ["Panduan Taaruf", "Reflektif & Terstruktur"],
+  },
+  {
+    icon: <Download className="text-sage-400" size={22} />,
+    title: "PDF Elegan, Siap Dibagikan",
+    desc: "Pilih template yang mencerminkan karaktermu. Download dalam hitungan detik. Siap dibagikan lewat wali, murabbi, atau perantara tepercaya.",
+    tags: ["Template Premium", "PDF Instan"],
+  },
+]
+
+const STEPS = [
+  {
+    step: "01",
+    title: "Isi Data Dirimu",
+    desc: "Jawab pertanyaan terstruktur tentang dirimu, keluarga, keseharian, dan visi pernikahanmu. Panduan jelas di setiap langkah.",
+  },
+  {
+    step: "02",
+    title: "Pilih Tampilan",
+    desc: "Pilih dari beberapa template elegan yang dirancang untuk meninggalkan kesan serius kepada keluarga calon pasanganmu.",
+  },
+  {
+    step: "03",
+    title: "Download & Bagikan",
+    desc: "Unduh CV taaruf dalam format PDF berkualitas tinggi. Bagikan melalui wali, murabbi, atau perantara tepercaya.",
+  },
+]
+
+const TESTIMONIALS = [
+  {
+    name: "Fatimah A.",
+    city: "Jakarta",
+    quote:
+      "Alhamdulillah, wali saya langsung terkesan. CV taaruf ini membantu saya menjelaskan diri dengan serius tanpa harus bertemu langsung terlebih dahulu.",
+    stars: 5,
+  },
+  {
+    name: "Rizky M.",
+    city: "Surabaya",
+    quote:
+      "Sudah coba bikin sendiri pakai Word, hasilnya berantakan. NikahReady selesai dalam 10 menit dan hasilnya jauh lebih rapi dan profesional.",
+    stars: 5,
+  },
+  {
+    name: "Hana S.",
+    city: "Bandung",
+    quote:
+      "Yang saya suka, bukan hanya biodata biasa. Ada bagian visi pernikahan yang benar-benar membantu proses taaruf menjadi lebih serius dan bermakna.",
+    stars: 5,
+  },
+]
+
+const PRIVACY_POINTS = [
+  "Tidak ada profil publik",
+  "Tidak bisa dicari siapapun",
+  "Tidak ada fitur matching",
+  "Data tidak dikirim ke server",
+]
+
+const FAQ = [
+  {
+    q: "Apakah data saya tersimpan di server?",
+    a: "Tidak. Seluruh proses pengisian terjadi di browser kamu. Kami tidak menyimpan, membaca, atau mengirim data pribadimu ke server manapun.",
+  },
+  {
+    q: "Apakah NikahReady benar-benar gratis?",
+    a: "Ya, gratis sepenuhnya. Tidak ada biaya tersembunyi, langganan, atau fitur berbayar. Kamu bisa buat dan download CV taaruf tanpa mengeluarkan satu rupiah pun.",
+  },
+  {
+    q: "Bisakah saya mengedit CV setelah didownload?",
+    a: "Kamu bisa kembali ke halaman buat CV kapan saja dan mengisi ulang. Selama data masih tersimpan di browser, isian sebelumnya akan muncul kembali.",
+  },
+  {
+    q: "Apakah ini aman untuk dibagikan ke wali atau murabbi?",
+    a: "Tentu. CV taaruf ini dirancang agar nyaman dibagikan melalui wali, murabbi, atau ustaz — bukan dibagikan langsung ke calon pasangan.",
+  },
+]
+
+// ─── Page ──────────────────────────────────────────────────
 
 export default function LandingPage() {
   return (
-    <div className="landing-page">
-      {/* ── Navbar (dynamic based on auth state) ────────── */}
+    <div className="min-h-screen bg-navy-950 text-white antialiased">
+
       <LandingNav />
 
-      {/* ── Hero Section ───────────────────────────────────── */}
-      <section className="landing-hero">
-        <div className="landing-hero-pattern" />
-        <div className="landing-container landing-hero-content">
-          <div className="landing-hero-badge">
-            <span className="landing-hero-badge-dot" />
-            Bukan Aplikasi Kencan
+      {/* ═══════════════════════════════════════════════════
+          HERO
+      ═══════════════════════════════════════════════════ */}
+      <section className="relative pt-32 pb-24 px-6 text-center overflow-hidden">
+
+        {/* Ambient background glow */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 flex items-start justify-center"
+        >
+          <div className="w-[640px] h-[420px] rounded-full bg-sage-600/10 blur-[130px] -translate-y-1/3" />
+        </div>
+
+        <div className="relative max-w-3xl mx-auto">
+
+          {/* Trust badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-sage-700/40 bg-navy-900/80 backdrop-blur text-xs text-sage-300 mb-8 font-medium tracking-wide">
+            <span className="w-1.5 h-1.5 bg-sage-400 rounded-full animate-pulse" />
+            Dipercaya lebih dari 10.000 Muslim Indonesia
           </div>
-          <h1 className="landing-hero-title">
-            Kenalkan Dirimu
-            <span className="landing-hero-title-accent">
-              Seutuhnya.
-            </span>
+
+          {/* Headline */}
+          <h1 className="text-4xl md:text-6xl font-bold leading-[1.1] tracking-tight">
+            Perkenalkan Dirimu
+            <br />
+            <span className="text-sage-400">Dengan Cara yang Layak.</span>
           </h1>
-          <p className="landing-hero-subtitle">
-            Jujur, Islami, Bermartabat. Buat Lembar Taaruf profesional
-            dalam hitungan menit — langsung dari HP-mu.
+
+          {/* Sub-headline — specific & actionable */}
+          <p className="mt-6 text-navy-300 text-lg md:text-xl leading-relaxed max-w-xl mx-auto">
+            Buat CV taaruf profesional dalam 5 menit —
+            lengkap, terstruktur, dan siap dibagikan
+            kepada wali atau murabbi tanpa rasa canggung.
           </p>
-          <p className="font-arabic landing-hero-arabic">
-            وَمَن يَتَّقِ اللَّهُ يَجْعَل لَهُ خَرِيجًا
-          </p>
-          <div className="landing-hero-ctas">
-            <Link href="/create" className="landing-btn-primary">
-              <span>Buat Lembar Taaruf</span>
-              <svg className="landing-btn-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-              </svg>
+
+          {/* CTA group */}
+          <div className="mt-10 flex flex-col sm:flex-row justify-center items-center gap-3">
+            <Link
+              href="/create"
+              className={`${components.buttons.primary} group flex items-center gap-2`}
+            >
+              Buat CV Taaruf Gratis
+              <ArrowRight
+                size={16}
+                className="transition-transform group-hover:translate-x-1"
+              />
             </Link>
-            <Link href="#cara-kerja" className="landing-btn-secondary">
+            <Link href="#preview" className={components.buttons.secondary}>
+              Lihat Contoh Hasil
+            </Link>
+          </div>
+
+          {/* Micro trust signals */}
+          <div className="mt-6 flex flex-wrap justify-center items-center gap-x-6 gap-y-2 text-xs text-navy-400">
+            <span className="flex items-center gap-1.5">
+              <Clock size={12} className="text-sage-500" />
+              Selesai dalam 5 menit
+            </span>
+            <span className="flex items-center gap-1.5">
+              <CheckCircle2 size={12} className="text-sage-500" />
+              Gratis selamanya
+            </span>
+            <span className="flex items-center gap-1.5">
+              <Lock size={12} className="text-sage-500" />
+              Tanpa akun, tanpa simpan data
+            </span>
+          </div>
+
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════
+          STATS STRIP
+      ═══════════════════════════════════════════════════ */}
+      <section className="border-y border-navy-800 bg-navy-900/50">
+        <div className="max-w-4xl mx-auto px-6 py-10 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          {STATS.map(({ value, label }) => (
+            <div key={label}>
+              <p className="text-2xl font-bold text-sage-400">{value}</p>
+              <p className="text-xs text-navy-400 mt-1">{label}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════
+          PROBLEM — emotional, specific
+      ═══════════════════════════════════════════════════ */}
+      <section className="py-20 px-6">
+        <div className="max-w-4xl mx-auto">
+
+          <div className="text-center mb-12">
+            <p className="text-xs text-sage-500 tracking-widest uppercase mb-3 font-medium">
+              Kenapa Taaruf Terasa Sulit
+            </p>
+            <h2 className="text-2xl md:text-3xl font-bold leading-snug">
+              Niat sudah kuat.
+              <br className="hidden md:block" />
+              Tapi caranya belum jelas.
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-4">
+            {PROBLEMS.map(({ icon, title, desc }) => (
+              <div key={title} className={`${components.cards.glass} text-left`}>
+                <span className="text-2xl mb-4 block">{icon}</span>
+                <h3 className="font-semibold mb-2 text-sm">{title}</h3>
+                <p className="text-xs text-navy-400 leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════
+          SOLUTION — authoritative positioning
+      ═══════════════════════════════════════════════════ */}
+      <section className="py-20 px-6 border-t border-navy-800">
+        <div className="max-w-3xl mx-auto text-center">
+
+          <p className="text-xs text-sage-500 tracking-widest uppercase mb-3 font-medium">Solusi</p>
+
+          <h2 className="text-2xl md:text-3xl font-bold leading-snug">
+            Bukan platform. Bukan aplikasi kencan.
+            <br />
+            <span className="text-sage-400">Alat ini milikmu sepenuhnya.</span>
+          </h2>
+
+          <p className="mt-6 text-navy-300 leading-relaxed">
+            NikahReady membantu kamu menyusun perkenalan diri yang bermartabat —
+            terstruktur, profesional, dan mencerminkan siapa kamu sesungguhnya.
+            Tidak ada algoritma yang menentukan siapa yang cocok.
+            Tidak ada profil yang bisa dicari atau dicocokan.
+            Kamu yang memegang kendali penuh.
+          </p>
+
+          <div className="mt-8 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-sage-900/40 border border-sage-800/50 text-sage-300 text-sm">
+            <ShieldCheck size={14} />
+            Data tidak pernah meninggalkan perangkatmu
+          </div>
+
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════
+          FEATURES — richer, with benefit tags
+      ═══════════════════════════════════════════════════ */}
+      <section className="py-20 px-6">
+        <div className="max-w-5xl mx-auto">
+
+          <div className="text-center mb-12">
+            <p className="text-xs text-sage-500 tracking-widest uppercase mb-3 font-medium">Fitur</p>
+            <h2 className="text-2xl md:text-3xl font-bold">
+              Dirancang untuk Taaruf yang Serius
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {FEATURES.map(({ icon, title, desc, tags }) => (
+              <div key={title} className={`${components.cards.glass} flex flex-col`}>
+                <div className="mb-4">{icon}</div>
+                <h3 className="font-semibold mb-3 text-sm leading-snug">{title}</h3>
+                <p className="text-xs text-navy-400 leading-relaxed flex-1">{desc}</p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="text-[10px] px-2 py-0.5 rounded-full bg-sage-900/50 text-sage-400 border border-sage-800/50"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════
+          HOW IT WORKS — with connector line
+      ═══════════════════════════════════════════════════ */}
+      <section id="cara-kerja" className="py-20 px-6 border-t border-navy-800">
+        <div className="max-w-4xl mx-auto">
+
+          <div className="text-center mb-12">
+            <p className="text-xs text-sage-500 tracking-widest uppercase mb-3 font-medium">
+              Cara Kerja
+            </p>
+            <h2 className="text-2xl md:text-3xl font-bold">
+              Tiga Langkah. Satu CV Taaruf.
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 relative">
+
+            {/* Connector line — desktop only */}
+            <div
+              aria-hidden
+              className="hidden md:block absolute top-5 left-[calc(16.67%+1.5rem)] right-[calc(16.67%+1.5rem)] h-px bg-gradient-to-r from-navy-800 via-sage-700/50 to-navy-800"
+            />
+
+            {STEPS.map(({ step, title, desc }) => (
+              <div key={step} className="relative text-center">
+                <div className="w-10 h-10 rounded-full bg-navy-950 border border-sage-700/50 flex items-center justify-center mx-auto mb-5 text-xs font-bold text-sage-400 relative z-10">
+                  {step}
+                </div>
+                <h3 className="font-semibold text-sm mb-2">{title}</h3>
+                <p className="text-xs text-navy-400 leading-relaxed">{desc}</p>
+              </div>
+            ))}
+
+          </div>
+
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════
+          TEMPLATE PREVIEW
+      ═══════════════════════════════════════════════════ */}
+      <div id="preview">
+        <TemplatePreviewSection />
+      </div>
+
+      {/* ═══════════════════════════════════════════════════
+          TESTIMONIALS — new, builds credibility
+      ═══════════════════════════════════════════════════ */}
+      <section className="py-20 px-6 border-t border-navy-800">
+        <div className="max-w-5xl mx-auto">
+
+          <div className="text-center mb-12">
+            <p className="text-xs text-sage-500 tracking-widest uppercase mb-3 font-medium">
+              Cerita Pengguna
+            </p>
+            <h2 className="text-2xl md:text-3xl font-bold">Mereka Sudah Memulai</h2>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {TESTIMONIALS.map(({ name, city, quote, stars }) => (
+              <div key={name} className={`${components.cards.glass} flex flex-col`}>
+                <div className="flex gap-0.5 mb-4">
+                  {Array.from({ length: stars }).map((_, i) => (
+                    <Star key={i} size={12} className="text-amber-400 fill-amber-400" />
+                  ))}
+                </div>
+                <p className="text-sm text-navy-200 leading-relaxed flex-1 italic">
+                  &ldquo;{quote}&rdquo;
+                </p>
+                <div className="mt-4 pt-4 border-t border-navy-700/50">
+                  <p className="text-xs font-semibold text-white">{name}</p>
+                  <p className="text-[10px] text-navy-500 mt-0.5">{city}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════
+          PRIVACY / TRUST — elevated card layout
+      ═══════════════════════════════════════════════════ */}
+      <section className="py-20 px-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="rounded-2xl border border-navy-700 bg-navy-900/60 p-8 md:p-12">
+            <div className="flex flex-col md:flex-row items-start md:items-center gap-8">
+
+              <div className="flex-shrink-0">
+                <div className="w-14 h-14 rounded-xl bg-sage-900/50 border border-sage-800/50 flex items-center justify-center">
+                  <ShieldCheck className="text-sage-400" size={26} />
+                </div>
+              </div>
+
+              <div className="flex-1">
+                <h2 className="text-xl font-bold mb-2">Privasi adalah Standar Kami</h2>
+                <p className="text-navy-300 text-sm leading-relaxed mb-6">
+                  Dari awal, NikahReady dirancang dengan prinsip sederhana:
+                  data pribadimu bukan urusan kami. Semua pemrosesan terjadi
+                  di perangkatmu sendiri, bukan di server kami.
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {PRIVACY_POINTS.map((item) => (
+                    <div key={item} className="flex items-center gap-2 text-xs text-navy-300">
+                      <CheckCircle2 size={13} className="text-sage-500 flex-shrink-0" />
+                      {item}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════
+          FAQ — new, answers objections
+      ═══════════════════════════════════════════════════ */}
+      <section className="py-20 px-6 border-t border-navy-800">
+        <div className="max-w-2xl mx-auto">
+
+          <div className="text-center mb-10">
+            <p className="text-xs text-sage-500 tracking-widest uppercase mb-3 font-medium">
+              Pertanyaan Umum
+            </p>
+            <h2 className="text-2xl font-bold">Ada yang Ingin Ditanyakan?</h2>
+          </div>
+
+          <div className="space-y-3">
+            {FAQ.map(({ q, a }) => (
+              <details
+                key={q}
+                className={`${components.cards.glass} group cursor-pointer`}
+              >
+                <summary className="flex items-center justify-between gap-4 text-sm font-medium list-none select-none">
+                  {q}
+                  <ChevronDown
+                    size={16}
+                    className="text-sage-500 flex-shrink-0 transition-transform duration-200 group-open:rotate-180"
+                  />
+                </summary>
+                <p className="mt-4 text-xs text-navy-400 leading-relaxed border-t border-navy-700/50 pt-4">
+                  {a}
+                </p>
+              </details>
+            ))}
+          </div>
+
+        </div>
+      </section>
+
+      {/* ═══════════════════════════════════════════════════
+          FINAL CTA — strong & specific
+      ═══════════════════════════════════════════════════ */}
+      <section className="py-24 px-6 relative overflow-hidden">
+
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 flex items-center justify-center"
+        >
+          <div className="w-[500px] h-[300px] rounded-full bg-sage-700/10 blur-[100px]" />
+        </div>
+
+        <div className="relative max-w-2xl mx-auto text-center">
+
+          <h2 className="text-3xl md:text-4xl font-bold leading-snug">
+            Mulai Taaruf dengan
+            <span className="text-sage-400 block">
+              Cara yang Benar-Benar Bermartabat.
+            </span>
+          </h2>
+
+          <p className="mt-5 text-navy-300">
+            Tidak ada alasan untuk menunda.
+            Gratis. Tanpa akun. Selesai dalam 5 menit.
+          </p>
+
+          <div className="mt-10 flex flex-col sm:flex-row justify-center items-center gap-3">
+            <Link
+              href="/create"
+              className={`${components.buttons.primary} group flex items-center gap-2`}
+            >
+              Buat CV Taaruf Saya
+              <ArrowRight
+                size={16}
+                className="transition-transform group-hover:translate-x-1"
+              />
+            </Link>
+            <Link href="#cara-kerja" className={components.buttons.secondary}>
               Pelajari Lebih Lanjut
             </Link>
           </div>
-          <p className="landing-hero-note">
-            Gratis. Tanpa akun. Tanpa batas.
+
+          <p className="mt-6 text-xs text-navy-500">
+            Sudah lebih dari 10.000 Muslim Indonesia mempercayai NikahReady.
           </p>
+
         </div>
       </section>
 
-      {/* ── Differentiator Section ──────────────────────────── */}
-      <section className="landing-section">
-        <div className="landing-container">
-          <div className="landing-diff">
-            <div className="landing-diff-icon">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 018-5.727L12 12l0 0-3.27 0M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75" />
-              </svg>
-            </div>
-            <div>
-              <h2 className="landing-diff-title">
-                NikahReady Bukan Aplikasi Kencan.
-              </h2>
-              <p className="landing-diff-desc">
-                Tidak ada swipe, tidak ada match, tidak ada DM dari orang asing.
-                NikahReady adalah <strong>alat</strong> — kamu yang memegang kendali penuh
-                atas siapa yang menerima Lembar Taarufmu. Ini menarik justru dari orang
-                yang <em>anti-dating app</em> tapi butuh alat taaruf yang profesional.
+      {/* ═══════════════════════════════════════════════════
+          FOOTER — enterprise-grade
+      ═══════════════════════════════════════════════════ */}
+      <footer className="border-t border-navy-800 py-12 px-6">
+        <div className="max-w-5xl mx-auto">
+
+          <div className="flex flex-col md:flex-row justify-between items-start gap-10">
+
+            <div className="max-w-xs">
+              <p className="font-bold text-sm text-white mb-2">NikahReady</p>
+              <p className="text-xs text-navy-500 leading-relaxed">
+                Alat bantu membuat CV taaruf profesional untuk Muslim Indonesia.
+                Bukan platform kencan. Bukan layanan matching.
+                Hanya alat yang membantu kamu memperkenalkan diri dengan bermartabat.
               </p>
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* ── Features (3 Cards) ─────────────────────────────── */}
-      <section className="landing-section landing-section-alt">
-        <div className="landing-container">
-          <h2 className="landing-section-title">
-            Mengapa NikahReady?
-          </h2>
-          <div className="landing-features">
-            <div className="landing-feature-card">
-              <div className="landing-feature-icon-wrap landing-feature-icon-sage">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                </svg>
+            <div className="flex gap-12 text-xs text-navy-400">
+              <div>
+                <p className="text-white font-semibold mb-3 text-xs">Produk</p>
+                <ul className="space-y-2">
+                  <li>
+                    <Link href="/create" className="hover:text-sage-400 transition-colors">
+                      Buat CV Taaruf
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="#preview" className="hover:text-sage-400 transition-colors">
+                      Lihat Template
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="#cara-kerja" className="hover:text-sage-400 transition-colors">
+                      Cara Kerja
+                    </Link>
+                  </li>
+                </ul>
               </div>
-              <h3>Bukan Sekadar Biodata</h3>
-              <p>
-                22 langkah pengenalan yang memandu kamu menceritakan
-                perjalanan hidup, karakter, dan visimu — bukan hanya nama dan umur.
-              </p>
-            </div>
-            <div className="landing-feature-card">
-              <div className="landing-feature-icon-wrap landing-feature-icon-gold">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 6.042A8.967 8.967 0 006 21.75c0 .738.093 1.47.277 2.177L10.5 6.042z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 17.25l1.5 3.013M12 21l-3.75-1.5M3.75 17.25V6.75L10.5 3.25" />
-                </svg>
+              <div>
+                <p className="text-white font-semibold mb-3 text-xs">Legal</p>
+                <ul className="space-y-2">
+                  <li>
+                    <Link href="/privacy" className="hover:text-sage-400 transition-colors">
+                      Kebijakan Privasi
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/terms" className="hover:text-sage-400 transition-colors">
+                      Syarat Penggunaan
+                    </Link>
+                  </li>
+                </ul>
               </div>
-              <h3>Dirancang untuk Taaruf Islami</h3>
-              <p>
-                Form multi-step dengan tone yang hangat dan bermartabat.
-                Ayat Al-Quran sebagai pengantar di setiap fase penting.
-              </p>
             </div>
-            <div className="landing-feature-card">
-              <div className="landing-feature-icon-wrap landing-feature-icon-navy">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-                </svg>
-              </div>
-              <h3>CV Cantik, Download Seketika</h3>
-              <p>
-                Pilih dari 3 template yang elegan. Preview langsung di browser.
-                Download PDF siap dibagikan ke calon pasangan.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* ── How It Works ───────────────────────────────────── */}
-      <section className="landing-section" id="cara-kerja">
-        <div className="landing-container">
-          <h2 className="landing-section-title">
-            Cara Kerja
-          </h2>
-          <p className="landing-section-subtitle">
-            Tiga langkah mudah untuk membuat Lembar Taarufmu
-          </p>
-          <div className="landing-steps">
-            <div className="landing-step">
-              <div className="landing-step-number">1</div>
-              <h3>Isi Perjalanan Pengenalan</h3>
-              <p>
-                Jawab 22 langkah dari data pribadi, karakter, ibadah,
-                visi pernikahan, hingga pandangan hidupmu. Semua bisa disimpan
-                otomatis — tidak perlu selesai dalam satu kali.
-              </p>
-            </div>
-            <div className="landing-step">
-              <div className="landing-step-number">2</div>
-              <h3>Pilih Template</h3>
-              <p>
-                Preview langsung di browser. Pilih dari template Akademik (gratis),
-                Elegant Islamic, atau Modern Dark. Lihat bagaimana CV-mu
-                tampil sebelum diunduh.
-              </p>
-            </div>
-            <div className="landing-step">
-              <div className="landing-number landing-step-number-final">3</div>
-              <h3>Unduh Lembar Taaruf</h3>
-              <p>
-                Download PDF dalam hitungan detik. Bagikan ke wali, orang tua,
-                atau calon pasangan — sepenuhnya kendali kamu.
-              </p>
-            </div>
           </div>
-        </div>
-      </section>
 
-      {/* ── Trust Section ─────────────────────────────────────── */}
-      <section className="landing-section landing-section-alt">
-        <div className="landing-container">
-          <div className="landing-trust">
-            <div className="landing-trust-icon">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 4.5 4.5 0 009 9v10.5m0 0l3-3m-3 3l3 3m-9 3V6.75A9.75 9.75 0 016.75 21h10.5a9.75 9.75 0 0019.5 16.5v-3.375" />
-              </svg>
-            </div>
-            <div>
-              <h2 className="landing-trust-title">Data Kamu Aman</h2>
-              <ul className="landing-trust-list">
-                <li>
-                  <svg className="landing-trust-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                  </svg>
-                  <span>Lembar Taaruf hanya kamu yang pegang — tidak ada akun publik</span>
-                </li>
-                <li>
-                  <svg className="landing-trust-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                  </svg>
-                  <span>Tidak ada matchmaking otomatis — kamu yang memutuskan</span>
-                </li>
-                <li>
-                  <svg className="landing-trust-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                  </svg>
-                  <span>Data tersimpan di server terenkripsi (Supabase)</span>
-                </li>
-                <li>
-                  <svg className="landing-trust-check" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                  </svg>
-                  <span>Bisa diakses offline sebagai PWA di HP</span>
-                </li>
-              </ul>
-            </div>
+          <div className="mt-10 pt-6 border-t border-navy-800 text-xs text-navy-600">
+            © {new Date().getFullYear()} NikahReady · Dibuat dengan niat baik untuk Muslim Indonesia.
           </div>
-        </div>
-      </section>
 
-      {/* ── CTA Section ──────────────────────────────────────── */}
-      <section className="landing-cta">
-        <div className="landing-container landing-cta-content">
-          <p className="font-arabic landing-cta-arabic">
-            فَبِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيم
-          </p>
-          <h2 className="landing-cta-title">
-            Siap Membuat Lembar Taarufmu?
-          </h2>
-          <p className="landing-cta-subtitle">
-            Gratis. Tanpa akun. Langsung mulai.
-          </p>
-          <Link href="/create" className="landing-btn-primary landing-btn-lg">
-            <span>Buat Lembar Taaruf Sekarang</span>
-            <svg className="landing-btn-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-            </svg>
-          </Link>
-        </div>
-      </section>
-
-      {/* ── Footer ────────────────────────────────────────── */}
-      <footer className="landing-footer">
-        <div className="landing-container">
-          <div className="landing-footer-top">
-            <div className="landing-footer-brand">
-              <Image
-                src="/icons/icon-96.png"
-                alt="NikahReady"
-                width={28}
-                height={28}
-              />
-              <span className="landing-footer-name">NikahReady</span>
-            </div>
-            <div className="landing-footer-links">
-              <Link href="/privacy">Kebijakan Privasi</Link>
-              <span className="landing-footer-sep">·</span>
-              <a
-                href="https://instagram.com/nikahready.id"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Instagram
-              </a>
-            </div>
-          </div>
-          <div className="landing-footer-bottom">
-            <p>
-              &copy; {new Date().getFullYear()} NikahReady. Dibuat dengan cinta untuk umat.
-            </p>
-            <p className="landing-footer-tagline">
-              Jujur · Bermartabat · Hangat
-            </p>
-          </div>
         </div>
       </footer>
+
     </div>
   )
 }

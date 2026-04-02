@@ -11,7 +11,6 @@ import { useState } from 'react'
 import { generateId } from '@/context/FormContext'
 import { TextInput, TextArea, SectionCard } from '@/components/ui/FormFields'
 
-// ── Tipe untuk satu item referensi ────────────────────────────
 interface ReferensiItem {
   id: string
   nama: string
@@ -22,12 +21,10 @@ interface ReferensiItem {
 
 const MAX_ITEMS = 5
 
-// ── Main Component ────────────────────────────────────────────
 export function Step20_Referensi() {
   const [referensiList, setReferensiList] = useState<ReferensiItem[]>([])
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null)
 
-  // Tambah referensi baru
   function handleAdd() {
     if (referensiList.length >= MAX_ITEMS) return
     setReferensiList((prev) => [
@@ -36,19 +33,16 @@ export function Step20_Referensi() {
     ])
   }
 
-  // Hapus referensi
   function handleRemove(id: string) {
     if (confirmDelete === id) {
       setReferensiList((prev) => prev.filter((r) => r.id !== id))
       setConfirmDelete(null)
     } else {
       setConfirmDelete(id)
-      // Reset konfirmasi setelah 3 detik
       setTimeout(() => setConfirmDelete(null), 3000)
     }
   }
 
-  // Update field
   function updateField(
     id: string,
     field: keyof ReferensiItem,
@@ -60,8 +54,7 @@ export function Step20_Referensi() {
   }
 
   return (
-    <div className="space-y-4">
-      {/* ── Pembuka Arabic ─────────────────────────────────── */}
+    <div className="space-y-5">
       <div className="text-center py-3">
         <p className="font-arabic text-xl text-gold-500">
           وَتَعَاوَنُوا عَلَى الْبِرِّ وَالتَّقْوَىٰ
@@ -73,7 +66,6 @@ export function Step20_Referensi() {
         </p>
       </div>
 
-      {/* ── Info Box ────────────────────────────────────────── */}
       <div className="flex gap-3 p-3 rounded-xl bg-navy-900/60 border border-navy-800">
         <span className="text-lg flex-shrink-0">📋</span>
         <p className="text-xs text-navy-400 leading-relaxed">
@@ -83,7 +75,6 @@ export function Step20_Referensi() {
         </p>
       </div>
 
-      {/* ── Progress ────────────────────────────────────────── */}
       <div className="flex items-center gap-2">
         <div className="flex-1 h-1 bg-navy-800 rounded-full">
           <div
@@ -98,7 +89,6 @@ export function Step20_Referensi() {
         </span>
       </div>
 
-      {/* ── Daftar Referensi ───────────────────────────────── */}
       {referensiList.map((ref, index) => (
         <SectionCard
           key={ref.id}
@@ -106,7 +96,7 @@ export function Step20_Referensi() {
           icon={index === 0 ? '⭐' : '👤'}
         >
           <div className="space-y-3">
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <TextInput
                 label="Nama"
                 value={ref.nama}
@@ -142,7 +132,6 @@ export function Step20_Referensi() {
               showCount
             />
 
-            {/* Tombol hapus */}
             <div className="flex justify-end">
               <button
                 type="button"
@@ -164,7 +153,6 @@ export function Step20_Referensi() {
         </SectionCard>
       ))}
 
-      {/* ── Tombol Tambah ──────────────────────────────────── */}
       {referensiList.length < MAX_ITEMS && (
         <button
           type="button"
@@ -178,7 +166,6 @@ export function Step20_Referensi() {
         </button>
       )}
 
-      {/* ── Tips ──────────────────────────────────────────── */}
       <div className="flex gap-3 p-3 rounded-xl bg-navy-900/60 border border-navy-800">
         <span className="text-lg flex-shrink-0">💡</span>
         <p className="text-xs text-navy-400 leading-relaxed">

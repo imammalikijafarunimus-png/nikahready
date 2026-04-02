@@ -11,26 +11,21 @@ import { useState } from 'react'
 import { useFormState } from '@/context/FormContext'
 import { TextArea, RadioGroup, SectionCard } from '@/components/ui/FormFields'
 
-// ── Opsi gender ───────────────────────────────────────────────
 const OPTIONS_GENDER = [
   { value: 'pria', label: '👨 Laki-laki' },
   { value: 'wanita', label: '👩 Perempuan' },
 ]
 
-// ── Main Component ────────────────────────────────────────────
 export function Step19_SuratTaaruf() {
   const state = useFormState()
 
-  // Nama dari form state (read-only)
   const namaLengkap = state.dataPribadi.nama_lengkap || ''
 
-  // Local state untuk surat taaruf
   const [gender, setGender] = useState('pria')
   const [surat, setSurat] = useState('')
 
   return (
-    <div className="space-y-4">
-      {/* ── Pembuka Arabic ─────────────────────────────────── */}
+    <div className="space-y-5">
       <div className="text-center py-3">
         <p className="font-arabic text-xl text-gold-500">
           فَاذْكُرُوا بِالْمَعْرُوفِ
@@ -42,7 +37,6 @@ export function Step19_SuratTaaruf() {
         </p>
       </div>
 
-      {/* ── Info Box ────────────────────────────────────────── */}
       <div className="flex gap-3 p-3 rounded-xl bg-navy-900/60 border border-navy-800">
         <span className="text-lg flex-shrink-0">✉️</span>
         <p className="text-xs text-navy-400 leading-relaxed">
@@ -52,7 +46,6 @@ export function Step19_SuratTaaruf() {
         </p>
       </div>
 
-      {/* ── 1. Identitas Pengirim ──────────────────────────── */}
       <SectionCard title="Identitas Pengirim" icon="👤">
         <div className="space-y-3">
           <div className="p-3 rounded-xl bg-navy-800/60 border border-navy-700">
@@ -72,7 +65,6 @@ export function Step19_SuratTaaruf() {
         </div>
       </SectionCard>
 
-      {/* ── 2. Surat Taaruf ────────────────────────────────── */}
       <SectionCard title="Surat Perkenalan" icon="💌" variant="highlight">
         <TextArea
           label="Tuliskan Surat Taarufmu"
@@ -86,7 +78,6 @@ export function Step19_SuratTaaruf() {
         />
       </SectionCard>
 
-      {/* ── Contoh Singkat ─────────────────────────────────── */}
       <SectionCard title="Contoh Surat Taaruf" icon="📝">
         <div className="p-3 rounded-xl bg-navy-800/60 border border-navy-700">
           <p className="text-xs text-navy-300 leading-relaxed italic">
@@ -102,7 +93,6 @@ export function Step19_SuratTaaruf() {
         </div>
       </SectionCard>
 
-      {/* ── Tips ──────────────────────────────────────────── */}
       <div className="flex gap-3 p-3 rounded-xl bg-navy-900/60 border border-navy-800">
         <span className="text-lg flex-shrink-0">💡</span>
         <p className="text-xs text-navy-400 leading-relaxed">
