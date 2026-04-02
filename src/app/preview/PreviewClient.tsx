@@ -1,7 +1,7 @@
 'use client'
 
 // ============================================================
-// src/app/preview/PreviewClient.tsx  (FINAL — Phase 6)
+// src/app/preview/PreviewClient.tsx  (FINAL — Phase 5: Grade A)
 // ============================================================
 
 import {
@@ -12,10 +12,29 @@ import {
   useMemo,
 } from 'react'
 import Link from 'next/link'
+import {
+  Pencil,
+  Eye,
+  Download,
+  ShieldCheck,
+  Lock,
+  CheckCircle2,
+  ChevronRight,
+  FileText,
+  Sparkles,
+  Info,
+  X,
+} from 'lucide-react'
 import { useFormState } from '@/context/FormContext'
+import { TemplateRingkas } from '@/components/templates/TemplateRingkas'
+import { TemplateSederhana } from '@/components/templates/TemplateSederhana'
+import { TemplateMinimalIslami } from '@/components/templates/TemplateMinimalIslami'
 import { TemplateAkademik } from '@/components/templates/TemplateAkademik'
+import { TemplateElegantIslamic } from '@/components/templates/TemplateElegantIslamic'
+import { TemplateModernPremium } from '@/components/templates/TemplateModernPremium'
 import { generatePdf } from '@/lib/generatePdf'
 import type { FormState } from '@/types'
+import './preview.css'
 
 const PDF_WIDTH_PX       = 794
 const PDF_PAGE_HEIGHT_PX = 1123
@@ -23,10 +42,11 @@ const PDF_PAGE_HEIGHT_PX = 1123
 // ── Skeletons & States ────────────────────────────────────────
 function LoadingSkeleton() {
   return (
-    <div className="min-h-screen bg-navy-950 flex items-center justify-center">
-      <div className="flex flex-col items-center gap-3">
-        <div className="w-12 h-12 rounded-full border-2 border-sage-700 border-t-sage-400 animate-spin" />
-        <p className="text-sm text-navy-400">Memuat preview…</p>
+    <div className="preview-loading">
+      <div className="preview-loading-content">
+        <p className="preview-loading-arabic">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيم</p>
+        <div className="preview-loading-spinner" />
+        <p className="preview-loading-text">Memuat preview…</p>
       </div>
     </div>
   )
@@ -34,21 +54,19 @@ function LoadingSkeleton() {
 
 function EmptyState() {
   return (
-    <div className="min-h-screen bg-navy-950 flex flex-col items-center justify-center gap-6 px-4">
-      <div className="text-center max-w-sm">
-        <span className="text-5xl block mb-4">📄</span>
-        <h2 className="text-lg font-bold text-white mb-2">CV Taaruf Belum Dibuat</h2>
-        <p className="text-sm text-navy-400 leading-relaxed">
-          Isi data taarufmu terlebih dahulu untuk melihat preview CV.
-        </p>
+    <div className="preview-empty">
+      <div className="preview-empty-icon">
+        📄
       </div>
-      <Link
-        href="/create"
-        className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-sage-700 to-sage-600 text-white text-sm font-semibold hover:from-sage-600 hover:to-sage-500 transition-all active:scale-95"
-      >
-        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" />
-        </svg>
+      <h2 className="preview-empty-title">Belum Ada CV Taaruf</h2>
+      <p className="preview-empty-desc">
+        Isi data taarufmu terlebih dahulu untuk melihat preview Lembar Taaruf.
+      </p>
+      <p className="preview-empty-desc" style={{ fontSize: '13px', fontStyle: 'italic', marginTop: '-8px' }}>
+        Alhamdulillah, perjalanan dimulai dari langkah pertama.
+      </p>
+      <Link href="/create" className="preview-empty-cta">
+        <Pencil />
         Mulai Isi Data
       </Link>
     </div>
@@ -58,25 +76,48 @@ function EmptyState() {
 // ── Download Overlay ──────────────────────────────────────────
 function DownloadOverlay({ step }: { step: string }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-navy-950/90 backdrop-blur-sm">
-      <div className="flex flex-col items-center gap-4 max-w-xs text-center px-6">
-        <div className="relative w-16 h-16">
-          <div className="absolute inset-0 rounded-full border-2 border-sage-900" />
-          <div className="absolute inset-0 rounded-full border-2 border-sage-400 border-t-transparent animate-spin" />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <svg className="w-6 h-6 text-gold-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-            </svg>
+    <div className="preview-download-overlay">
+      <div className="preview-download-card">
+        <div className="preview-download-spinner">
+          <div className="preview-download-spinner-ring" />
+          <div className="preview-download-spinner-progress" />
+          <div className="preview-download-spinner-icon">
+            <Download />
           </div>
         </div>
-        <div>
-          <p className="text-base font-semibold text-white">Membuat PDF…</p>
-          <p className="text-sm text-navy-400 mt-1 min-h-[1.25rem]">{step}</p>
-        </div>
-        <p className="text-xs text-navy-600 leading-relaxed">
-          Proses ini membutuhkan beberapa detik.
-          Jangan tutup atau refresh halaman ini.
+        <p className="preview-download-title">Membuat PDF…</p>
+        <p className="preview-download-step">{step}</p>
+        <p className="preview-download-hint">
+          Proses ini membutuhkan beberapa detik. Jangan tutup atau refresh halaman ini.
         </p>
+      </div>
+    </div>
+  )
+}
+
+// ── Success Overlay ───────────────────────────────────────────
+function SuccessOverlay({ onClose }: { onClose: () => void }) {
+  return (
+    <div className="preview-success-overlay">
+      <div className="preview-success-card">
+        <div className="preview-success-icon">
+          <CheckCircle2 />
+        </div>
+        <p className="preview-success-arabic">بَارَكَ اللهُ فِيكَ</p>
+        <p className="preview-success-meaning">&ldquo;Semoga Allah memberkahi kamu&rdquo;</p>
+        <h3 className="preview-success-title">PDF Berhasil Diunduh!</h3>
+        <p className="preview-success-desc">
+          Lembar Taarufmu siap dibagikan ke wali atau murabbi. Semoga menjadi jalan
+          untuk pernikahan yang barokah.
+        </p>
+        <div className="preview-success-actions">
+          <Link href="/dashboard" className="preview-success-btn preview-success-btn-primary">
+            Ke Dashboard
+          </Link>
+          <button onClick={onClose} className="preview-success-btn preview-success-btn-secondary">
+            Tutup
+          </button>
+        </div>
       </div>
     </div>
   )
@@ -85,59 +126,72 @@ function DownloadOverlay({ step }: { step: string }) {
 // ── Top Bar ────────────────────────────────────────────────────
 function PreviewTopBar({
   pageCount,
+  templateName,
   onDownload,
   isDownloading,
 }: {
   pageCount: number
+  templateName: string
   onDownload: () => void
   isDownloading: boolean
 }) {
   return (
-    <header className="sticky top-0 z-40 bg-navy-900/95 backdrop-blur-sm border-b border-navy-800">
-      <div className="max-w-screen-xl mx-auto px-4 py-3 flex items-center gap-3">
-        <Link
-          href="/create"
-          className="flex items-center gap-1.5 text-sm text-navy-400 hover:text-white transition-colors flex-shrink-0"
-        >
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-          </svg>
-          Edit
-        </Link>
+    <header className="preview-topbar">
+      <div className="preview-topbar-inner">
+        {/* ── Left: Brand + Edit ── */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', flexShrink: 0 }}>
+          <div className="preview-topbar-brand">
+            <div style={{
+              width: 28,
+              height: 28,
+              borderRadius: '50%',
+              background: 'linear-gradient(135deg, #065F46, #047857)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#fff',
+              fontSize: '13px',
+              fontWeight: 700,
+            }}>
+              N
+            </div>
+            <span>NikahReady</span>
+          </div>
+          <Link href="/create" className="preview-btn-edit">
+            <Pencil />
+            Edit
+          </Link>
+        </div>
 
-        <div className="flex-1 text-center min-w-0">
-          <h1 className="text-sm font-semibold text-white">Preview CV Taaruf</h1>
-          <p className="text-xs text-navy-500">
-            Template Akademik · {pageCount} halaman
+        {/* ── Center: Title ── */}
+        <div className="preview-topbar-center">
+          <p className="preview-topbar-title">Preview Lembar Taaruf</p>
+          <p className="preview-topbar-subtitle">
+            Template {templateName} · {pageCount} halaman
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={onDownload}
-          disabled={isDownloading}
-          className={[
-            'flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold flex-shrink-0',
-            'transition-all duration-200 active:scale-95',
-            isDownloading
-              ? 'bg-navy-700 text-navy-500 cursor-not-allowed'
-              : 'bg-gradient-to-r from-gold-600 to-gold-500 text-white hover:opacity-90 shadow-gold',
-          ].join(' ')}
-        >
-          {isDownloading ? (
-            <>
-              <div className="w-3.5 h-3.5 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-              <span className="hidden sm:inline">Memproses…</span>
-            </>
-          ) : (
-            <>
-              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
-              </svg>
-              Download PDF
-            </>
-          )}
-        </button>
+        {/* ── Right: Download ── */}
+        <div className="preview-topbar-actions">
+          <button
+            type="button"
+            onClick={onDownload}
+            disabled={isDownloading}
+            className="preview-btn-download"
+          >
+            {isDownloading ? (
+              <>
+                <div className="preview-loading-spinner" style={{ width: 14, height: 14, borderWidth: 2 }} />
+                <span className="hidden sm:inline">Memproses…</span>
+              </>
+            ) : (
+              <>
+                <Download />
+                <span className="hidden sm:inline">Download PDF</span>
+              </>
+            )}
+          </button>
+        </div>
       </div>
     </header>
   )
@@ -204,38 +258,48 @@ export function PreviewClient() {
   const [isDownloading, setIsDownloading] = useState(false)
   const [downloadStep,  setDownloadStep]  = useState('')
   const [errorMsg,      setErrorMsg]      = useState<string | null>(null)
+  const [showSuccess,   setShowSuccess]   = useState(false)
 
   useEffect(() => {
     const t = setTimeout(() => setIsHydrated(true), 150)
     return () => clearTimeout(t)
   }, [])
 
-  const pageCount = useMemo(() => {
-    let count = 1
-    if (
-      state.riwayatPendidikan.length > 0 ||
-      state.riwayatPekerjaan.length > 0 ||
-      state.riwayatOrganisasi.length > 0
-    ) count++
-    if (state.perjalananHidup.length > 0) count++
-    if (
-      state.karakter.karakter_diri ||
-      state.karakter.kelebihan.length > 0 ||
-      state.ibadah.shalat_fardhu
-    ) count++
-    if (
-      state.visiMisi.visi ||
-      state.kriteria.kriteria_karakter ||
-      state.pandanganIsu.pandangan_isu
-    ) count++
-    return Math.max(count, 1)
-  }, [state])
+  // Fixed page count per template (all pages are always rendered)
+  const TEMPLATE_PAGE_COUNT: Record<string, number> = {
+    ringkas: 1,
+    sederhana: 2,
+    minimal_islami: 1,
+    akademik: 5,
+    elegant_islamic: 5,
+    modern_dark: 4,
+  }
+  const pageCount = TEMPLATE_PAGE_COUNT[state.fotoTemplate.template_pilihan] ?? 1
+
+  // ── Template switching logic ──
+  const templateMap: Record<string, React.ComponentType<{ state: FormState }>> = {
+    ringkas: TemplateRingkas,
+    sederhana: TemplateSederhana,
+    minimal_islami: TemplateMinimalIslami,
+    akademik: TemplateAkademik,
+    elegant_islamic: TemplateElegantIslamic,
+    modern_dark: TemplateModernPremium,
+  }
+  const ActiveTemplate = templateMap[state.fotoTemplate.template_pilihan] || TemplateRingkas
+  const templateName = state.fotoTemplate.template_pilihan === 'ringkas' ? 'Ringkas'
+    : state.fotoTemplate.template_pilihan === 'sederhana' ? 'Sederhana'
+    : state.fotoTemplate.template_pilihan === 'minimal_islami' ? 'Minimal Islami'
+    : state.fotoTemplate.template_pilihan === 'akademik' ? 'Akademik'
+    : state.fotoTemplate.template_pilihan === 'elegant_islamic' ? 'Elegant Islamic'
+    : state.fotoTemplate.template_pilihan === 'modern_dark' ? 'Modern Dark'
+    : 'Ringkas'
 
   const handleDownload = useCallback(async () => {
     if (!wrapperRef.current || isDownloading) return
 
     setIsDownloading(true)
     setErrorMsg(null)
+    setShowSuccess(false)
 
     try {
       setDownloadStep('Menyiapkan dokumen…')
@@ -268,6 +332,7 @@ export function PreviewClient() {
 
       setDownloadStep('Selesai ✓')
       await new Promise((r) => setTimeout(r, 500))
+      setShowSuccess(true)
 
     } catch (err) {
       setErrorMsg(err instanceof Error ? err.message : 'Terjadi kesalahan tidak diketahui')
@@ -281,53 +346,73 @@ export function PreviewClient() {
   if (!hasMinimumData(state)) return <EmptyState />
 
   return (
-    <div className="min-h-screen bg-navy-950">
-      <PreviewTopBar
-        pageCount={pageCount}
-        onDownload={handleDownload}
-        isDownloading={isDownloading}
-      />
+    <div className="preview-page">
+      <div className="preview-pattern" />
+      <div className="preview-glow" />
 
-      {isDownloading && <DownloadOverlay step={downloadStep} />}
+      <div className="relative z-10">
+        <PreviewTopBar
+          pageCount={pageCount}
+          templateName={templateName}
+          onDownload={handleDownload}
+          isDownloading={isDownloading}
+        />
 
-      {/* Error toast */}
-      {errorMsg && (
-        <div
-          role="alert"
-          className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-4 py-3 rounded-2xl bg-red-900 border border-red-700 text-red-200 text-sm shadow-lg animate-slide-up max-w-sm w-full mx-4"
-        >
-          <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
-          </svg>
-          <span className="flex-1">{errorMsg}</span>
-          <button type="button" onClick={() => setErrorMsg(null)} className="opacity-70 hover:opacity-100">
-            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-      )}
+        {isDownloading && <DownloadOverlay step={downloadStep} />}
+        {showSuccess && <SuccessOverlay onClose={() => setShowSuccess(false)} />}
 
-      <main className="py-6 px-2">
-        <div className="max-w-2xl mx-auto mb-4 px-2">
-          <div className="flex items-start gap-2 p-3 rounded-xl bg-navy-900/60 border border-navy-800">
-            <svg className="w-4 h-4 text-sage-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
-            </svg>
-            <p className="text-xs text-navy-400 leading-relaxed">
-              Ini adalah preview CV-mu ({pageCount} halaman). Klik{' '}
-              <strong className="text-gold-400">Download PDF</strong> di atas
-              untuk mengunduh. Proses membutuhkan beberapa detik.
+        {/* Error toast */}
+        {errorMsg && (
+          <div
+            role="alert"
+            className="preview-error-toast"
+          >
+            <Info />
+            <span>{errorMsg}</span>
+            <button type="button" onClick={() => setErrorMsg(null)}>
+              <X />
+            </button>
+          </div>
+        )}
+
+        <main className="py-6 px-2">
+          {/* Info banner */}
+          <div className="preview-info-banner" style={{ margin: '0 auto 16px' }}>
+            <Info />
+            <p>
+              Ini preview Lembar Taarufmu ({pageCount} halaman, template {templateName}).
+              Klik <strong>Download PDF</strong> untuk mengunduh.
             </p>
           </div>
-        </div>
 
-        <ScaleWrapper innerRef={wrapperRef} pageCount={pageCount}>
-          <TemplateAkademik state={state} />
-        </ScaleWrapper>
+          <ScaleWrapper innerRef={wrapperRef} pageCount={pageCount}>
+            <ActiveTemplate state={state} />
+          </ScaleWrapper>
 
-        <div className="h-12" />
-      </main>
+          <div className="h-12" />
+
+          {/* Trust strip */}
+          <div className="preview-trust">
+            <div className="preview-trust-inner">
+              <div className="preview-trust-item">
+                <ShieldCheck /> <span>Data Terenkripsi</span>
+              </div>
+              <div className="preview-trust-item">
+                <Lock /> <span>Server Aman</span>
+              </div>
+              <div className="preview-trust-item">
+                <CheckCircle2 /> <span>Privasi Terjaga</span>
+              </div>
+            </div>
+          </div>
+        </main>
+
+        {/* Footer */}
+        <footer className="preview-footer">
+          <p className="preview-footer-brand">© 2025 NikahReady · Alat Bantu CV Taaruf</p>
+          <p className="preview-footer-values">Jujur · Bermartabat · Aman</p>
+        </footer>
+      </div>
     </div>
   )
 }

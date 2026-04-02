@@ -254,12 +254,18 @@ export interface GaleriFotoItem {
 }
 
 // ── Step 18: Foto & Template Pilihan ─────────────────────────
-export type TemplatePilihan = 'akademik' | 'elegant_islamic' | 'modern_dark'
+export type TemplatePilihan =
+  | 'ringkas'
+  | 'sederhana'
+  | 'minimal_islami'
+  | 'akademik'
+  | 'elegant_islamic'
+  | 'modern_dark'
 
 export interface FotoTemplate {
   foto_pribadi_url: string    // URL foto utama (profil)
   foto_formal_url: string     // URL foto formal
-  template_pilihan: TemplatePilihan
+  template_pilihan: TemplatePilihan // default: 'ringkas'
 }
 
 // ── Aggregate Types ──────────────────────────────────────────

@@ -27,7 +27,7 @@ const STATS = [
   { value: "10.000+", label: "CV Dibuat" },
   { value: "4.9 ★",  label: "Rating Pengguna" },
   { value: "< 5 Menit", label: "Waktu Pengerjaan" },
-  { value: "100% Gratis", label: "Tanpa Biaya Apapun" },
+  { value: "Gratis", label: "Untuk Mulai" },
 ]
 
 const PROBLEMS = [
@@ -112,28 +112,28 @@ const TESTIMONIALS = [
 ]
 
 const PRIVACY_POINTS = [
-  "Tidak ada profil publik",
-  "Tidak bisa dicari siapapun",
-  "Tidak ada fitur matching",
-  "Data tidak dikirim ke server",
+  "Tidak ada profil publik — bukan tempat pencarian jodoh",
+  "Hanya kamu yang bisa mengakses data sendiri",
+  "Tidak ada fitur matching atau rekomendasi otomatis",
+  "Data bisa dihapus kapan saja dari akunmu",
 ]
 
 const FAQ = [
   {
     q: "Apakah data saya tersimpan di server?",
-    a: "Tidak. Seluruh proses pengisian terjadi di browser kamu. Kami tidak menyimpan, membaca, atau mengirim data pribadimu ke server manapun.",
+    a: "Keamanan data adalah prioritas utama kami. Data tersimpan di server yang terenkripsi dan hanya bisa diakses oleh akunmu sendiri. Kami tidak membagikan data ke pihak ketiga, dan kamu bisa menghapus seluruh data kapan saja dari pengaturan akun.",
   },
   {
     q: "Apakah NikahReady benar-benar gratis?",
-    a: "Ya, gratis sepenuhnya. Tidak ada biaya tersembunyi, langganan, atau fitur berbayar. Kamu bisa buat dan download CV taaruf tanpa mengeluarkan satu rupiah pun.",
+    a: "Ya, kamu bisa mulai membuat CV taaruf secara gratis tanpa biaya apapun. Ada juga template premium yang tersedia untuk kamu yang ingin tampilan lebih eksklusif — tapi itu sepenuhnya opsional dan tidak mengurangi kemampuanmu membuat CV yang profesional.",
   },
   {
     q: "Bisakah saya mengedit CV setelah didownload?",
-    a: "Kamu bisa kembali ke halaman buat CV kapan saja dan mengisi ulang. Selama data masih tersimpan di browser, isian sebelumnya akan muncul kembali.",
+    a: "Tentu. Data profilmu tersimpan secara aman di akunmu. Kamu bisa login kapan saja untuk melanjutkan mengisi, mengedit, atau mengunduh ulang CV taarufmu dalam format PDF kapan saja.",
   },
   {
     q: "Apakah ini aman untuk dibagikan ke wali atau murabbi?",
-    a: "Tentu. CV taaruf ini dirancang agar nyaman dibagikan melalui wali, murabbi, atau ustaz — bukan dibagikan langsung ke calon pasangan.",
+    a: "Sangat aman. CV taarufmu dirancang khusus untuk dibagikan melalui wali, murabbi, atau ustaz — bukan dipublikasikan secara terbuka. Kamu yang mengontrol penuh siapa yang bisa melihat data pribadimu.",
   },
 ]
 
@@ -186,7 +186,7 @@ export default function LandingPage() {
               href="/create"
               className={`${components.buttons.primary} group flex items-center gap-2`}
             >
-              Buat CV Taaruf Gratis
+              Mulai Buat CV Taaruf
               <ArrowRight
                 size={16}
                 className="transition-transform group-hover:translate-x-1"
@@ -205,11 +205,11 @@ export default function LandingPage() {
             </span>
             <span className="flex items-center gap-1.5">
               <CheckCircle2 size={12} className="text-sage-500" />
-              Gratis selamanya
+              Mulai gratis
             </span>
             <span className="flex items-center gap-1.5">
               <Lock size={12} className="text-sage-500" />
-              Tanpa akun, tanpa simpan data
+              Data tersimpan aman
             </span>
           </div>
 
@@ -284,7 +284,7 @@ export default function LandingPage() {
 
           <div className="mt-8 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-sage-900/40 border border-sage-800/50 text-sage-300 text-sm">
             <ShieldCheck size={14} />
-            Data tidak pernah meninggalkan perangkatmu
+            Kamu yang memegang kendali penuh atas datamu
           </div>
 
         </div>
@@ -424,8 +424,8 @@ export default function LandingPage() {
                 <h2 className="text-xl font-bold mb-2">Privasi adalah Standar Kami</h2>
                 <p className="text-navy-300 text-sm leading-relaxed mb-6">
                   Dari awal, NikahReady dirancang dengan prinsip sederhana:
-                  data pribadimu bukan urusan kami. Semua pemrosesan terjadi
-                  di perangkatmu sendiri, bukan di server kami.
+                  data pribadimu adalah hakmu, bukan milik siapapun. Kami menyimpannya
+                  dengan enkripsi dan memastikan hanya kamu yang bisa mengaksesnya.
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {PRIVACY_POINTS.map((item) => (
@@ -501,7 +501,7 @@ export default function LandingPage() {
 
           <p className="mt-5 text-navy-300">
             Tidak ada alasan untuk menunda.
-            Gratis. Tanpa akun. Selesai dalam 5 menit.
+            Mulai gratis. Data tersimpan aman. Selesai dalam 5 menit.
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row justify-center items-center gap-3">
@@ -530,62 +530,111 @@ export default function LandingPage() {
       {/* ═══════════════════════════════════════════════════
           FOOTER — enterprise-grade
       ═══════════════════════════════════════════════════ */}
-      <footer className="border-t border-navy-800 py-12 px-6">
-        <div className="max-w-5xl mx-auto">
+      <footer className="border-t border-navy-800/60 bg-navy-950/80">
+        <div className="max-w-5xl mx-auto px-6">
 
-          <div className="flex flex-col md:flex-row justify-between items-start gap-10">
+          {/* ── Trust bar ─────────────────────────────── */}
+          <div className="py-6 border-b border-navy-800/40">
+            <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-3 text-[11px] text-navy-400">
+              <span className="flex items-center gap-1.5">
+                <ShieldCheck size={13} className="text-sage-600" />
+                Data Terenkripsi
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Lock size={13} className="text-sage-600" />
+                Server Aman
+              </span>
+              <span className="flex items-center gap-1.5">
+                <CheckCircle2 size={13} className="text-sage-600" />
+                Tanpa Profil Publik
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Star size={13} className="text-sage-600" />
+                10.000+ Pengguna
+              </span>
+            </div>
+          </div>
 
-            <div className="max-w-xs">
-              <p className="font-bold text-sm text-white mb-2">NikahReady</p>
-              <p className="text-xs text-navy-500 leading-relaxed">
+          {/* ── Main footer grid ──────────────────────── */}
+          <div className="py-10 grid grid-cols-1 md:grid-cols-4 gap-10">
+
+            {/* Brand column */}
+            <div className="md:col-span-2">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-sage-700 to-sage-500 flex items-center justify-center text-white text-xs font-bold">
+                  N
+                </div>
+                <span className="font-bold text-sm text-white">NikahReady</span>
+              </div>
+              <p className="text-xs text-navy-400 leading-relaxed max-w-xs mb-4">
                 Alat bantu membuat CV taaruf profesional untuk Muslim Indonesia.
                 Bukan platform kencan. Bukan layanan matching.
                 Hanya alat yang membantu kamu memperkenalkan diri dengan bermartabat.
               </p>
+              <p className="text-[10px] text-navy-600 italic leading-relaxed">
+                بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ — Dibuat dengan niat baik untuk umat.
+              </p>
             </div>
 
-            <div className="flex gap-12 text-xs text-navy-400">
-              <div>
-                <p className="text-white font-semibold mb-3 text-xs">Produk</p>
-                <ul className="space-y-2">
-                  <li>
-                    <Link href="/create" className="hover:text-sage-400 transition-colors">
-                      Buat CV Taaruf
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="#preview" className="hover:text-sage-400 transition-colors">
-                      Lihat Template
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="#cara-kerja" className="hover:text-sage-400 transition-colors">
-                      Cara Kerja
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <p className="text-white font-semibold mb-3 text-xs">Legal</p>
-                <ul className="space-y-2">
-                  <li>
-                    <Link href="/privacy" className="hover:text-sage-400 transition-colors">
-                      Kebijakan Privasi
-                    </Link>
-                  </li>
-                  <li>
-                    <Link href="/terms" className="hover:text-sage-400 transition-colors">
-                      Syarat Penggunaan
-                    </Link>
-                  </li>
-                </ul>
-              </div>
+            {/* Product links */}
+            <div>
+              <p className="text-white font-semibold mb-4 text-xs tracking-wide uppercase">Produk</p>
+              <ul className="space-y-2.5 text-xs text-navy-400">
+                <li>
+                  <Link href="/create" className="hover:text-sage-400 transition-colors">
+                    Buat CV Taaruf
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#preview" className="hover:text-sage-400 transition-colors">
+                    Lihat Template
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#cara-kerja" className="hover:text-sage-400 transition-colors">
+                    Cara Kerja
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/login" className="hover:text-sage-400 transition-colors">
+                    Masuk ke Akun
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Legal & support */}
+            <div>
+              <p className="text-white font-semibold mb-4 text-xs tracking-wide uppercase">Informasi</p>
+              <ul className="space-y-2.5 text-xs text-navy-400">
+                <li>
+                  <Link href="/privacy" className="hover:text-sage-400 transition-colors">
+                    Kebijakan Privasi
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/terms" className="hover:text-sage-400 transition-colors">
+                    Syarat Penggunaan
+                  </Link>
+                </li>
+                <li>
+                  <Link href="mailto:salam@nikahready.id" className="hover:text-sage-400 transition-colors">
+                    Hubungi Kami
+                  </Link>
+                </li>
+              </ul>
             </div>
 
           </div>
 
-          <div className="mt-10 pt-6 border-t border-navy-800 text-xs text-navy-600">
-            © {new Date().getFullYear()} NikahReady · Dibuat dengan niat baik untuk Muslim Indonesia.
+          {/* ── Bottom bar ─────────────────────────────── */}
+          <div className="py-5 border-t border-navy-800/40 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <p className="text-[11px] text-navy-600">
+              © {new Date().getFullYear()} NikahReady. Hak cipta dilindungi.
+            </p>
+            <p className="text-[10px] text-navy-600/70">
+              Dibuat di Indonesia untuk Muslim Indonesia
+            </p>
           </div>
 
         </div>

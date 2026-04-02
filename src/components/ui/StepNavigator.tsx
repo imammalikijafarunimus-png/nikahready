@@ -10,6 +10,7 @@
 
 import React, { useMemo, useEffect, useCallback } from 'react'
 import type { FormState, StepDefinition } from '@/types'
+import '../../app/create/create.css'
 
 // ── Array sections (langkah yang datanya berupa array) ────────
 const ARRAY_SECTIONS = new Set([
@@ -163,22 +164,22 @@ export function StepNavigator({
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm transition-opacity duration-300"
+        className="form-navigator-backdrop"
         onClick={onClose}
         aria-hidden="true"
       />
 
       {/* Panel */}
       <div
-        className="fixed inset-y-0 right-0 z-50 w-80 max-w-[85vw] bg-navy-900 border-l border-navy-700 shadow-2xl flex flex-col animate-slide-in-right"
+        className="form-navigator-panel form-navigator-slide-in"
         role="dialog"
         aria-modal="true"
         aria-label="Navigasi langkah"
       >
         {/* ── Panel Header ──────────────────────────────────── */}
-        <div className="flex items-center justify-between px-4 py-4 border-b border-navy-800">
+        <div className="form-navigator-header">
           <div>
-            <h2 className="text-xl font-bold text-white">Langkah Form</h2>
+            <h2 className="form-navigator-title">Langkah Form</h2>
             <p className="text-xs text-navy-400 mt-0.5">
               {completedCount} dari {totalSteps} langkah selesai
             </p>
@@ -196,10 +197,10 @@ export function StepNavigator({
         </div>
 
         {/* ── Completion progress bar ───────────────────────── */}
-        <div className="px-4 py-3 border-b border-navy-800">
-          <div className="w-full bg-navy-800 rounded-full h-2">
+        <div className="form-navigator-progress">
+          <div className="form-navigator-progress-bar">
             <div
-              className="h-2 rounded-full bg-gradient-to-r from-sage-600 to-sage-400 transition-all duration-500 ease-out"
+              className="form-navigator-progress-fill"
               style={{ width: `${completionPercent}%` }}
             />
           </div>
@@ -220,25 +221,21 @@ export function StepNavigator({
                   <button
                     type="button"
                     onClick={() => handleStepClick(stepDef.step)}
-                    className={[
-                      'w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200',
+                    className={
                       isCurrent
-                        ? 'bg-sage-900/30 border-l-2 border-sage-500'
-                        : 'hover:bg-navy-800/60 border-l-2 border-transparent',
-                    ].join(' ')}
+                        ? 'form-navigator-item form-navigator-item-current'
+                        : 'form-navigator-item form-navigator-item-hover'
+                    }
                   >
                     {/* Step number / status icon */}
                     <span
-                      className={[
-                        'flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-colors duration-200',
+                      className={
                         status === 'completed'
-                          ? 'bg-sage-800 text-sage-300 border border-sage-600'
+                          ? 'form-navigator-number form-navigator-number-completed'
                           : status === 'current'
-                          ? 'bg-sage-600 text-white border border-sage-400'
-                          : status === 'placeholder'
-                          ? 'bg-navy-800 text-navy-500 border border-navy-700'
-                          : 'bg-navy-800 text-navy-500 border border-navy-700',
-                      ].join(' ')}
+                          ? 'form-navigator-number form-navigator-number-current'
+                          : 'form-navigator-number form-navigator-number-upcoming'
+                      }
                     >
                       {status === 'completed' ? (
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -259,14 +256,17 @@ export function StepNavigator({
                     {/* Title + subtitle */}
                     <div className="flex-1 min-w-0">
                       <p
-                        className={[
-                          'text-sm font-medium truncate',
-                          isCurrent ? 'text-sage-300' : status === 'completed' ? 'text-white' : 'text-navy-400',
-                        ].join(' ')}
+                        className={
+                          isCurrent
+                            ? 'form-navigator-step-title form-navigator-step-title-current'
+                            : status === 'completed'
+                            ? 'form-navigator-step-title form-navigator-step-title-completed'
+                            : 'form-navigator-step-title form-navigator-step-title-upcoming'
+                        }
                       >
                         {stepDef.title}
                       </p>
-                      <p className="text-xs text-navy-500 truncate">
+                      <p className="form-navigator-step-subtitle">
                         {stepDef.isPremiumOnly && plan === 'free'
                           ? 'NikahReady Pro'
                           : status === 'placeholder'
@@ -277,7 +277,7 @@ export function StepNavigator({
 
                     {/* Current step indicator */}
                     {isCurrent && (
-                      <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-sage-400" />
+                      <span className="form-navigator-current-dot" />
                     )}
                   </button>
                 </li>
@@ -287,7 +287,7 @@ export function StepNavigator({
         </div>
 
         {/* ── Panel Footer ──────────────────────────────────── */}
-        <div className="px-4 py-3 border-t border-navy-800">
+        <div className="form-navigator-footer">
           <p className="text-xs text-navy-500 text-center">
             Klik langkah untuk langsung menuju ke sana
           </p>

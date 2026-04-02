@@ -1,0 +1,371 @@
+/* ============================================================
+   src/app/create/create.css
+   Form Experience Styles — NikahReady
+   Enterprise Refactor — Phase 4
+   ============================================================ */
+
+/* ── Form Page Layout ────────────────────────────────────── */
+.form-page {
+  @apply min-h-screen bg-navy-950 flex flex-col relative overflow-hidden;
+}
+
+/* Islamic pattern overlay — subtle geometric texture */
+.form-pattern {
+  position: absolute;
+  inset: 0;
+  opacity: 0.018;
+  background-image: url('/images/pattern-islamic.svg');
+  background-repeat: repeat;
+  background-size: 100px 100px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Ambient top glow — very subtle sage tint */
+.form-glow {
+  position: absolute;
+  top: -10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50%;
+  height: 40%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(6, 78, 59, 0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ── Form Header Bar ─────────────────────────────────────── */
+.form-header {
+  @apply sticky top-0 z-30 border-b border-navy-800/50;
+  background: rgba(15, 23, 42, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+.form-header-inner {
+  @apply max-w-2xl mx-auto px-4 py-3;
+}
+
+.form-header-row {
+  @apply flex items-center justify-between mb-2;
+}
+
+/* ── Form Progress Bar ───────────────────────────────────── */
+.form-progress-track {
+  @apply w-full bg-navy-800/60 rounded-full overflow-hidden;
+  height: 5px;
+}
+
+.form-progress-bar {
+  @apply h-full rounded-full;
+  background: linear-gradient(90deg, #064E3B, #10B981, #064E3B);
+  background-size: 200% 100%;
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  animation: form-progress-gradient 3s ease infinite;
+}
+
+@keyframes form-progress-gradient {
+  0% { background-position: 0% 0%; }
+  50% { background-position: 100% 0%; }
+  100% { background-position: 0% 0%; }
+}
+
+/* Shimmer effect on progress bar */
+.form-progress-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.12) 50%,
+    transparent 100%
+  );
+  animation: form-progress-shimmer 2.5s ease-in-out infinite;
+}
+
+@keyframes form-progress-shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+/* ── Save Status ─────────────────────────────────────────── */
+.form-save-status {
+  @apply flex items-center gap-1.5 text-xs;
+}
+
+.form-save-status-saving {
+  @apply text-sage-400;
+}
+
+.form-save-status-saved {
+  @apply text-navy-500;
+}
+
+.form-save-status-dirty {
+  @apply text-gold-500;
+}
+
+.form-save-dot {
+  @apply rounded-full;
+  width: 6px;
+  height: 6px;
+}
+
+.form-save-dot-pulse {
+  animation: form-dot-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes form-dot-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ── Step Title Area ─────────────────────────────────────── */
+.form-step-title-area {
+  @apply mb-6 relative;
+}
+
+.form-step-icon {
+  @apply text-3xl flex-shrink-0 mt-0.5;
+  filter: saturate(0.8);
+}
+
+.form-step-title {
+  @apply text-2xl font-bold text-white leading-tight;
+  letter-spacing: -0.02em;
+}
+
+.form-step-subtitle {
+  @apply text-sm text-navy-400 mt-1;
+}
+
+/* Decorative accent lines */
+.form-step-accent {
+  @apply mt-4 flex gap-1;
+}
+
+.form-step-accent-line {
+  @apply rounded-full;
+  height: 2px;
+}
+
+/* ── Bottom Navigation Bar ───────────────────────────────── */
+.form-bottom-nav {
+  @apply sticky bottom-0 z-30 border-t border-navy-800/50;
+  background: rgba(15, 23, 42, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.form-bottom-nav-inner {
+  @apply max-w-2xl mx-auto px-4 py-3 flex items-center gap-3;
+}
+
+.form-btn-prev {
+  @apply flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-medium border
+         transition-all duration-200 active:scale-95;
+  border-color: rgba(51, 65, 85, 0.5);
+  color: #CBD5E1;
+}
+
+.form-btn-prev:hover {
+  border-color: rgba(6, 78, 59, 0.5);
+  color: #6EE7B7;
+}
+
+.form-btn-next {
+  @apply flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-semibold
+         transition-all duration-200 active:scale-95;
+  background: linear-gradient(135deg, #064E3B, #047857);
+  color: white;
+}
+
+.form-btn-next:hover {
+  box-shadow: 0 4px 20px -4px rgba(6, 78, 59, 0.4);
+}
+
+.form-btn-submit {
+  @apply flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-semibold
+         transition-all duration-200 active:scale-95;
+  background: linear-gradient(135deg, #D97706, #F59E0B);
+  color: white;
+}
+
+.form-btn-submit:hover {
+  box-shadow: 0 4px 20px -4px rgba(217, 119, 6, 0.4);
+}
+
+/* ── Step Dots ───────────────────────────────────────────── */
+.form-step-dot {
+  @apply rounded-full transition-all duration-300;
+}
+
+.form-step-dot-active {
+  width: 24px;
+  height: 8px;
+  background: #10B981;
+}
+
+.form-step-dot-past {
+  width: 8px;
+  height: 8px;
+  background: rgba(6, 78, 59, 0.5);
+}
+
+.form-step-dot-upcoming {
+  width: 8px;
+  height: 8px;
+  background: rgba(51, 65, 85, 0.5);
+}
+
+/* ── Navigator Sidebar ───────────────────────────────────── */
+.form-navigator-backdrop {
+  @apply fixed inset-0 z-50 transition-opacity duration-300;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.form-navigator-panel {
+  @apply fixed inset-y-0 right-0 z-50 flex flex-col;
+  width: 320px;
+  max-width: 85vw;
+  background: rgba(15, 23, 42, 0.98);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-left: 1px solid rgba(51, 65, 85, 0.4);
+  box-shadow: -8px 0 40px -12px rgba(0, 0, 0, 0.5);
+}
+
+.form-navigator-header {
+  @apply flex items-center justify-between px-5 py-4 border-b border-navy-800/50;
+}
+
+.form-navigator-title {
+  @apply text-lg font-bold text-white;
+  letter-spacing: -0.01em;
+}
+
+.form-navigator-progress {
+  @apply px-5 py-3 border-b border-navy-800/50;
+}
+
+.form-navigator-progress-bar {
+  @apply w-full bg-navy-800/60 rounded-full overflow-hidden;
+  height: 6px;
+}
+
+.form-navigator-progress-fill {
+  @apply h-full rounded-full transition-all duration-500 ease-out;
+  background: linear-gradient(90deg, #064E3B, #10B981);
+}
+
+.form-navigator-list {
+  @apply flex-1 overflow-y-auto;
+}
+
+.form-navigator-item {
+  @apply w-full text-left px-5 py-3 flex items-center gap-3 transition-all duration-200
+         border-l-2;
+}
+
+.form-navigator-item-current {
+  @apply bg-sage-900/20 border-sage-500;
+}
+
+.form-navigator-item-hover {
+  @apply hover:bg-navy-800/40 border-transparent;
+}
+
+.form-navigator-number {
+  @apply flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center
+         text-xs font-bold transition-colors duration-200 border;
+}
+
+.form-navigator-number-completed {
+  @apply bg-sage-800 text-sage-300 border-sage-600;
+}
+
+.form-navigator-number-current {
+  @apply bg-sage-600 text-white border-sage-400;
+}
+
+.form-navigator-number-upcoming {
+  @apply bg-navy-800 text-navy-500 border-navy-700;
+}
+
+.form-navigator-step-title {
+  @apply text-sm font-medium truncate;
+}
+
+.form-navigator-step-title-current {
+  @apply text-sage-300;
+}
+
+.form-navigator-step-title-completed {
+  @apply text-white;
+}
+
+.form-navigator-step-title-upcoming {
+  @apply text-navy-400;
+}
+
+.form-navigator-step-subtitle {
+  @apply text-xs text-navy-500 truncate;
+}
+
+.form-navigator-current-dot {
+  @apply flex-shrink-0 rounded-full bg-sage-400;
+  width: 6px;
+  height: 6px;
+}
+
+.form-navigator-footer {
+  @apply px-5 py-3 border-t border-navy-800/50;
+}
+
+/* ── Step Enter Animation ────────────────────────────────── */
+.form-step-enter {
+  animation: form-step-enter-anim 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes form-step-enter-anim {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Slide-in animation for navigator ────────────────────── */
+.form-navigator-slide-in {
+  animation: form-navigator-slide 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes form-navigator-slide {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* ── Print ────────────────────────────────────────────────── */
+@media print {
+  .form-header,
+  .form-bottom-nav,
+  .form-pattern,
+  .form-glow {
+    display: none !important;
+  }
+}

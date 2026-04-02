@@ -1,0 +1,315 @@
+/* ============================================================
+   src/app/dashboard.css
+   Dashboard Styles — NikahReady
+   Enterprise Refactor — Phase 3
+   ============================================================ */
+
+/* ── Dashboard Page Layout ───────────────────────────────── */
+.dashboard-page {
+  @apply min-h-screen bg-navy-950 relative overflow-hidden;
+}
+
+/* Islamic pattern overlay — subtle geometric texture */
+.dashboard-pattern {
+  position: absolute;
+  inset: 0;
+  opacity: 0.02;
+  background-image: url('/images/pattern-islamic.svg');
+  background-repeat: repeat;
+  background-size: 100px 100px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Ambient top glow — sage tint */
+.dashboard-glow {
+  position: absolute;
+  top: -15%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 50%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(6, 78, 59, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ── Dashboard Nav ────────────────────────────────────────── */
+.dashboard-nav {
+  @apply sticky top-0 z-50 bg-navy-900/80 backdrop-blur-xl border-b border-navy-800/50;
+}
+
+.dashboard-nav-inner {
+  @apply max-w-5xl mx-auto px-5 flex items-center justify-between h-14;
+}
+
+/* ── Welcome Section ──────────────────────────────────────── */
+.dashboard-welcome {
+  @apply relative mb-10;
+  animation: dash-fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.dashboard-welcome-arabic {
+  @apply font-arabic text-lg text-gold-600/60 mb-1;
+  direction: rtl;
+}
+
+.dashboard-welcome-title {
+  @apply text-2xl sm:text-3xl font-bold text-white mb-1.5 tracking-tight;
+  letter-spacing: -0.02em;
+}
+
+.dashboard-welcome-title span {
+  background: linear-gradient(135deg, #064E3B, #10B981);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.dashboard-welcome-subtitle {
+  @apply text-sm sm:text-base text-navy-400 leading-relaxed;
+}
+
+/* ── Dashboard Card (base) ───────────────────────────────── */
+.dash-card {
+  @apply rounded-2xl border border-navy-800/50 bg-navy-900/50 backdrop-blur-sm p-6;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dash-card:hover {
+  border-color: rgba(51, 65, 85, 0.6);
+}
+
+/* ── Completion Card ──────────────────────────────────────── */
+.dash-completion {
+  @apply relative overflow-hidden;
+  animation: dash-fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+
+/* Gradient accent on left edge */
+.dash-completion::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  border-radius: 0 3px 3px 0;
+  background: linear-gradient(180deg, #064E3B, #10B981);
+}
+
+.dash-completion-header {
+  @apply flex items-center justify-between mb-3;
+}
+
+.dash-completion-label {
+  @apply text-sm font-semibold text-navy-100;
+}
+
+.dash-completion-percent {
+  @apply text-2xl font-bold tabular-nums;
+}
+
+.dash-progress-track {
+  @apply w-full h-2.5 bg-navy-800/60 rounded-full overflow-hidden;
+}
+
+.dash-progress-bar {
+  @apply h-full rounded-full;
+  transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+/* Animated shimmer on progress bar */
+.dash-progress-bar::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.15) 50%,
+    transparent 100%
+  );
+  animation: progress-shimmer 2s ease-in-out infinite;
+}
+
+.dash-completion-message {
+  @apply text-xs text-navy-400 mt-3 leading-relaxed;
+}
+
+/* ── Quick Action Cards ───────────────────────────────────── */
+.dash-actions {
+  @apply grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8;
+  animation: dash-fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+}
+
+.dash-action-card {
+  @apply flex flex-col items-center gap-3 p-6 rounded-2xl border border-navy-800/50 bg-navy-900/50 no-underline transition-all duration-200 text-center;
+}
+
+.dash-action-card:hover {
+  @apply -translate-y-0.5;
+  box-shadow: 0 8px 30px -8px rgba(0, 0, 0, 0.4);
+}
+
+.dash-action-card:active {
+  @apply scale-[0.98];
+}
+
+.dash-action-icon {
+  @apply w-12 h-12 flex items-center justify-center rounded-xl;
+}
+
+.dash-action-icon-sage {
+  @apply bg-sage-900/15;
+}
+
+.dash-action-icon-gold {
+  @apply bg-gold-600/15;
+}
+
+.dash-action-icon-navy {
+  @apply bg-navy-800/50;
+}
+
+.dash-action-title {
+  @apply text-sm font-semibold text-white;
+}
+
+.dash-action-desc {
+  @apply text-xs text-navy-500 leading-relaxed;
+}
+
+/* ── Steps Overview ───────────────────────────────────────── */
+.dash-steps {
+  @apply rounded-2xl border border-navy-800/50 bg-navy-900/50 backdrop-blur-sm p-6 mb-8;
+  animation: dash-fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+}
+
+.dash-steps-title {
+  @apply text-base font-bold text-navy-100 mb-4;
+}
+
+.dash-steps-grid {
+  @apply grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2;
+}
+
+.dash-step-chip {
+  @apply flex items-center gap-2 px-2.5 py-2 rounded-lg text-xs no-underline transition-all duration-150 border border-transparent;
+}
+
+.dash-step-chip-accessible {
+  @apply text-navy-300 hover:bg-navy-800/40 hover:border-navy-700/50;
+}
+
+.dash-step-chip-locked {
+  @apply text-navy-600 cursor-default;
+}
+
+.dash-step-chip-current {
+  @apply bg-sage-900/15 border border-sage-900/30;
+}
+
+.dash-step-chip-icon {
+  @apply text-sm shrink-0;
+}
+
+.dash-step-chip-text {
+  @apply truncate;
+}
+
+.dash-step-chip-badge {
+  @apply text-[9px] px-1 py-0.5 rounded bg-gold-600/15 text-gold-300 shrink-0 font-semibold;
+}
+
+/* ── Account Info ─────────────────────────────────────────── */
+.dash-account {
+  @apply rounded-2xl border border-navy-800/40 bg-navy-900/30 p-5 mb-8;
+  animation: dash-fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+}
+
+.dash-account-title {
+  @apply text-sm font-semibold text-navy-100 mb-3;
+}
+
+.dash-account-row {
+  @apply flex justify-between text-xs;
+}
+
+.dash-account-label {
+  @apply text-navy-500;
+}
+
+.dash-account-value {
+  @apply text-navy-300;
+}
+
+.dash-account-value-premium {
+  @apply font-semibold text-gold-300;
+}
+
+.dash-account-value-free {
+  @apply font-semibold text-sage-300;
+}
+
+/* ── Trust Strip ──────────────────────────────────────────── */
+.dash-trust {
+  @apply flex flex-wrap justify-center items-center gap-x-6 gap-y-2 py-4 px-5 rounded-xl border border-navy-800/30 bg-navy-900/30 mb-8;
+  animation: dash-fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.45s both;
+}
+
+.dash-trust-item {
+  @apply flex items-center gap-1.5 text-[10px] text-navy-500 leading-none;
+}
+
+/* ── Dashboard Footer ─────────────────────────────────────── */
+.dash-footer {
+  @apply text-center pb-8 pt-4;
+  animation: dash-fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.5s both;
+}
+
+.dash-footer-brand {
+  @apply text-[10px] text-navy-600 tracking-wide;
+}
+
+.dash-footer-values {
+  @apply text-[10px] text-navy-600/60 mt-0.5;
+}
+
+/* ── Animations ───────────────────────────────────────────── */
+@keyframes dash-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes progress-shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (min-width: 640px) {
+  .dash-completion-percent {
+    @apply text-3xl;
+  }
+}
+
+/* ── Print ────────────────────────────────────────────────── */
+@media print {
+  .dashboard-nav,
+  .dash-actions,
+  .dash-trust,
+  .dash-footer {
+    display: none !important;
+  }
+}

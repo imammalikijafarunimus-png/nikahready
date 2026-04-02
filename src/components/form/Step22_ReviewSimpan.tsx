@@ -5,12 +5,14 @@
 // Step 22 (form step): Review & Simpan
 // Langkah terakhir — menampilkan ringkasan seluruh data form
 // dengan indikator kelengkapan, dan tombol simpan final.
+// Phase 5 Polish: premium visual upgrade
 // ============================================================
 
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { useFormState } from '@/context/FormContext'
 import { SectionCard } from '@/components/ui/FormFields'
+import { FileText, ChevronRight } from 'lucide-react'
 
 function isEmpty(obj: Record<string, unknown>): boolean {
   return Object.values(obj).every((v) =>
@@ -217,10 +219,19 @@ export function Step22_ReviewSimpan() {
 
   return (
     <div className="space-y-5">
+      {/* ── Header Section ── */}
       <div className="text-center py-4">
-        <div className="text-5xl mb-3" role="img" aria-hidden="true">
-          {isMostlyComplete ? '🎉' : '📝'}
+        <div
+          className={
+            isMostlyComplete
+              ? 'w-16 h-16 mx-auto mb-3 rounded-2xl bg-gradient-to-br from-sage-700/30 to-sage-900/20 border border-sage-700/30 flex items-center justify-center'
+              : 'w-16 h-16 mx-auto mb-3 rounded-2xl bg-navy-800/60 border border-navy-700/50 flex items-center justify-center'
+          }
+        >
+          <span className="text-3xl">{isMostlyComplete ? '🎉' : '📝'}</span>
         </div>
+        <p className="font-arabic text-lg text-gold-500 mb-1">وَفَوْقَ كُلِّ ذِي عِلْمٍ عَلِيمٌ</p>
+        <p className="text-[10px] text-navy-600 mb-2">&ldquo;Dan di atas setiap orang yang berilmu ada yang lebih mengetahui&rdquo; — QS Yusuf: 76</p>
         <h2 className="text-lg font-bold text-white">
           {isMostlyComplete
             ? 'Lembar Taarufmu Sudah Hampir Siap!'
@@ -233,6 +244,7 @@ export function Step22_ReviewSimpan() {
         </p>
       </div>
 
+      {/* ── Progress Bar ── */}
       <SectionCard>
         <div className="space-y-3">
           <div className="flex items-center justify-between">
@@ -240,7 +252,7 @@ export function Step22_ReviewSimpan() {
             <span className="text-lg font-bold text-sage-400">{filledCount}/{totalCount}</span>
           </div>
 
-          <div className="w-full bg-navy-800 rounded-full h-3">
+          <div className="w-full bg-navy-800 rounded-full h-3 relative overflow-hidden">
             <div
               className={[
                 'h-3 rounded-full transition-all duration-700 ease-out',
@@ -250,6 +262,7 @@ export function Step22_ReviewSimpan() {
               ].join(' ')}
               style={{ width: `${percentComplete}%` }}
             />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-[shimmer_2s_infinite]" />
           </div>
 
           <p className="text-xs text-navy-500 text-center">
@@ -260,24 +273,31 @@ export function Step22_ReviewSimpan() {
         </div>
       </SectionCard>
 
+      {/* ── Template Card ── */}
       <SectionCard title="Template CV Pilihan" icon="🎨">
-        <div className="p-3 rounded-xl bg-navy-800/60 border border-navy-700 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-sage-600 to-sage-800 flex items-center justify-center flex-shrink-0">
-            <span className="text-lg">📄</span>
+        <div className="p-4 rounded-xl bg-navy-800/60 border border-navy-700 flex items-center gap-4">
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-sage-700 to-sage-900 flex items-center justify-center flex-shrink-0 shadow-lg shadow-sage-900/20">
+            <FileText className="w-5 h-5 text-sage-300" />
           </div>
-          <div>
-            <p className="text-sm font-medium text-white capitalize">
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-white capitalize">
               {selectedTemplate.replace(/_/g, ' ')}
             </p>
-            <p className="text-xs text-navy-500">
-              {selectedTemplate === 'akademik'
-                ? 'Template gratis — formal dan clean'
+            <p className="text-xs text-navy-500 mt-0.5">
+              {selectedTemplate === 'ringkas'
+                ? 'Template gratis — 1 halaman padat'
+                : selectedTemplate === 'sederhana'
+                ? 'Template gratis — 2 halaman data inti'
+                : selectedTemplate === 'minimal_islami'
+                ? 'Template gratis — 1 halaman ornamental'
                 : 'Template premium — tersedia untuk NikahReady Pro'}
             </p>
           </div>
+          <ChevronRight className="w-4 h-4 text-navy-600 flex-shrink-0" />
         </div>
       </SectionCard>
 
+      {/* ── Review Step Cards ── */}
       <SectionCard title="Ringkasan Per Langkah" icon="📋">
         <div className="space-y-2 max-h-96 overflow-y-auto pr-1">
           {reviewSteps.map((rs) => (
@@ -288,7 +308,7 @@ export function Step22_ReviewSimpan() {
               className={[
                 'w-full text-left p-3 rounded-xl border transition-all duration-200',
                 rs.filled
-                  ? 'border-navy-700 bg-navy-800/40 hover:border-sage-700'
+                  ? 'border-navy-700 bg-navy-800/40 hover:border-sage-700 border-l-2 border-l-sage-600'
                   : 'border-navy-800/50 bg-navy-900/30 hover:border-navy-600',
               ].join(' ')}
             >
@@ -340,12 +360,14 @@ export function Step22_ReviewSimpan() {
         </div>
       </SectionCard>
 
+      {/* ── Completion Highlight / Warning ── */}
       {isMostlyComplete ? (
         <SectionCard variant="highlight">
           <div className="text-center space-y-2 py-2">
-            <p className="font-arabic text-lg text-gold-400">
+            <p className="font-arabic text-xl text-gold-400">
               بَارَكَ اللهُ لَكَ وَبَارَكَ عَلَيْكَ
             </p>
+            <div className="w-12 h-px bg-gold-700/40 mx-auto" />
             <p className="text-xs text-navy-300 leading-relaxed">
               &quot;Semoga Allah memberkahi kamu dan memberkahi pernikahanmu.&quot;
             </p>
@@ -355,7 +377,7 @@ export function Step22_ReviewSimpan() {
           </div>
         </SectionCard>
       ) : (
-        <div className="flex gap-3 p-3 rounded-xl bg-gold-900/20 border border-gold-800/50">
+        <div className="flex gap-3 p-3 rounded-xl bg-gold-900/20 border border-gold-800/50 backdrop-blur-sm">
           <span className="text-lg flex-shrink-0">⚠️</span>
           <p className="text-xs text-gold-300 leading-relaxed">
             Ada <strong>{totalCount - filledCount} langkah</strong> yang belum diisi.
@@ -365,7 +387,8 @@ export function Step22_ReviewSimpan() {
         </div>
       )}
 
-      <div className="flex gap-3 p-3 rounded-xl bg-navy-900/60 border border-navy-800">
+      {/* ── Info Hint Card ── */}
+      <div className="flex gap-3 p-3 rounded-xl bg-navy-900/60 border border-navy-800 backdrop-blur-sm">
         <span className="text-lg flex-shrink-0">💡</span>
         <p className="text-xs text-navy-400 leading-relaxed">
           Setelah menyimpan, kamu bisa <strong className="text-white">kembali melengkapi profil</strong> melalui dashboard.
@@ -374,10 +397,11 @@ export function Step22_ReviewSimpan() {
         </p>
       </div>
       
+      {/* ── Bottom Action Links ── */}
       <div className="flex flex-col sm:flex-row gap-2 pt-2">
         <Link
           href="/create"
-          className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-navy-600 text-navy-300 hover:border-sage-600 hover:text-sage-400 text-sm font-medium transition-all duration-200"
+          className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl border-2 border-sage-800 text-sage-400 hover:border-sage-600 hover:text-sage-300 hover:bg-sage-900/20 text-sm font-semibold transition-all duration-200"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z" />
@@ -386,7 +410,7 @@ export function Step22_ReviewSimpan() {
         </Link>
         <Link
           href="/preview"
-          className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-navy-600 text-navy-300 hover:border-sage-600 hover:text-sage-400 text-sm font-medium transition-all duration-200"
+          className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl border-2 border-gold-700/50 text-gold-400 hover:border-gold-600 hover:text-gold-300 hover:bg-gold-900/15 text-sm font-semibold transition-all duration-200"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
@@ -396,7 +420,7 @@ export function Step22_ReviewSimpan() {
         </Link>
         <Link
           href="/dashboard"
-          className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-navy-800 text-navy-300 hover:bg-navy-700 hover:text-white text-sm font-medium transition-all duration-200"
+          className="flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-navy-800 text-navy-300 hover:bg-navy-700 hover:text-white text-sm font-medium transition-all duration-200 border border-navy-700"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955a1.126 1.126 0 011.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />

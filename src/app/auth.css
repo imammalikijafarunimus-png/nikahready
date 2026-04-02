@@ -101,6 +101,11 @@
   @apply text-xs text-red-400;
 }
 
+/* ── Contextual hint text ─────────────────────────────────── */
+.auth-hint {
+  @apply text-xs text-navy-500 leading-snug mt-0.5;
+}
+
 /* ── Password visibility toggle ───────────────────────────── */
 .auth-password-wrap {
   @apply relative;
@@ -108,6 +113,37 @@
 
 .auth-password-toggle {
   @apply absolute right-3 top-1/2 -translate-y-1/2 bg-transparent border-0 text-navy-500 cursor-pointer p-1 flex items-center justify-center transition-colors hover:text-navy-400;
+}
+
+/* ── Password Strength Indicator ──────────────────────────── */
+.auth-strength {
+  @apply flex flex-col gap-1.5 mt-1.5;
+}
+
+.auth-strength-bars {
+  display: flex;
+  gap: 4px;
+}
+
+.auth-strength-bar {
+  flex: 1;
+  height: 3px;
+  border-radius: 2px;
+}
+
+.auth-strength-hint {
+  @apply flex items-center gap-1.5;
+  line-height: 1;
+}
+
+/* label (e.g. "Lemah") — color is set inline from JS */
+.auth-strength-hint span:nth-child(2) {
+  @apply text-xs font-semibold;
+}
+
+/* descriptive text after the em dash */
+.auth-strength-text {
+  @apply text-xs text-navy-500;
 }
 
 /* ── Submit Button ────────────────────────────────────────── */
