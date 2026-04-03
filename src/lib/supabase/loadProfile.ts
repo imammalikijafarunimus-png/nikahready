@@ -42,7 +42,7 @@ export async function loadProfile(userId: string): Promise<LoadProfileResult> {
     const profileId = profile.id
 
     // ── 2. Load array tables ───────────────────────────────
-    const [pendidikanRes, pekerjaanRes, perjalananRes, organisasiRes, sosmedRes, keluargaRes, rencanaRes] =
+    const [pendidikanRes, pekerjaanRes, perjalananRes, organisasiRes, sosmedRes, galeriRes, keluargaRes, rencanaRes] =
       await Promise.all([
         supabase
           .from('riwayat_pendidikan')
@@ -70,6 +70,11 @@ export async function loadProfile(userId: string): Promise<LoadProfileResult> {
           .eq('profile_id', profileId)
           .order('urutan', { ascending: true }),
         supabase
+          .from('galeri_foto')
+          .select('*')
+          .eq('profile_id', profileId)
+          .order('urutan', { ascending: true }),
+        supabase
           .from('anggota_keluarga')
           .select('*')
           .eq('profile_id', profileId)
@@ -87,6 +92,7 @@ export async function loadProfile(userId: string): Promise<LoadProfileResult> {
     if (perjalananRes.error) throw perjalananRes.error
     if (organisasiRes.error) throw organisasiRes.error
     if (sosmedRes.error) throw sosmedRes.error
+    if (galeriRes.error) throw galeriRes.error
     if (keluargaRes.error) throw keluargaRes.error
     if (rencanaRes.error) throw rencanaRes.error
 
@@ -238,17 +244,23 @@ export async function loadProfile(userId: string): Promise<LoadProfileResult> {
         urutan: r.urutan,
       })),
 
-      // src/lib/supabase/loadProfile.ts
+      sosialMedia: sosmedRes.data.map((r) => ({
+        id: r.id,
+        platform: r.platform,
+        username: r.username,
+        url: r.url,
+        is_primary: r.is_primary,
+        tampil_di_pdf: r.tampil_di_pdf,
+        urutan: r.urutan,
+      })),
 
-sosialMedia: sosmedRes.data.map((r) => ({
-  id: r.id,
-  platform: r.platform,
-  username: r.username,
-  url: r.url,
-  is_primary: r.is_primary,
-  tampil_di_pdf: r.tampil_di_pdf,
-  urutan: r.urutan,
-})),
+      galeriFoto: galeriRes.data.map((r) => ({
+        id: r.id,
+        kategori: r.kategori,
+        url: r.url,
+        keterangan: r.keterangan ?? '',
+        urutan: r.urutan,
+      })),
 
       anggotaKeluarga: keluargaRes.data.map((r) => ({
         id: r.id,

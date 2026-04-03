@@ -149,7 +149,7 @@ export function StepNavigator({
 
   const completionPercent = Math.round((completedCount / totalSteps) * 100)
 
-  // Handle klik langkah
+  // Handle klik langkah — semua step bisa dikunjungi (view-only untuk premium)
   const handleStepClick = useCallback(
     (step: number) => {
       onGoToStep(step)
@@ -215,6 +215,7 @@ export function StepNavigator({
             {stepDefinitions.map((stepDef, index) => {
               const status = stepStatuses[index] ?? 'upcoming'
               const isCurrent = stepDef.step === currentStep
+              const isLocked = stepDef.isPremiumOnly && plan === 'free'
 
               return (
                 <li key={stepDef.step}>
@@ -250,8 +251,12 @@ export function StepNavigator({
                       )}
                     </span>
 
-                    {/* Icon */}
-                    <span className="text-base flex-shrink-0">{stepDef.icon}</span>
+                    {/* Icon: premium steps show lock for free users */}
+                    {isLocked ? (
+                      <span className="text-base flex-shrink-0 opacity-50">{stepDef.icon}</span>
+                    ) : (
+                      <span className="text-base flex-shrink-0">{stepDef.icon}</span>
+                    )}
 
                     {/* Title + subtitle */}
                     <div className="flex-1 min-w-0">
@@ -267,8 +272,8 @@ export function StepNavigator({
                         {stepDef.title}
                       </p>
                       <p className="form-navigator-step-subtitle">
-                        {stepDef.isPremiumOnly && plan === 'free'
-                          ? 'NikahReady Pro'
+                        {isLocked
+                          ? 'Preview saja — upgrade untuk mengisi'
                           : status === 'placeholder'
                           ? 'Segera hadir'
                           : stepDef.subtitle}
@@ -278,6 +283,13 @@ export function StepNavigator({
                     {/* Current step indicator */}
                     {isCurrent && (
                       <span className="form-navigator-current-dot" />
+                    )}
+
+                    {/* Premium badge */}
+                    {stepDef.isPremiumOnly && plan === 'free' && (
+                      <span className="text-[10px] px-1.5 py-0.5 rounded-md bg-gold-900/30 border border-gold-700/40 text-gold-500 font-semibold flex-shrink-0">
+                        PRO
+                      </span>
                     )}
                   </button>
                 </li>

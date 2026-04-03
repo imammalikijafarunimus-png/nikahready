@@ -149,7 +149,7 @@ export const INITIAL_FORM_STATE: FormState = {
   isDirty: false,
   isSaving: false,
   lastSavedAt: null,
-  plan: 'premium', // MVP: default premium
+  plan: 'free', // Default: real plan diambil dari AuthContext
 }
 
 // ── Step Definitions (22 steps) ─────────────────────────────
@@ -192,7 +192,7 @@ export const STEP_DEFINITIONS: StepDefinition[] = [
     subtitle: 'Fase-fase penting dalam hidupmu',
     icon: '🛤️',
     section: 'perjalananHidup',
-    isPremiumOnly: false,
+    isPremiumOnly: true,
   },
   {
     step: 6,
@@ -200,7 +200,7 @@ export const STEP_DEFINITIONS: StepDefinition[] = [
     subtitle: 'Pengalaman berorganisasi dan komunitas',
     icon: '🤝',
     section: 'riwayatOrganisasi',
-    isPremiumOnly: false,
+    isPremiumOnly: true,
   },
   {
     step: 7,
@@ -224,7 +224,7 @@ export const STEP_DEFINITIONS: StepDefinition[] = [
     subtitle: 'Keseharian dan kebiasaan hidupmu',
     icon: '🌱',
     section: 'gayaHidup',
-    isPremiumOnly: false,
+    isPremiumOnly: true,
   },
   {
     step: 10,
@@ -248,7 +248,7 @@ export const STEP_DEFINITIONS: StepDefinition[] = [
     subtitle: 'Rencana dan alokasi keuangan keluarga',
     icon: '💰',
     section: 'financialPlanning',
-    isPremiumOnly: true,
+    isPremiumOnly: true, // PREMIUM
   },
   {
     step: 13,
@@ -264,7 +264,7 @@ export const STEP_DEFINITIONS: StepDefinition[] = [
     subtitle: 'Struktur keluarga dan latar belakangnya',
     icon: '👨‍👩‍👧‍👦',
     section: 'anggotaKeluarga',
-    isPremiumOnly: true,
+    isPremiumOnly: false,
   },
   {
     step: 15,
@@ -333,16 +333,18 @@ export const STEP_DEFINITIONS: StepDefinition[] = [
   },
 ]
 
-// ── Step access by plan ──────────────────────────────────────
-export const FREE_STEPS = STEP_DEFINITIONS
+// ── Step access helpers ──────────────────────────────────────
+// Model baru: free users bisa NAVIGASI ke semua step,
+// tapi hanya bisa MENGISI step non-premium.
+// Premium users bisa mengisi semua step.
+
+export const FILLABLE_FREE_STEPS = STEP_DEFINITIONS
   .filter((s) => !s.isPremiumOnly)
   .map((s) => s.step)
 
-export const PREMIUM_STEPS = STEP_DEFINITIONS.map((s) => s.step)
-
-export function getAccessibleSteps(plan: 'free' | 'premium'): number[] {
-  return plan === 'premium' ? PREMIUM_STEPS : FREE_STEPS
-}
+export const PREMIUM_ONLY_STEPS = STEP_DEFINITIONS
+  .filter((s) => s.isPremiumOnly)
+  .map((s) => s.step)
 
 // ── Select Options ───────────────────────────────────────────
 

@@ -6,7 +6,7 @@
 // Mengatur: routing antar step, progress, save ke Supabase.
 // ============================================================
 
-import { useMemo, useCallback, useState, useEffect } from 'react'
+import { useMemo, useCallback, useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 
 import {
@@ -14,12 +14,15 @@ import {
   useFormDispatch,
   useStepNavigation,
   useSaveStatus,
+  serializeDraft,
 } from '@/context/FormContext'
 import { useRequireAuth } from '@/context/AuthContext'
-import { STEP_DEFINITIONS } from '@/lib/constants'
+import { STEP_DEFINITIONS, FORM_DRAFT_KEY, INITIAL_FORM_STATE } from '@/lib/constants'
 import { saveProfile } from '@/lib/supabase/saveProfile'
+import { loadProfile } from '@/lib/supabase/loadProfile'
 import { StepWrapper } from '@/components/ui/StepWrapper'
 import { StepNavigator } from '@/components/ui/StepNavigator'
+import { PremiumOverlay } from '@/components/ui/PremiumOverlay'
 import type { FormState } from '@/types'
 
 // Step components
@@ -48,12 +51,18 @@ import { Step22_ReviewSimpan }   from '@/components/form/Step22_ReviewSimpan'
 
 // ── Toast / feedback sederhana ────────────────────────────────
 interface ToastProps {
-  type: 'success' | 'error'
+  type: 'success' | 'error' | 'info'
   message: string
   onClose: () => void
 }
 
 function Toast({ type, message, onClose }: ToastProps) {
+  const bgClass = type === 'success'
+    ? 'bg-sage-800 border border-sage-600 text-sage-200'
+    : type === 'info'
+      ? 'bg-gold-900/80 border border-gold-700 text-gold-200'
+      : 'bg-red-900 border border-red-700 text-red-200'
+
   return (
     <div
       role="alert"
@@ -61,14 +70,16 @@ function Toast({ type, message, onClose }: ToastProps) {
         'fixed bottom-24 left-1/2 -translate-x-1/2 z-50',
         'flex items-center gap-2 px-4 py-3 rounded-2xl shadow-lg',
         'text-sm font-medium animate-slide-up max-w-xs w-full mx-4',
-        type === 'success'
-          ? 'bg-sage-800 border border-sage-600 text-sage-200'
-          : 'bg-red-900 border border-red-700 text-red-200',
+        bgClass,
       ].join(' ')}
     >
       {type === 'success' ? (
         <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+        </svg>
+      ) : type === 'info' ? (
+        <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
         </svg>
       ) : (
         <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -115,6 +126,50 @@ export function CreateFormClient() {
   const nav = useStepNavigation()
   const { isSaving, isDirty, lastSavedLabel } = useSaveStatus()
 
+  // ── Auto-load profile dari Supabase saat mount ───────────
+  // FIX: Sebelumnya CreateFormClient tidak pernah memanggil loadProfile(),
+  // sehingga data Supabase tidak pernah masuk ke form di halaman /create.
+  // Akibatnya, user yang login di device baru tidak melihat data mereka.
+  const supabaseLoadedRef = useRef(false)
+
+  useEffect(() => {
+    if (!userId || authLoading || supabaseLoadedRef.current) return
+
+    supabaseLoadedRef.current = true
+
+    async function loadFromSupabase() {
+      try {
+        const result = await loadProfile(userId!)
+
+        if (result.success && result.profile && result.profileId) {
+          // 1. Load data dari Supabase ke FormContext (override localStorage)
+          dispatch({ type: 'LOAD_PROFILE', payload: result.profile })
+          dispatch({ type: 'SET_PROFILE_ID', profileId: result.profileId })
+
+          // 2. Sync ke localStorage agar draft konsisten cross-device
+          const mergedState = { ...INITIAL_FORM_STATE, ...result.profile, profileId: result.profileId }
+          try {
+            localStorage.setItem(
+              FORM_DRAFT_KEY,
+              serializeDraft(mergedState as unknown as Parameters<typeof serializeDraft>[0])
+            )
+          } catch (e) {
+            console.warn('[NikahReady] Could not sync Supabase data to localStorage:', e)
+          }
+
+          console.info('[NikahReady] Profile loaded from Supabase:', result.profileId)
+        } else {
+          console.info('[NikahReady] No profile in Supabase yet, using localStorage draft.')
+        }
+      } catch (err) {
+        console.error('[NikahReady] Failed to load profile from Supabase:', err)
+        // Fallback: data tetap dari localStorage (default behavior)
+      }
+    }
+
+    loadFromSupabase()
+  }, [userId, authLoading, dispatch])
+
   // ── Navigator state ──────────────────────────────────────
   const [showNavigator, setShowNavigator] = useState(false)
   const toggleNavigator = useCallback(() => {
@@ -124,16 +179,20 @@ export function CreateFormClient() {
     setShowNavigator(false)
   }, [])
 
-  // ── All hooks must be called before any conditional return ──
-  const [toast, setToast] = useState<{
-    type: 'success' | 'error'
-    message: string
-  } | null>(null)
-
+  // ── Premium gating helpers ───────────────────────────────
   const stepDef = useMemo(
     () => STEP_DEFINITIONS[nav.currentStep - 1],
     [nav.currentStep]
   )
+
+  const isFreeUser = plan !== 'premium'
+  const isCurrentStepPremium = stepDef?.isPremiumOnly ?? false
+
+  // ── All hooks must be called before any conditional return ──
+  const [toast, setToast] = useState<{
+    type: 'success' | 'error' | 'info'
+    message: string
+  } | null>(null)
 
   const stepContent = useMemo(() => {
     switch (nav.currentStep) {
@@ -164,11 +223,10 @@ export function CreateFormClient() {
   }, [nav.currentStep, stepDef])
 
   const handleNext = useCallback(async () => {
-    // Jika step terakhir → simpan ke Supabase
+    // ── Jika step terakhir → simpan ke Supabase + preview
     if (nav.isLastStep) {
       dispatch({ type: 'SET_SAVING', isSaving: true })
 
-      // Gunakan real authenticated user ID
       if (!userId) {
         setToast({ type: 'error', message: 'Kamu harus login terlebih dahulu.' })
         dispatch({ type: 'SET_SAVING', isSaving: false })
@@ -177,24 +235,27 @@ export function CreateFormClient() {
       const result = await saveProfile(state, userId)
 
       if (result.success) {
-        // Simpan profileId ke context
         if (result.profileId) {
           dispatch({ type: 'SET_PROFILE_ID', profileId: result.profileId })
         }
         dispatch({ type: 'SET_SAVED', timestamp: new Date().toISOString() })
 
+        try {
+          const mergedState = { ...state, profileId: result.profileId || state.profileId }
+          localStorage.setItem(
+            FORM_DRAFT_KEY,
+            serializeDraft(mergedState as unknown as Parameters<typeof serializeDraft>[0])
+          )
+        } catch { /* silent fail */ }
+
         setToast({ type: 'success', message: 'Profil berhasil disimpan! 🎉' })
 
-        // Navigasi ke halaman preview setelah 1.5 detik
         setTimeout(() => {
           router.push('/preview')
         }, 1500)
       } else {
         dispatch({ type: 'SET_SAVING', isSaving: false })
-        setToast({
-          type: 'error',
-          message: result.error ?? 'Gagal menyimpan. Coba lagi.',
-        })
+        setToast({ type: 'error', message: result.error ?? 'Gagal menyimpan. Coba lagi.' })
       }
       return
     }
@@ -220,6 +281,16 @@ export function CreateFormClient() {
         dispatch({ type: 'SET_PROFILE_ID', profileId: result.profileId })
       }
       dispatch({ type: 'SET_SAVED', timestamp: new Date().toISOString() })
+
+      // Sync ke localStorage (Supabase = source of truth)
+      try {
+        const mergedState = { ...state, profileId: result.profileId || state.profileId }
+        localStorage.setItem(
+          FORM_DRAFT_KEY,
+          serializeDraft(mergedState as unknown as Parameters<typeof serializeDraft>[0])
+        )
+      } catch { /* silent fail */ }
+
       setToast({ type: 'success', message: 'Profil tersimpan!' })
     } else {
       dispatch({ type: 'SET_SAVING', isSaving: false })
@@ -303,7 +374,20 @@ export function CreateFormClient() {
       >
         {/* Animasi masuk saat ganti step */}
         <div key={nav.currentStep} className="animate-step-in">
-          {stepContent}
+          {/* Premium overlay: form visible tapi read-only + upgrade CTA */}
+          {isFreeUser && isCurrentStepPremium ? (
+            <div className="relative">
+              <div className="pointer-events-none select-none opacity-40">
+                {stepContent}
+              </div>
+              <PremiumOverlay
+                stepTitle={stepDef?.title ?? ''}
+                stepIcon={stepDef?.icon}
+              />
+            </div>
+          ) : (
+            stepContent
+          )}
         </div>
       </StepWrapper>
 
