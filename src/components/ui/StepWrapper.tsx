@@ -296,7 +296,7 @@ export function StepWrapper({
             )}
           </div>
 
-          {/* Next / Submit button */}
+          {/* Next / Submit / Selesai button */}
           <button
             type="button"
             onClick={onNext}

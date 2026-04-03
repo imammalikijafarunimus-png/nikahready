@@ -164,7 +164,8 @@ interface DraftData {
   savedAt: string
 }
 
-function serializeDraft(state: FormState): string {
+/** Exported: serialize FormState ke JSON string untuk localStorage */
+export function serializeDraft(state: FormState): string {
   const draft: DraftData = {
     version: FORM_DRAFT_VERSION,
     state,

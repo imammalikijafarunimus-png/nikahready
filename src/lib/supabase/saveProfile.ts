@@ -112,24 +112,21 @@ export async function saveProfile(
       template_pilihan:  state.fotoTemplate.template_pilihan,
     }
 
-    // Jika profileId ada → update, jika tidak → insert
-    let profileId = state.profileId
+    // ── 1b. Upsert taaruf_profiles berdasarkan user_id ─────────
+    // Dengan UNIQUE(user_id) constraint, upsert memastikan:
+    // - Jika user sudah punya profil → UPDATE
+    // - Jika user belum punya profil → INSERT
+    // Ini mengeliminasi masalah multiple profile per user.
+    const { data: profileData, error: profileError } = await supabase
+      .from('taaruf_profiles')
+      .upsert(profilePayload, {
+        onConflict: 'user_id',
+      })
+      .select('id')
+      .single()
 
-    if (profileId) {
-      const { error } = await supabase
-        .from('taaruf_profiles')
-        .update(profilePayload)
-        .eq('id', profileId)
-      if (error) throw error
-    } else {
-      const { data, error } = await supabase
-        .from('taaruf_profiles')
-        .insert(profilePayload)
-        .select('id')
-        .single()
-      if (error) throw error
-      profileId = data.id
-    }
+    if (profileError) throw profileError
+    const profileId = profileData.id
 
     // ── 2. Simpan array tables (delete-then-insert) ────────
     // Helper: delete all by profile_id, then insert new rows
@@ -222,6 +219,19 @@ export async function saveProfile(
         url:          item.url,
         is_primary:   item.is_primary,
         tampil_di_pdf: item.tampil_di_pdf,
+        urutan:       item.urutan,
+      }))
+    )
+
+    // Galeri Foto
+    await replaceArray(
+      'galeri_foto',
+      state.galeriFoto.map((item) => ({
+        profile_id: profileId,
+        kategori:   item.kategori,
+        url:        item.url,
+        keterangan: item.keterangan,
+        urutan:     item.urutan,
       }))
     )
 

@@ -289,18 +289,40 @@ export default function DashboardPage() {
           </Link>
 
           {/* Download PDF */}
-          <Link href="/preview" className="dash-action-card hover:border-navy-700">
-            <div className="dash-action-icon dash-action-icon-navy">
-              <Download className="text-navy-300" size={22} />
-            </div>
-            <span className="dash-action-title">
-              Download PDF
-            </span>
-            <span className="dash-action-desc">
-              Download PDF siap dibagikan ke wali atau murabbi
-            </span>
-            <ChevronRight size={14} className="text-navy-600 mt-auto" />
-          </Link>
+          {plan === 'premium' ? (
+            <Link href="/preview" className="dash-action-card hover:border-navy-700">
+              <div className="dash-action-icon dash-action-icon-navy">
+                <Download className="text-navy-300" size={22} />
+              </div>
+              <span className="dash-action-title">
+                Download PDF
+              </span>
+              <span className="dash-action-desc">
+                Download PDF siap dibagikan ke wali atau murabbi
+              </span>
+              <ChevronRight size={14} className="text-navy-600 mt-auto" />
+            </Link>
+          ) : (
+            <button
+              type="button"
+              onClick={() => router.push('/upgrade')}
+              className="dash-action-card hover:border-navy-700 cursor-pointer text-left"
+            >
+              <div className="dash-action-icon dash-action-icon-navy">
+                <Download className="text-navy-300" size={22} />
+              </div>
+              <span className="dash-action-title flex items-center gap-2">
+                Download PDF
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-gold-900/40 text-gold-400 border border-gold-700/40">
+                  PRO
+                </span>
+              </span>
+              <span className="dash-action-desc">
+                Download PDF siap dibagikan ke wali atau murabbi
+              </span>
+              <Sparkles size={14} className="text-gold-500/60 mt-auto" />
+            </button>
+          )}
         </div>
 
         {/* ── Steps Overview (Organized) ───────────────────── */}
@@ -310,21 +332,21 @@ export default function DashboardPage() {
           </h2>
           <div className="dash-steps-grid">
             {STEP_DEFINITIONS.map((step) => {
-              const isAccessible = plan === 'premium' || !step.isPremiumOnly
+              const isPremium = step.isPremiumOnly
               const isCurrentStep = step.step === state.currentStep
               return (
                 <Link
                   key={step.step}
-                  href={isAccessible ? '/create' : '#'}
+                  href='/create'
                   className={[
                     'dash-step-chip',
                     isCurrentStep
                       ? 'dash-step-chip-current'
-                      : isAccessible
-                        ? 'dash-step-chip-accessible'
-                        : 'dash-step-chip-locked',
+                      : isPremium && plan === 'free'
+                        ? 'dash-step-chip-locked'
+                        : 'dash-step-chip-accessible',
                   ].join(' ')}
-                  title={!isAccessible ? 'Fitur premium — upgrade untuk akses' : step.title}
+                  title={isPremium && plan === 'free' ? 'Preview saja — upgrade untuk mengisi' : step.title}
                 >
                   <span className="dash-step-chip-icon">{step.icon}</span>
                   <span className="dash-step-chip-text">
@@ -358,17 +380,20 @@ export default function DashboardPage() {
               </span>
             </div>
             <div className="dash-account-row">
-              <span className="dash-account-label">Langkah Tersedia</span>
+              <span className="dash-account-label">Langkah</span>
               <span className="dash-account-value">
                 {plan === 'premium'
-                  ? `${STEP_DEFINITIONS.length} langkah`
-                  : `${STEP_DEFINITIONS.filter(s => !s.isPremiumOnly).length} / ${STEP_DEFINITIONS.length} langkah`
+                  ? `${STEP_DEFINITIONS.length} langkah (semua bisa diisi)`
+                  : `${STEP_DEFINITIONS.length} langkah · ${STEP_DEFINITIONS.filter(s => !s.isPremiumOnly).length} bisa diisi`
                 }
               </span>
             </div>
           </div>
           {plan === 'free' && (
-            <button className="w-full mt-4 py-2.5 rounded-xl text-xs font-semibold bg-gradient-to-r from-gold-600 to-gold-500 text-white shadow-gold active:scale-95 transition-all cursor-pointer border-0">
+            <button
+              onClick={() => router.push('/upgrade')}
+              className="w-full mt-4 py-2.5 rounded-xl text-xs font-semibold bg-gradient-to-r from-gold-600 to-gold-500 text-white shadow-gold active:scale-95 transition-all cursor-pointer border-0 hover:from-gold-500 hover:to-gold-400"
+            >
               Upgrade ke NikahReady Pro
             </button>
           )}

@@ -26,6 +26,8 @@ import {
   X,
 } from 'lucide-react'
 import { useFormState } from '@/context/FormContext'
+import { useRequireAuth } from '@/context/AuthContext'
+import { OPTIONS_TEMPLATE } from '@/lib/constants'
 import { TemplateRingkas } from '@/components/templates/TemplateRingkas'
 import { TemplateSederhana } from '@/components/templates/TemplateSederhana'
 import { TemplateMinimalIslami } from '@/components/templates/TemplateMinimalIslami'
@@ -252,6 +254,7 @@ function hasMinimumData(state: FormState): boolean {
 // ── Main ────────────────────────────────────────────────────────
 export function PreviewClient() {
   const state       = useFormState()
+  const { plan }    = useRequireAuth()
   const wrapperRef  = useRef<HTMLDivElement>(null)  // ref ke ScaleWrapper inner div
 
   const [isHydrated,    setIsHydrated]    = useState(false)
@@ -344,6 +347,38 @@ export function PreviewClient() {
 
   if (!isHydrated) return <LoadingSkeleton />
   if (!hasMinimumData(state)) return <EmptyState />
+
+  // ── Premium template check ──────────────────────────────────
+  const currentTemplate = OPTIONS_TEMPLATE.find(t => t.value === state.fotoTemplate.template_pilihan)
+  const isPremiumTemplate = currentTemplate?.isPremiumOnly ?? false
+
+  if (plan !== 'premium' && isPremiumTemplate) {
+    return (
+      <div className="preview-page">
+        <div className="preview-pattern" />
+        <div className="preview-glow" />
+        <div className="relative z-10 flex items-center justify-center min-h-screen">
+          <div className="text-center max-w-md mx-auto px-6">
+            <div className="text-5xl mb-4">🔒</div>
+            <h2 className="text-xl font-bold text-white mb-2">Template Premium</h2>
+            <p className="text-sm text-navy-400 mb-6">
+              Template &ldquo;{currentTemplate?.label}&rdquo; hanya tersedia untuk pengguna NikahReady Pro.
+              Upgrade untuk menggunakan semua template premium dan fitur lengkap lainnya.
+            </p>
+            <Link href="/upgrade" className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-gold-600 to-gold-500 text-white text-sm font-semibold hover:from-gold-500 hover:to-gold-400 transition-all">
+              <Sparkles size={16} />
+              Upgrade ke Pro
+            </Link>
+            <div className="mt-4">
+              <Link href="/create" className="text-xs text-sage-400 hover:text-sage-300 transition-colors">
+                &larr; Kembali ke form (pilih template gratis)
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="preview-page">
