@@ -393,3 +393,173 @@ CREATE POLICY "Allow owner delete"
   ON storage.objects FOR DELETE
   TO authenticated
   USING (auth.uid()::text = (storage.foldername(name))[1]);
+
+-- ============================================================
+-- NikahReady — Migration: Fix template_pilihan CHECK constraint
+--
+-- Jalankan file ini di Supabase SQL Editor jika database sudah ada
+-- sebelum perbaikan schema. Tidak perlu dijalankan jika database
+-- dibuat dari supabase-schema.sql terbaru.
+-- ============================================================
+
+-- 1. Drop constraint lama yang hanya izinkan 3 template premium
+ALTER TABLE public.taaruf_profiles DROP CONSTRAINT IF EXISTS taaruf_profiles_template_pilihan_check;
+
+-- 2. Tambah constraint baru dengan semua 6 template (3 free + 3 premium)
+ALTER TABLE public.taaruf_profiles ADD CONSTRAINT taaruf_profiles_template_pilihan_check
+  CHECK (template_pilihan IN ('ringkas', 'sederhana', 'minimal_islami', 'akademik', 'elegant_islamic', 'modern_dark'));
+
+-- 3. Update default value untuk row baru (opsional — sudah default 'ringkas' di schema baru)
+-- Jika ada existing row yang masih 'akademik' tapi seharusnya free, update:
+-- UPDATE public.taaruf_profiles SET template_pilihan = 'ringkas'
+--   WHERE template_pilihan IS NULL OR template_pilihan = '';
+
+-- 4. Verifikasi
+SELECT constraint_name, check_clause
+FROM information_schema.check_constraints
+WHERE constraint_name = 'taaruf_profiles_template_pilihan_check';
+
+-- ============================================================
+-- NikahReady — Migration: Admin Panel & Subscriptions
+--
+-- Menambahkan role admin, tabel subscriptions, dan audit_logs.
+-- Jalankan file ini di Supabase SQL Editor.
+-- ============================================================
+
+-- ── 1. Tambah kolom role di tabel users ─────────────────────
+ALTER TABLE public.users
+  ADD COLUMN IF NOT EXISTS role TEXT NOT NULL DEFAULT 'user'
+  CHECK (role IN ('user', 'admin'));
+
+-- ── 2. Update comment ───────────────────────────────────────
+COMMENT ON COLUMN public.users.role IS 'user = pengguna biasa; admin = akses panel admin';
+
+-- ── 3. Index untuk lookup role ───────────────────────────────
+CREATE INDEX IF NOT EXISTS idx_users_role ON public.users(role);
+
+-- ============================================================
+-- 4. TABEL SUBSCRIPTIONS
+-- ============================================================
+-- Tracking riwayat perubahan plan user.
+-- Setiap kali admin upgrade/downgrade plan, buat row baru di sini.
+
+CREATE TABLE IF NOT EXISTS public.subscriptions (
+  id                UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id           UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
+  plan              TEXT NOT NULL CHECK (plan IN ('free', 'premium')),
+  start_date        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  end_date          TIMESTAMPTZ,            -- NULL = unlimited (manual upgrade)
+  payment_provider  TEXT,                   -- NULL untuk manual, 'midtrans'/'xendit' nanti
+  transaction_id    TEXT,                   -- ID transaksi dari payment gateway
+  status            TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'expired', 'cancelled', 'trial')),
+  notes             TEXT,                   -- Catatan admin (misal: "Gratis karena beta tester")
+  created_at        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  created_by        UUID REFERENCES public.users(id), -- Admin yang melakukan perubahan
+  updated_at        TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+COMMENT ON TABLE public.subscriptions IS 'Riwayat perubahan plan/subscription pengguna';
+
+CREATE INDEX IF NOT EXISTS idx_subscriptions_user_id ON public.subscriptions(user_id);
+CREATE INDEX IF NOT EXISTS idx_subscriptions_status ON public.subscriptions(status);
+
+-- ============================================================
+-- 5. TABEL AUDIT_LOGS
+-- ============================================================
+-- Mencatat semua aksi admin untuk accountability.
+
+CREATE TABLE IF NOT EXISTS public.audit_logs (
+  id              UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  admin_id        UUID NOT NULL REFERENCES public.users(id),
+  action          TEXT NOT NULL,   -- 'upgrade_plan', 'downgrade_plan', 'delete_user', dll
+  target_user_id  UUID REFERENCES public.users(id), -- User yang terkena aksi
+  target_email    TEXT,            -- Email target (snapshot, kalau user dihapus)
+  details         JSONB DEFAULT '{}'::JSONB,
+  ip_address      TEXT,
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+COMMENT ON TABLE public.audit_logs IS 'Log aktivitas admin untuk accountability';
+
+CREATE INDEX IF NOT EXISTS idx_audit_logs_admin_id ON public.audit_logs(admin_id);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_created_at ON public.audit_logs(created_at);
+
+-- ============================================================
+-- 6. UPDATE RLS POLICIES
+-- ============================================================
+
+-- Admin bisa lihat semua user
+CREATE POLICY "Admin can view all users"
+  ON public.users FOR SELECT
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin'
+    )
+  );
+
+-- Admin bisa update plan/role user lain
+CREATE POLICY "Admin can update other users"
+  ON public.users FOR UPDATE
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin'
+    )
+  );
+
+-- Admin bisa manage subscriptions
+ALTER TABLE public.subscriptions ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Admin can manage subscriptions"
+  ON public.subscriptions FOR ALL
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin'
+    )
+  );
+
+-- Admin bisa baca/tulis audit logs
+ALTER TABLE public.audit_logs ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Admin can manage audit logs"
+  ON public.audit_logs FOR ALL
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'admin'
+    )
+  );
+
+-- ============================================================
+-- 7. TRIGGER: updated_at untuk subscriptions & audit_logs
+-- ============================================================
+
+CREATE TRIGGER set_updated_at_subscriptions
+  BEFORE UPDATE ON public.subscriptions
+  FOR EACH ROW EXECUTE FUNCTION public.handle_updated_at();
+
+-- ============================================================
+-- 8. SET ADMIN PERTAMA (UNCOMMENT & EDIT EMAIL KAMU)
+-- ============================================================
+-- Jalankan ini SEKALI SETELAH migration untuk menjadikan
+-- akun kamu sebagai admin pertama.
+
+-- UPDATE public.users
+-- SET role = 'admin'
+-- WHERE email = 'emailkamu@gmail.com';
+
+-- ============================================================
+-- 9. VERIFIKASI
+-- ============================================================
+-- Cek bahwa kolom role sudah ada:
+-- SELECT column_name, data_type, column_default
+-- FROM information_schema.columns
+-- WHERE table_name = 'users' AND column_name = 'role';
+
+-- Cek RLS policies:
+-- SELECT tablename, policyname, cmd
+-- FROM pg_policies
+-- WHERE schemaname = 'public'
+--   AND policyname LIKE 'Admin can%';

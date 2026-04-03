@@ -13,6 +13,7 @@ import {
   TextArea,
   SelectInput,
 } from '@/components/ui/FormFields'
+import { getMaxItemsForSection } from '@/lib/constants'
 import type { RencanaMasaDepanItem } from '@/types'
 
 // ── Select options untuk tipe rencana ────────────────────────
@@ -134,7 +135,7 @@ export function Step15_RencanaMasaDepan() {
         itemLabel="Rencana"
         emptyIcon="🗓️"
         emptyMessage="Belum ada rencana masa depan. Tambahkan rencana pertamamu."
-        maxItems={10}
+        maxItems={getMaxItemsForSection('rencanaMasaDepan', 'pro')}
         createDefaultItem={createDefaultRencanaMasaDepan}
         renderSummary={renderSummary}
         renderForm={renderForm}

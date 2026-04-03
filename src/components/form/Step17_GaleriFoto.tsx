@@ -18,7 +18,7 @@ import {
   SelectInput,
   TextInput,
 } from '@/components/ui/FormFields'
-import { OPTIONS_KATEGORI_GALERI } from '@/lib/constants'
+import { OPTIONS_KATEGORI_GALERI, getMaxItemsForSection } from '@/lib/constants'
 import { uploadPhoto } from '@/lib/supabase/uploadPhoto'
 import { useRequireAuth } from '@/context/AuthContext'
 import type { GaleriFotoItem } from '@/types'
@@ -299,7 +299,7 @@ export function Step17_GaleriFoto() {
         itemLabel="Foto"
         emptyIcon="📸"
         emptyMessage="Belum ada foto. Tambahkan foto pertamamu."
-        maxItems={12}
+        maxItems={getMaxItemsForSection('galeriFoto', 'pro')}
         createDefaultItem={createDefaultGaleri}
         renderSummary={renderSummary}
         renderForm={renderForm}

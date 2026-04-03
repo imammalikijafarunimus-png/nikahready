@@ -14,7 +14,8 @@ import {
   NumberInput,
   SelectInput,
 } from '@/components/ui/FormFields'
-import { OPTIONS_JENJANG_PENDIDIKAN } from '@/lib/constants'
+import { OPTIONS_JENJANG_PENDIDIKAN, getMaxItemsForSection } from '@/lib/constants'
+import { useFormState } from '@/context/FormContext'
 import type { RiwayatPendidikanItem } from '@/types'
 
 function createDefaultPendidikan(): Omit<RiwayatPendidikanItem, 'id' | 'urutan'> {
@@ -124,6 +125,8 @@ function renderForm(
 export function Step03_RiwayatPendidikan() {
   const { items, addItem, removeItem, updateItem } =
     useArraySection('riwayatPendidikan')
+  const { plan } = useFormState()
+  const maxItems = getMaxItemsForSection('riwayatPendidikan', plan as 'free' | 'pro')
 
   return (
     <div className="space-y-5"> {/* ← was space-y-4 */}
@@ -144,7 +147,7 @@ export function Step03_RiwayatPendidikan() {
         itemLabel="Pendidikan"
         emptyIcon="🎓"
         emptyMessage="Belum ada riwayat pendidikan. Tambahkan pendidikan pertamamu."
-        maxItems={10}
+        maxItems={maxItems}
         createDefaultItem={createDefaultPendidikan}
         renderSummary={renderSummary}
         renderForm={renderForm}

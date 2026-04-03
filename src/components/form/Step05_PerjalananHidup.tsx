@@ -15,7 +15,7 @@ import {
   NumberInput,
   SectionCard,
 } from '@/components/ui/FormFields'
-import { OPTIONS_FASE_HIDUP } from '@/lib/constants'
+import { OPTIONS_FASE_HIDUP, getMaxItemsForSection } from '@/lib/constants'
 import type { PerjalananHidupItem, FaseHidup } from '@/types'
 
 // Label + warna per fase
@@ -184,7 +184,7 @@ export function Step05_PerjalananHidup() {
         itemLabel="Fase"
         emptyIcon="🛤️"
         emptyMessage="Mulai ceritakan perjalanan hidupmu. Tidak perlu sempurna — cerita autentikmu jauh lebih berharga."
-        maxItems={8}
+        maxItems={getMaxItemsForSection('perjalananHidup', 'pro')}
         createDefaultItem={createDefaultPerjalanan}
         renderSummary={renderSummary}
         renderForm={renderForm}

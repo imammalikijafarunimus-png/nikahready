@@ -13,7 +13,8 @@ import {
   TextArea,
   SelectInput,
 } from '@/components/ui/FormFields'
-import { OPTIONS_HUBUNGAN_KELUARGA } from '@/lib/constants'
+import { OPTIONS_HUBUNGAN_KELUARGA, getMaxItemsForSection } from '@/lib/constants'
+import { useFormState } from '@/context/FormContext'
 import type { AnggotaKeluargaItem, HubunganKeluarga } from '@/types'
 
 /**
@@ -85,6 +86,8 @@ const renderForm = (
 
 export function Step14_AnggotaKeluarga() {
   const { items, addItem, removeItem, updateItem } = useArraySection('anggotaKeluarga')
+  const { plan } = useFormState()
+  const maxItems = getMaxItemsForSection('anggotaKeluarga', plan as 'free' | 'pro')
 
   return (
     <div className="space-y-6">
@@ -106,6 +109,7 @@ export function Step14_AnggotaKeluarga() {
         items={items as AnggotaKeluargaItem[]}
         emptyIcon="👪"
         emptyMessage="Anda belum menambahkan daftar keluarga. Mulai dengan menambahkan Ayah atau Ibu."
+        maxItems={maxItems}
         
         // Sesuai dengan prop createDefaultItem di DynamicList.tsx
         createDefaultItem={() => ({

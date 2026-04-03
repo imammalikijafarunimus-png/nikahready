@@ -1,0 +1,283 @@
+/* ============================================================
+   src/components/share/share-menu.css
+   Styles untuk ShareMenu dropdown
+   ============================================================ */
+
+/* ── Dropdown Container ── */
+.share-menu-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 50;
+  width: 340px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.15), 0 4px 12px rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+  animation: shareMenuFadeIn 0.15s ease-out;
+}
+
+@keyframes shareMenuFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ── Header ── */
+.share-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.share-menu-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #0F172A;
+}
+
+.share-menu-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: #f1f5f9;
+  border-radius: 8px;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.share-menu-close:hover {
+  background: #e2e8f0;
+  color: #0F172A;
+}
+
+/* ── Section ── */
+.share-menu-section {
+  padding: 12px 16px;
+}
+
+.share-menu-section + .share-menu-section {
+  border-top: 1px solid #f1f5f9;
+}
+
+/* ── Publish Toggle ── */
+.share-menu-toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #f8fafc;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: left;
+}
+
+.share-menu-toggle:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.share-menu-toggle:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.share-menu-toggle-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #065F46, #047857);
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.share-menu-toggle-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.share-menu-toggle-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0F172A;
+  line-height: 1.3;
+}
+
+.share-menu-toggle-desc {
+  display: block;
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 2px;
+  line-height: 1.3;
+}
+
+/* ── Toggle Switch ── */
+.share-menu-switch {
+  width: 40px;
+  height: 22px;
+  border-radius: 11px;
+  background: #cbd5e1;
+  position: relative;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.share-menu-switch-active {
+  background: #065F46;
+}
+
+.share-menu-switch-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s;
+}
+
+.share-menu-switch-active .share-menu-switch-knob {
+  transform: translateX(18px);
+}
+
+/* ── URL Display ── */
+.share-menu-url-display {
+  padding: 8px 12px;
+  background: #f1f5f9;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.share-menu-url-text {
+  font-size: 11px;
+  color: #065F46;
+  word-break: break-all;
+  line-height: 1.5;
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+}
+
+/* ── Action Buttons ── */
+.share-menu-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.share-menu-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #ffffff;
+  font-size: 13px;
+  font-weight: 500;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-decoration: none;
+}
+
+.share-menu-action-btn:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+}
+
+.share-menu-action-whatsapp:hover {
+  background: #f0fdf4;
+  border-color: #86efac;
+  color: #065F46;
+}
+
+.share-menu-action-email:hover {
+  background: #eff6ff;
+  border-color: #93c5fd;
+  color: #1e40af;
+}
+
+.share-menu-action-copy:hover {
+  background: #fefce8;
+  border-color: #fde047;
+  color: #854d0e;
+}
+
+.share-menu-action-external:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  color: #0F172A;
+}
+
+/* ── Trigger Button Styles ── */
+.preview-btn-share {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  backdrop-filter: blur(4px);
+}
+
+.preview-btn-share:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.preview-btn-share-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.15s;
+  backdrop-filter: blur(4px);
+}
+
+.preview-btn-share-icon:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* ── Mobile Responsive ── */
+@media only screen and (max-width: 400px) {
+  .share-menu-dropdown {
+    width: calc(100vw - 32px);
+    right: -8px;
+  }
+}

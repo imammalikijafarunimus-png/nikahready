@@ -13,6 +13,8 @@ import {
   NumberInput,
   ToggleSwitch,
 } from '@/components/ui/FormFields'
+import { getMaxItemsForSection } from '@/lib/constants'
+import { useFormState } from '@/context/FormContext'
 import type { RiwayatPekerjaanItem } from '@/types'
 
 function createDefaultPekerjaan(): Omit<RiwayatPekerjaanItem, 'id' | 'urutan'> {
@@ -125,6 +127,8 @@ function renderForm(
 export function Step04_RiwayatPekerjaan() {
   const { items, addItem, removeItem, updateItem } =
     useArraySection('riwayatPekerjaan')
+  const { plan } = useFormState()
+  const maxItems = getMaxItemsForSection('riwayatPekerjaan', plan as 'free' | 'pro')
 
   return (
     <div className="space-y-5"> {/* ← was space-y-4 */}
@@ -144,7 +148,7 @@ export function Step04_RiwayatPekerjaan() {
         itemLabel="Pengalaman"
         emptyIcon="💼"
         emptyMessage="Belum ada riwayat pekerjaan. Tambahkan pengalaman kerja pertamamu."
-        maxItems={15}
+        maxItems={maxItems}
         createDefaultItem={createDefaultPekerjaan}
         renderSummary={renderSummary}
         renderForm={renderForm}

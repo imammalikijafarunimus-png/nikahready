@@ -509,6 +509,82 @@ export const PROVINSI_INDONESIA = [
   'Papua Pegunungan', 'Papua Barat Daya',
 ].map((v) => ({ value: v, label: v }))
 
+// ── Max Items Per Section (freemium-aware) ────────────────────
+//
+// Membatasi jumlah item yang bisa diinput per section agar:
+// 1. Konten tidak overflow di template PDF
+// 2. Template tetap rapi dan terbaca
+// 3. User diarahkan untuk memasukkan data yang paling relevan saja
+//
+// Format: { free: number, pro: number }
+// - free: batas untuk user gratis
+// - pro: batas untuk user premium
+//
+// Di template, gunakan .slice(-N) untuk mengambil N item TERAKHIR
+// (yang biasanya paling relevan/terbaru).
+
+export const MAX_ITEMS_PER_SECTION: Record<string, { free: number; pro: number }> = {
+  // Step 3 — Riwayat Pendidikan (FREE)
+  riwayatPendidikan:  { free: 3, pro: 5 },    // Ambil terakhir/tertinggi
+
+  // Step 4 — Riwayat Pekerjaan (FREE)
+  riwayatPekerjaan:   { free: 2, pro: 4 },    // Ambil terakhir/relevan
+
+  // Step 5 — Perjalanan Hidup (PREMIUM)
+  perjalananHidup:    { free: 0, pro: 5 },    // Premium only
+
+  // Step 6 — Riwayat Organisasi (PREMIUM)
+  riwayatOrganisasi:  { free: 0, pro: 3 },    // Premium only
+
+  // Step 14 — Anggota Keluarga (FREE)
+  anggotaKeluarga:    { free: 3, pro: 6 },    // Orang tua + sibling
+
+  // Step 15 — Rencana Masa Depan (PREMIUM)
+  rencanaMasaDepan:   { free: 0, pro: 4 },    // Premium only
+
+  // Step 16 — Sosial Media (FREE)
+  sosialMedia:        { free: 2, pro: 5 },    // WhatsApp + IG minimum
+
+  // Step 17 — Galeri Foto (PREMIUM)
+  galeriFoto:         { free: 0, pro: 8 },    // Premium only
+} as const
+
+/**
+ * Helper: ambil maxItems untuk section berdasarkan plan user.
+ * Jika section tidak ditemukan, fallback ke defaultMax.
+ */
+export function getMaxItemsForSection(
+  sectionKey: string,
+  plan: 'free' | 'pro' | 'premium',
+  defaultMax = 20
+): number {
+  const limits = MAX_ITEMS_PER_SECTION[sectionKey]
+  if (!limits) return defaultMax
+  return (plan === 'pro' || plan === 'premium') ? limits.pro : limits.free
+}
+
+/**
+ * Batas maksimum tag (kelebihan, kekurangan, hobi) per plan.
+ */
+export const MAX_TAGS: Record<string, { free: number; pro: number }> = {
+  kelebihan:  { free: 3, pro: 5 },
+  kekurangan: { free: 3, pro: 5 },
+  hobi:       { free: 3, pro: 5 },
+} as const
+
+/**
+ * Helper: ambil maxTags untuk field tag berdasarkan plan user.
+ */
+export function getMaxTags(
+  tagKey: string,
+  plan: 'free' | 'pro' | 'premium',
+  defaultMax = 5
+): number {
+  const limits = MAX_TAGS[tagKey]
+  if (!limits) return defaultMax
+  return (plan === 'pro' || plan === 'premium') ? limits.pro : limits.free
+}
+
 // ── Local storage key ────────────────────────────────────────
 export const FORM_DRAFT_KEY = 'nikahready_form_draft'
 export const FORM_DRAFT_VERSION = '2.0.0' // bumped: TF-1 added 3 free templates, schema changed

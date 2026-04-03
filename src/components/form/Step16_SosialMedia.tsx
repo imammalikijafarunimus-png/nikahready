@@ -13,7 +13,8 @@ import {
   SelectInput,
   ToggleSwitch,
 } from '@/components/ui/FormFields'
-import { OPTIONS_PLATFORM_SOSMED } from '@/lib/constants'
+import { OPTIONS_PLATFORM_SOSMED, getMaxItemsForSection } from '@/lib/constants'
+import { useFormState } from '@/context/FormContext'
 import type { SosialMediaItem } from '@/types'
 
 function createDefaultSosmed(): Omit<SosialMediaItem, 'id' | 'urutan'> {
@@ -110,6 +111,8 @@ function renderForm(
 export function Step16_SosialMedia() {
   const { items, addItem, removeItem, updateItem } =
     useArraySection('sosialMedia')
+  const { plan } = useFormState()
+  const maxItems = getMaxItemsForSection('sosialMedia', plan as 'free' | 'pro')
 
   return (
     <div className="space-y-5">
@@ -128,7 +131,7 @@ export function Step16_SosialMedia() {
         itemLabel="Akun Sosmed"
         emptyIcon="📱"
         emptyMessage="Belum ada akun sosial media. Tambahkan akun sosmed pertamamu."
-        maxItems={10}
+        maxItems={maxItems}
         createDefaultItem={createDefaultSosmed}
         renderSummary={renderSummary}
         renderForm={renderForm}
