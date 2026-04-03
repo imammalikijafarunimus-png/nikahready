@@ -327,6 +327,7 @@ export function PreviewClient() {
       const result = await generatePdf({
         templateElement: templateEl,
         ownerName: state.dataPribadi.nama_lengkap || 'taaruf',
+        isFreeUser: plan !== 'premium',
       })
 
       if (!result.success) {

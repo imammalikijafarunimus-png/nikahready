@@ -11,6 +11,9 @@
 // PENTING: File ini hanya boleh di-import di dalam
 // async function (bukan module level) karena html2canvas
 // dan jsPDF mengakses `window` / `document`.
+//
+// v2.0 — Improved: font loading, text normalization,
+//         scale transform fix, PNG output for quality.
 // ============================================================
 
 interface GeneratePdfOptions {
@@ -20,6 +23,8 @@ interface GeneratePdfOptions {
   filename?: string
   /** Nama pemilik CV untuk nama file */
   ownerName?: string
+  /** Jika true, tambahkan watermark "NikahReady Free" di setiap halaman */
+  isFreeUser?: boolean
 }
 
 interface GeneratePdfResult {
@@ -27,25 +32,178 @@ interface GeneratePdfResult {
   error?: string
 }
 
+// ── A4 dimensions (96 DPI) ───────────────────────────────────
+const A4_WIDTH_PX  = 794
+const A4_HEIGHT_PX = 1123
+const PDF_W_MM     = 210
+const PDF_H_MM     = 297
+
 /**
  * Menghapus CSS transform sementara untuk mendapatkan
  * screenshot ukuran asli (794px), bukan ukuran yang di-scale.
+ *
+ * Perbaikan v2: force reflow setelah transform removal
+ * agar browser menghitung ulang layout sebelum capture.
  */
 function removeTransformTemporarily(el: HTMLElement): (() => void) {
   const originalTransform       = el.style.transform
   const originalTransformOrigin = el.style.transformOrigin
   const originalPosition        = el.style.position
+  const originalVisibility      = el.style.visibility
+  const originalZIndex          = el.style.zIndex
+  const originalLeft            = el.style.left
+  const originalTop             = el.style.top
 
   el.style.transform       = 'none'
   el.style.transformOrigin = 'unset'
-  // Pastikan element visible tapi tidak mengganggu layout
-  el.style.position        = 'absolute'
+  // Pastikan element visible & di atas semuanya tapi tidak mengganggu layout
+  el.style.position        = 'fixed'
+  el.style.visibility      = 'visible'
+  el.style.zIndex          = '9999'
+  el.style.left            = '0'
+  el.style.top             = '0'
+
+  // Force reflow — ini kritis agar browser menghitung ulang layout
+  // setelah transform dihapus. Tanpa ini, html2canvas bisa saja
+  // membaca layout yang masih "cached" sebelum transform removal.
+  void el.offsetHeight
+  void el.offsetWidth
 
   // Return restore function
   return () => {
     el.style.transform       = originalTransform
     el.style.transformOrigin = originalTransformOrigin
     el.style.position        = originalPosition
+    el.style.visibility      = originalVisibility
+    el.style.zIndex          = originalZIndex
+    el.style.left            = originalLeft
+    el.style.top             = originalTop
+    void el.offsetHeight // Force reflow saat restore juga
+  }
+}
+
+/**
+ * Memastikan semua font yang dipakai template sudah loaded.
+ * html2canvas hanya bisa render font yang sudah loaded.
+ * 
+ * Strategy: 
+ * 1. Tunggu document.fonts.ready (native)
+ * 2. Buat span test untuk setiap font, render ke DOM,
+ *    lalu tunggu sampai computed style menunjukkan font yang benar
+ * 3. Cleanup span test
+ */
+async function ensureFontsLoaded(): Promise<void> {
+  // 1. Tunggu native font loading
+  await document.fonts.ready
+
+  // 2. Font yang wajib tersedia di template
+  const requiredFonts = [
+    { family: 'Inter', weight: '400' },
+    { family: 'Inter', weight: '500' },
+    { family: 'Inter', weight: '600' },
+    { family: 'Inter', weight: '700' },
+    { family: 'Inter', weight: '800' },
+    { family: 'Amiri', weight: '400' },
+    { family: 'Amiri', weight: '700' },
+  ]
+
+  // 3. Buat test span untuk setiap font, cek apakah benar-benar loaded
+  const testSpans: HTMLSpanElement[] = []
+  const container = document.createElement('div')
+  container.style.cssText = 'position:absolute;left:-9999px;top:-9999px;visibility:hidden;'
+  document.body.appendChild(container)
+
+  for (const font of requiredFonts) {
+    const span = document.createElement('span')
+    span.textContent = 'NikahReady Test'
+    span.style.fontFamily = `'${font.family}', sans-serif`
+    span.style.fontWeight = font.weight
+    span.style.fontSize = '16px'
+    container.appendChild(span)
+    testSpans.push(span)
+  }
+
+  // 4. Tunggu sejenak dan verifikasi
+  await new Promise<void>((resolve) => {
+    let checks = 0
+    const maxChecks = 20 // Max 2 detik (20 * 100ms)
+    const interval = setInterval(() => {
+      checks++
+      // Cek apakah semua font sudah loaded
+      const allLoaded = requiredFonts.every((font) =>
+        document.fonts.check(`16px "${font.family}"`)
+      )
+      if (allLoaded || checks >= maxChecks) {
+        clearInterval(interval)
+        resolve()
+      }
+    }, 100)
+  })
+
+  // 5. Cleanup
+  document.body.removeChild(container)
+}
+
+/**
+ * Menambahkan watermark "NikahReady" di setiap halaman PDF.
+ * Watermark ini tidak mengganggu konten utama, tapi cukup
+ * terlihat untuk mendorong user upgrade ke Pro.
+ * 
+ * Watermark di-render langsung di PDF menggunakan jsPDF text,
+ * sehingga tidak terlihat di browser preview.
+ */
+function addWatermark(pdf: { [K: string]: any }, totalPages: number): void {
+  const watermarkText = 'NikahReady · Free Plan'
+  
+  for (let page = 0; page < totalPages; page++) {
+    pdf.setPage(page + 1)
+    
+    // Posisi: diagonal di tengah halaman
+    const centerX = PDF_W_MM / 2
+    const centerY = PDF_H_MM / 2
+    
+    pdf.saveGraphicsState()
+    
+    // Rotasi 45 derajat di sekitar titik tengah
+    pdf.setGState(new (pdf as any).GState({ opacity: 0.06 }))
+    
+    // Font besar untuk watermark
+    pdf.setFont('helvetica', 'bold')
+    pdf.setFontSize(42)
+    
+    // Hitung posisi text (diagonal dari kiri bawah ke kanan atas)
+    // Karena jsPDF tidak support rotation text secara langsung,
+    // kita gunakan transform matrix
+    const angle = -45 * (Math.PI / 180)
+    const cos = Math.cos(angle)
+    const sin = Math.sin(angle)
+    const textWidth = pdf.getTextWidth(watermarkText)
+    
+    // Multiple watermark lines untuk efek repeating
+    const positions = [
+      { x: centerX - 30, y: centerY - 40 },
+      { x: centerX + 20, y: centerY + 20 },
+      { x: centerX - 60, y: centerY + 10 },
+    ]
+    
+    for (const pos of positions) {
+      // Gunakan transformation matrix untuk rotasi
+      pdf.text(watermarkText, pos.x, pos.y, {
+        angle: -45,
+        // Tidak ada align option yang baik, jadi manual adjust
+      })
+    }
+    
+    // Tambahkan garis tipis branding di bawah
+    pdf.setFont('helvetica', 'normal')
+    pdf.setFontSize(9)
+    pdf.setTextColor(150, 150, 150)
+    pdf.text('Upgrade ke Pro untuk tanpa watermark', centerX - 35, PDF_H_MM - 8, {
+      angle: 0,
+    })
+    pdf.setTextColor(0, 0, 0)
+    
+    pdf.restoreGraphicsState()
   }
 }
 
@@ -53,6 +211,7 @@ export async function generatePdf({
   templateElement,
   filename,
   ownerName = 'taaruf',
+  isFreeUser = false,
 }: GeneratePdfOptions): Promise<GeneratePdfResult> {
   try {
     // ── 1. Dynamic import (WAJIB — bukan module level) ────────
@@ -64,13 +223,14 @@ export async function generatePdf({
     const html2canvas = html2canvasModule.default
     const { jsPDF }   = jsPDFModule
 
-    // ── 2. Tunggu semua font selesai load ─────────────────────
+    // ── 2. Pastikan semua font sudah loaded ────────────────────
     // Kritis: tanpa ini, screenshot bisa pakai fallback font
-    await document.fonts.ready
+    // yang ukurannya beda → posisi teks berantakan di PDF
+    await ensureFontsLoaded()
 
     // ── 3. Temukan semua page div ──────────────────────────────
     // Setiap halaman PDF adalah direct child pertama dari template
-    // yang punya minHeight 1123px
+    // yang punya width 794px
     const pageElements = Array.from(
       templateElement.children
     ) as HTMLElement[]
@@ -103,11 +263,7 @@ export async function generatePdf({
     const restoreTemplate = removeTransformTemporarily(templateElement)
 
     try {
-      // ── 5. A4 dimensions (mm) ────────────────────────────────
-      const PDF_W_MM = 210  // A4 width in mm
-      const PDF_H_MM = 297  // A4 height in mm
-
-      // Inisialisasi jsPDF
+      // ── 5. Inisialisasi jsPDF ────────────────────────────────
       const pdf = new jsPDF({
         orientation: 'portrait',
         unit: 'mm',
@@ -124,52 +280,121 @@ export async function generatePdf({
           pdf.addPage('a4', 'portrait')
         }
 
-        // html2canvas config
-        const canvas = await html2canvas(pageEl, {
-          scale: 2,              // 2x untuk kualitas retina / print
-          useCORS: true,         // Untuk gambar dari Supabase Storage
-          allowTaint: false,     // Lebih aman dengan useCORS: true
-          backgroundColor: '#ffffff',
-          logging: false,        // Matikan log di production
-          imageTimeout: 15000,   // Timeout 15 detik per gambar
-          onclone: (clonedDoc, clonedElement) => {
-            // Pastikan elemen yang di-clone juga tidak ter-scale
-            clonedElement.style.transform       = 'none'
-            clonedElement.style.transformOrigin = 'unset'
+        // Pastikan halaman memiliki dimensi yang benar
+        const originalWidth = pageEl.style.width
+        const originalMinHeight = pageEl.style.minHeight
+        pageEl.style.width = `${A4_WIDTH_PX}px`
+        pageEl.style.minHeight = `${A4_HEIGHT_PX}px`
+        void pageEl.offsetHeight // Force reflow
 
-            // Force semua font di clone dokumen
-            const style = clonedDoc.createElement('style')
-            style.textContent = `
-              @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Amiri:wght@400;700&display=swap');
-              * { font-family: 'Inter', system-ui, sans-serif !important; }
-              .font-arabic, [style*="Amiri"] { font-family: 'Amiri', Georgia, serif !important; }
-            `
-            clonedDoc.head.appendChild(style)
-          },
-        })
+        try {
+          // html2canvas config — optimized untuk akurasi
+          const canvas = await html2canvas(pageEl, {
+            scale: 2,              // 2x untuk kualitas retina / print
+            useCORS: true,         // Untuk gambar dari Supabase Storage
+            allowTaint: false,     // Lebih aman dengan useCORS: true
+            backgroundColor: '#ffffff',
+            logging: false,        // Matikan log di production
+            imageTimeout: 15000,   // Timeout 15 detik per gambar
 
-        // Convert canvas ke image data
-        const imgData   = canvas.toDataURL('image/jpeg', 0.95)
-        const imgWidth  = PDF_W_MM
-        // Hitung tinggi proporsional (A4 @96dpi → 794x1123px)
-        const imgHeight = (canvas.height * PDF_W_MM) / canvas.width
+            // Perbaikan v2: width eksplisit agar html2canvas
+            // tidak menghitung ulang dengan dimensi yang salah
+            width: A4_WIDTH_PX,
+            windowWidth: A4_WIDTH_PX,
 
-        // Tambahkan image ke halaman PDF
-        // Jika imgHeight > PDF_H_MM (konten overflow), pdf akan crop
-        // Ini acceptable karena kita sudah set overflow: hidden pada tiap page
-        pdf.addImage(
-          imgData,
-          'JPEG',
-          0,           // x margin
-          0,           // y margin
-          imgWidth,
-          imgHeight,
-          undefined,   // alias (auto)
-          'FAST',      // compression: NONE | FAST | MEDIUM | SLOW
-        )
+            // Perbaikan v2: hilangkan elemen yang tidak terlihat
+            ignoreElements: (element) => {
+              // Skip elemen yang hidden atau tooltip
+              const tag = element.tagName?.toLowerCase()
+              if (tag === 'script' || tag === 'style') return true
+              if ((element as HTMLElement).style?.display === 'none') return true
+              return false
+            },
+
+            onclone: (clonedDoc, clonedElement) => {
+              // ── Perbaikan v2: Normalisasi text rendering ──
+              // Ini mengeliminasi perbedaan sub-pixel rendering
+              // antara browser dan canvas
+              const normalizeStyle = clonedDoc.createElement('style')
+              normalizeStyle.textContent = `
+                /* Normalisasi text spacing untuk akurasi PDF */
+                * {
+                  letter-spacing: normal !important;
+                  word-spacing: normal !important;
+                  text-rendering: geometricPrecision !important;
+                  -webkit-font-smoothing: antialiased !important;
+                  -moz-osx-font-smoothing: grayscale !important;
+                }
+
+                /* Pastikan semua elemen menggunakan Inter */
+                @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Amiri:wght@400;700&display=swap');
+                
+                body, div, span, p, h1, h2, h3, h4, h5, h6,
+                li, ul, ol, td, th, label, a, strong, em, b, i {
+                  font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif !important;
+                }
+
+                /* Font Arabic khusus */
+                .font-arabic, [style*="Amiri"], [class*="arabic"] {
+                  font-family: 'Amiri', Georgia, 'Times New Roman', serif !important;
+                }
+
+                /* Fix flexbox layout consistency */
+                .template-page > div > div,
+                .template-page section {
+                  flex-shrink: 0 !important;
+                  min-width: 0 !important;
+                  overflow: hidden !important;
+                }
+              `
+              clonedDoc.head.appendChild(normalizeStyle)
+
+              // Pastikan elemen yang di-clone juga tidak ter-scale
+              clonedElement.style.transform       = 'none'
+              clonedElement.style.transformOrigin = 'unset'
+              clonedElement.style.width          = `${A4_WIDTH_PX}px`
+              clonedElement.style.minHeight      = `${A4_HEIGHT_PX}px`
+
+              // Force reflow di clone juga
+              void clonedElement.offsetHeight
+            },
+          })
+
+          // ── Convert canvas ke image data ────────────────────
+          // Perbaikan v2: gunakan PNG untuk kualitas text yang lebih tajam.
+          // JPEG menghilangkan detail halus pada teks kecil (font size < 10px).
+          // Tradeoff: file size lebih besar ~2-3x, tapi text jauh lebih tajam.
+          const imgData   = canvas.toDataURL('image/png')
+          const imgWidth  = PDF_W_MM
+          // Hitung tinggi proporsional (A4 @96dpi → 794x1123px)
+          const imgHeight = (canvas.height * PDF_W_MM) / canvas.width
+
+          // Tambahkan image ke halaman PDF
+          // Jika imgHeight > PDF_H_MM (konten overflow), pdf akan crop
+          // Ini acceptable karena kita sudah set overflow: hidden pada tiap page
+          pdf.addImage(
+            imgData,
+            'PNG',           // Perbaikan: PNG untuk kualitas text
+            0,               // x margin
+            0,               // y margin
+            imgWidth,
+            imgHeight,
+            undefined,       // alias (auto)
+            'FAST',          // compression: NONE | FAST | MEDIUM | SLOW
+          )
+        } finally {
+          // Restore original dimensions
+          pageEl.style.width = originalWidth
+          pageEl.style.minHeight = originalMinHeight
+        }
       }
 
-      // ── 7. Generate nama file ──────────────────────────────
+      // ── 7. Tambahkan watermark untuk free user ──────────────
+      if (isFreeUser) {
+        addWatermark(pdf, pageElements.length)
+      }
+
+      // ── 8. Generate nama file ──────────────────────────────
       const safeName = ownerName
         .toLowerCase()
         .replace(/\s+/g, '_')

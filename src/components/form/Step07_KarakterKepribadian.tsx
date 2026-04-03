@@ -14,7 +14,7 @@ import {
   TagInput,
   SectionCard,
 } from '@/components/ui/FormFields'
-import { OPTIONS_MBTI, OPTIONS_BAHASA_CINTA } from '@/lib/constants'
+import { OPTIONS_MBTI, OPTIONS_BAHASA_CINTA, getMaxTags } from '@/lib/constants'
 import type { Karakter } from '@/types'
 
 // ── Suggestions untuk TagInput ────────────────────────────────
@@ -42,6 +42,10 @@ export function Step07_KarakterKepribadian() {
   const state    = useFormState()
   const dispatch = useFormDispatch()
   const data     = state.karakter
+  const planKey  = state.plan === 'premium' ? 'pro' as const : 'free' as const
+  const maxKelebihan  = getMaxTags('kelebihan', planKey)
+  const maxKekurangan = getMaxTags('kekurangan', planKey)
+  const maxHobi       = getMaxTags('hobi', planKey)
 
   // Type-safe field updater
   function update<K extends keyof Karakter>(field: K, value: Karakter[K]) {
@@ -89,7 +93,7 @@ export function Step07_KarakterKepribadian() {
             tags={data.kelebihan}
             onChange={(v) => update('kelebihan', v)}
             placeholder="Ketik kelebihanmu lalu Enter…"
-            maxTags={10}
+            maxTags={maxKelebihan}
             suggestions={SUGGESTIONS_KELEBIHAN}
             hint="Pilih atau ketik kelebihan yang paling mencerminkan dirimu"
           />
@@ -98,7 +102,7 @@ export function Step07_KarakterKepribadian() {
             tags={data.kekurangan}
             onChange={(v) => update('kekurangan', v)}
             placeholder="Ketik kekuranganmu lalu Enter…"
-            maxTags={10}
+            maxTags={maxKekurangan}
             suggestions={SUGGESTIONS_KEKURANGAN}
             hint="Jujur tentang kekurangan menunjukkan kedewasaan — bukan kelemahan"
           />
@@ -112,7 +116,7 @@ export function Step07_KarakterKepribadian() {
           tags={data.hobi}
           onChange={(v) => update('hobi', v)}
           placeholder="Ketik hobimu lalu Enter…"
-          maxTags={10}
+          maxTags={maxHobi}
           suggestions={SUGGESTIONS_HOBI}
           hint="Hobi menunjukkan sisi personal dan passion-mu"
         />

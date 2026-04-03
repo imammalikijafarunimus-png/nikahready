@@ -13,6 +13,7 @@ import {
   TextArea,
   NumberInput,
 } from '@/components/ui/FormFields'
+import { getMaxItemsForSection } from '@/lib/constants'
 import type { RiwayatOrganisasiItem } from '@/types'
 
 // ── Default item factory ──────────────────────────────────────
@@ -140,7 +141,7 @@ export function Step06_RiwayatOrganisasi() {
         itemLabel="Organisasi"
         emptyIcon="🤝"
         emptyMessage="Belum ada riwayat organisasi. Tambahkan pengalaman berorganisasimu."
-        maxItems={10}
+        maxItems={getMaxItemsForSection('riwayatOrganisasi', 'pro')}
         createDefaultItem={createDefaultOrganisasi}
         renderSummary={renderSummary}
         renderForm={renderForm}
