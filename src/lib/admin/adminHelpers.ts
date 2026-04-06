@@ -128,48 +128,58 @@ export async function checkIsAdmin(): Promise<{
 export async function getAdminStats(): Promise<AdminStats> {
   const supabase = createClient()
 
-  // Total users
-  const { count: totalUsers } = await supabase
-    .from('users')
-    .select('*', { count: 'exact', head: true })
+  // FIX: Use Promise.all() to execute all queries in parallel.
+  // Before: 7 sequential queries ~350ms (7 × 50ms each).
+  // After:  ~50ms (time of the slowest single query).
+  const [
+    { count: totalUsers },
+    { count: freeUsers },
+    { count: premiumUsers },
+    { count: newUsersThisWeek },
+    { count: newUsersThisMonth },
+    { count: totalSubscriptions },
+    { count: activeSubscriptions },
+  ] = await Promise.all([
+    // Total users
+    supabase
+      .from('users')
+      .select('*', { count: 'exact', head: true }),
 
-  // Free users
-  const { count: freeUsers } = await supabase
-    .from('users')
-    .select('*', { count: 'exact', head: true })
-    .eq('plan', 'free')
+    // Free users
+    supabase
+      .from('users')
+      .select('*', { count: 'exact', head: true })
+      .eq('plan', 'free'),
 
-  // Premium users
-  const { count: premiumUsers } = await supabase
-    .from('users')
-    .select('*', { count: 'exact', head: true })
-    .eq('plan', 'premium')
+    // Premium users
+    supabase
+      .from('users')
+      .select('*', { count: 'exact', head: true })
+      .eq('plan', 'premium'),
 
-  // New this week
-  const oneWeekAgo = new Date()
-  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7)
-  const { count: newUsersThisWeek } = await supabase
-    .from('users')
-    .select('*', { count: 'exact', head: true })
-    .gte('created_at', oneWeekAgo.toISOString())
+    // New this week
+    supabase
+      .from('users')
+      .select('*', { count: 'exact', head: true })
+      .gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()),
 
-  // New this month
-  const oneMonthAgo = new Date()
-  oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1)
-  const { count: newUsersThisMonth } = await supabase
-    .from('users')
-    .select('*', { count: 'exact', head: true })
-    .gte('created_at', oneMonthAgo.toISOString())
+    // New this month
+    supabase
+      .from('users')
+      .select('*', { count: 'exact', head: true })
+      .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()),
 
-  // Subscriptions
-  const { count: totalSubscriptions } = await supabase
-    .from('subscriptions')
-    .select('*', { count: 'exact', head: true })
+    // Subscriptions
+    supabase
+      .from('subscriptions')
+      .select('*', { count: 'exact', head: true }),
 
-  const { count: activeSubscriptions } = await supabase
-    .from('subscriptions')
-    .select('*', { count: 'exact', head: true })
-    .eq('status', 'active')
+    // Active subscriptions
+    supabase
+      .from('subscriptions')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'active'),
+  ])
 
   return {
     totalUsers: totalUsers ?? 0,
@@ -207,7 +217,13 @@ export async function getAdminUsers(options?: {
     .range(from, to)
 
   if (search) {
-    query = query.or(`email.ilike.%${search}%`)
+    // FIX: Sanitize search input to prevent PostgREST filter injection.
+    // Only allow alphanumeric, @, dots, underscores, and hyphens.
+    // Characters like %, (, ) that could manipulate the filter are rejected.
+    const safeSearch = /^[a-zA-Z0-9@._-]+$/.test(search) ? search : ''
+    if (safeSearch) {
+      query = query.or(`email.ilike.%${safeSearch}%`)
+    }
   }
   if (plan) {
     query = query.eq('plan', plan)
