@@ -128,139 +128,135 @@ export async function saveProfile(
     if (profileError) throw profileError
     const profileId = profileData.id
 
-    // ── 2. Simpan array tables (delete-then-insert) ────────
-    // Helper: delete all by profile_id, then insert new rows
-    async function replaceArray<T extends object>(
-      tableName: string,
-      rows: T[]
-    ) {
-      // Hapus semua data lama
-      const { error: deleteError } = await supabase
-        .from(tableName)
-        .delete()
-        .eq('profile_id', profileId!)
-      if (deleteError) throw deleteError
+    // ── 2. Simpan array tables (Phase 3: batch delete + batch insert) ──
+    // Optimasi: semua DELETE dijalankan paralel, lalu semua INSERT dijalankan paralel.
+    // Ini mengurangi latency dari ~16 sequential round-trips menjadi ~2.
+    //
+    // Catatan: ini BUKAN true atomic transaction (perlu Supabase Edge Function + RPC
+    // untuk BEGIN/COMMIT/ROLLBACK). Tapi batch approach sudah jauh lebih baik dari
+    // sequential delete-insert per tabel.
 
-      // Insert data baru jika ada
-      if (rows.length > 0) {
-        const { error: insertError } = await supabase
-          .from(tableName)
-          .insert(rows)
-        if (insertError) throw insertError
-      }
+    // ── 2a. Siapkan semua data rows ──
+    const arrayTables = [
+      {
+        table: 'riwayat_pendidikan' as const,
+        rows: state.riwayatPendidikan.map((item) => ({
+          profile_id: profileId,
+          jenjang: item.jenjang,
+          nama_institusi: item.nama_institusi,
+          jurusan: item.jurusan,
+          tahun_mulai: item.tahun_mulai || null,
+          tahun_selesai: item.tahun_selesai || null,
+          prestasi: item.prestasi,
+          urutan: item.urutan,
+        })),
+      },
+      {
+        table: 'riwayat_pekerjaan' as const,
+        rows: state.riwayatPekerjaan.map((item) => ({
+          profile_id: profileId,
+          nama_perusahaan: item.nama_perusahaan,
+          posisi_jabatan: item.posisi_jabatan,
+          deskripsi_pekerjaan: item.deskripsi_pekerjaan,
+          is_masih_aktif: item.is_masih_aktif,
+          tahun_mulai: item.tahun_mulai || null,
+          tahun_selesai: item.is_masih_aktif ? null : item.tahun_selesai || null,
+          urutan: item.urutan,
+        })),
+      },
+      {
+        table: 'perjalanan_hidup' as const,
+        rows: state.perjalananHidup.map((item) => ({
+          profile_id: profileId,
+          fase: item.fase,
+          judul: item.judul,
+          cerita: item.cerita,
+          pelajaran: item.pelajaran,
+          tahun_mulai: item.tahun_mulai || null,
+          tahun_selesai: item.tahun_selesai || null,
+          urutan: item.urutan,
+        })),
+      },
+      {
+        table: 'riwayat_organisasi' as const,
+        rows: state.riwayatOrganisasi.map((item) => ({
+          profile_id: profileId,
+          nama_organisasi: item.nama_organisasi,
+          jabatan: item.jabatan,
+          deskripsi: item.deskripsi,
+          tahun_mulai: item.tahun_mulai || null,
+          tahun_selesai: item.tahun_selesai || null,
+          urutan: item.urutan,
+        })),
+      },
+      {
+        table: 'sosial_media' as const,
+        rows: state.sosialMedia.map((item) => ({
+          profile_id: profileId,
+          platform: item.platform,
+          username: item.username,
+          url: item.url,
+          is_primary: item.is_primary,
+          tampil_di_pdf: item.tampil_di_pdf,
+          urutan: item.urutan,
+        })),
+      },
+      {
+        table: 'galeri_foto' as const,
+        rows: state.galeriFoto.map((item) => ({
+          profile_id: profileId,
+          kategori: item.kategori,
+          url: item.url,
+          keterangan: item.keterangan,
+          urutan: item.urutan,
+        })),
+      },
+      {
+        table: 'anggota_keluarga' as const,
+        rows: state.anggotaKeluarga.map((item) => ({
+          profile_id: profileId,
+          hubungan: item.hubungan,
+          nama: item.nama,
+          pekerjaan: item.pekerjaan,
+          pendidikan: item.pendidikan,
+          keterangan: item.keterangan,
+          urutan: item.urutan,
+        })),
+      },
+      {
+        table: 'rencana_masa_depan' as const,
+        rows: state.rencanaMasaDepan.map((item) => ({
+          profile_id: profileId,
+          tipe: item.tipe,
+          waktu: item.waktu,
+          rencana: item.rencana,
+          target: item.target,
+          urutan: item.urutan,
+        })),
+      },
+    ]
+
+    // ── 2b. Batch DELETE semua tabel relasi secara paralel ──
+    const deleteResults = await Promise.all(
+      arrayTables.map(({ table }) =>
+        supabase.from(table).delete().eq('profile_id', profileId!)
+      )
+    )
+    for (const { error } of deleteResults) {
+      if (error) throw error
     }
 
-    // Riwayat Pendidikan — exclude client-side `id` (Supabase auto-generates)
-    await replaceArray(
-      'riwayat_pendidikan',
-      state.riwayatPendidikan.map((item) => ({
-        profile_id:     profileId,
-        jenjang:        item.jenjang,
-        nama_institusi: item.nama_institusi,
-        jurusan:        item.jurusan,
-        tahun_mulai:    item.tahun_mulai || null,
-        tahun_selesai:  item.tahun_selesai || null,
-        prestasi:       item.prestasi,
-        urutan:         item.urutan,
-      }))
+    // ── 2c. Batch INSERT semua tabel relasi secara paralel ──
+    const insertResults = await Promise.all(
+      arrayTables.map(({ table, rows }) =>
+        rows.length > 0
+          ? supabase.from(table).insert(rows)
+          : Promise.resolve({ error: null })
+      )
     )
-
-    // Riwayat Pekerjaan
-    await replaceArray(
-      'riwayat_pekerjaan',
-      state.riwayatPekerjaan.map((item) => ({
-        profile_id:          profileId,
-        nama_perusahaan:     item.nama_perusahaan,
-        posisi_jabatan:      item.posisi_jabatan,
-        deskripsi_pekerjaan: item.deskripsi_pekerjaan,
-        is_masih_aktif:      item.is_masih_aktif,
-        tahun_mulai:         item.tahun_mulai || null,
-        tahun_selesai:       item.is_masih_aktif ? null : item.tahun_selesai || null,
-        urutan:              item.urutan,
-      }))
-    )
-
-    // Perjalanan Hidup
-    await replaceArray(
-      'perjalanan_hidup',
-      state.perjalananHidup.map((item) => ({
-        profile_id:   profileId,
-        fase:         item.fase,
-        judul:        item.judul,
-        cerita:       item.cerita,
-        pelajaran:    item.pelajaran,
-        tahun_mulai:  item.tahun_mulai || null,
-        tahun_selesai: item.tahun_selesai || null,
-        urutan:       item.urutan,
-      }))
-    )
-
-    // Riwayat Organisasi
-    await replaceArray(
-      'riwayat_organisasi',
-      state.riwayatOrganisasi.map((item) => ({
-        profile_id:       profileId,
-        nama_organisasi:  item.nama_organisasi,
-        jabatan:          item.jabatan,
-        deskripsi:        item.deskripsi,
-        tahun_mulai:      item.tahun_mulai || null,
-        tahun_selesai:    item.tahun_selesai || null,
-        urutan:           item.urutan,
-      }))
-    )
-
-    // Sosial Media
-    await replaceArray(
-      'sosial_media',
-      state.sosialMedia.map((item) => ({
-        profile_id:   profileId,
-        platform:     item.platform,
-        username:     item.username,
-        url:          item.url,
-        is_primary:   item.is_primary,
-        tampil_di_pdf: item.tampil_di_pdf,
-        urutan:       item.urutan,
-      }))
-    )
-
-    // Galeri Foto
-    await replaceArray(
-      'galeri_foto',
-      state.galeriFoto.map((item) => ({
-        profile_id: profileId,
-        kategori:   item.kategori,
-        url:        item.url,
-        keterangan: item.keterangan,
-        urutan:     item.urutan,
-      }))
-    )
-
-    // Anggota Keluarga
-    await replaceArray(
-      'anggota_keluarga',
-      state.anggotaKeluarga.map((item) => ({
-        profile_id:  profileId,
-        hubungan:    item.hubungan,
-        nama:        item.nama,
-        pekerjaan:   item.pekerjaan,
-        pendidikan:  item.pendidikan,
-        keterangan:  item.keterangan,
-        urutan:      item.urutan,
-      }))
-    )
-
-    // Rencana Masa Depan
-    await replaceArray(
-      'rencana_masa_depan',
-      state.rencanaMasaDepan.map((item) => ({
-        profile_id: profileId,
-        tipe:       item.tipe,
-        waktu:      item.waktu,
-        rencana:    item.rencana,
-        target:     item.target,
-        urutan:     item.urutan,
-      }))
-    )
+    for (const { error } of insertResults) {
+      if (error) throw error
+    }
 
     return { success: true, profileId: profileId! }
   } catch (err) {

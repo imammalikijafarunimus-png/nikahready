@@ -232,10 +232,15 @@ export async function uploadPhoto(
 /**
  * Hapus foto dari Supabase Storage.
  * Dipakai saat user mengganti foto atau menghapus item galeri.
+ *
+ * FIX (Fase 2): Validasi ownership — pastikan folder pertama
+ * dalam filePath sama dengan userId. Ini mencegah user menghapus
+ * foto milik user lain.
  */
 export async function deletePhoto(
   publicUrl: string,
-  bucket: BucketName
+  bucket: BucketName,
+  userId?: string  // FIX: Tambahkan userId untuk validasi ownership
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const supabase = createClient()
@@ -250,6 +255,15 @@ export async function deletePhoto(
       return { success: false, error: 'URL tidak valid' }
     }
     const filePath = parts.slice(bucketIndex + 1).join('/')
+
+    // FIX: Validasi ownership — cek folder pertama = userId
+    if (userId) {
+      const folderOwner = filePath.split('/')[0]
+      if (folderOwner !== userId) {
+        console.warn('[NikahReady] deletePhoto: ownership violation — user', userId, 'tried to delete file owned by', folderOwner)
+        return { success: false, error: 'Tidak memiliki izin untuk menghapus foto ini' }
+      }
+    }
 
     const { error } = await supabase.storage
       .from(bucket)

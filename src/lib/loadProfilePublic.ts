@@ -26,35 +26,26 @@ export async function loadProfilePublic(
 ): Promise<PublicProfileResult> {
   const supabase = createClient()
 
-  // 1. Fetch main profile
-  const { data: profile, error: profileError } = await supabase
+  // Phase 3 Optimasi: 1 query untuk profil (gabungkan find-by-share_id + fetch-full)
+  // Sebelumnya: 2 query (cari ID by share_id → fetch full by ID)
+  // Sekarang: 1 query langsung dengan share_id + is_published filter
+  const { data: fullProfile, error: profileError } = await supabase
     .from('taaruf_profiles')
-    .select('id')
+    .select('*')
     .eq('share_id', shareId)
     .eq('is_published', true)
     .single()
 
-  if (profileError || !profile) {
+  if (profileError || !fullProfile) {
     return {
       success: false,
       error: 'CV tidak ditemukan atau sudah tidak dipublikasikan.',
     }
   }
 
-  const profileId = profile.id
+  const profileId = fullProfile.id
 
-  // 2. Fetch all profile data (scalar fields)
-  const { data: fullProfile, error: fullError } = await supabase
-    .from('taaruf_profiles')
-    .select('*')
-    .eq('id', profileId)
-    .single()
-
-  if (fullError || !fullProfile) {
-    return { success: false, error: 'Gagal memuat data profil.' }
-  }
-
-  // 3. Fetch all related tables in parallel
+  // Fetch all related tables in parallel
   const [
     { data: riwayatPendidikan },
     { data: riwayatPekerjaan },
@@ -75,7 +66,7 @@ export async function loadProfilePublic(
     supabase.from('rencana_masa_depan').select('*').eq('profile_id', profileId).order('urutan'),
   ])
 
-  // 4. Map to FormState
+  // Map to FormState
   const state: FormState = {
     ...INITIAL_FORM_STATE,
 
@@ -207,88 +198,88 @@ export async function loadProfilePublic(
 
     // Array sections
     riwayatPendidikan: (riwayatPendidikan || []).map((r: Record<string, unknown>) => ({
-  id: r.id as string,
-  jenjang: r.jenjang as string,
-  nama_institusi: r.nama_institusi as string,
-  jurusan: (r.jurusan as string) || '',
-  tahun_mulai: (r.tahun_mulai as number) ?? '' as number | '',
-  tahun_selesai: (r.tahun_selesai as number) ?? '' as number | '',
-  prestasi: (r.prestasi as string) || '',
-  urutan: r.urutan as number,
-})),
+      id: r.id as string,
+      jenjang: r.jenjang as string,
+      nama_institusi: r.nama_institusi as string,
+      jurusan: (r.jurusan as string) || '',
+      tahun_mulai: (r.tahun_mulai as number) ?? '' as number | '',
+      tahun_selesai: (r.tahun_selesai as number) ?? '' as number | '',
+      prestasi: (r.prestasi as string) || '',
+      urutan: r.urutan as number,
+    })),
 
     riwayatPekerjaan: (riwayatPekerjaan || []).map((r: Record<string, unknown>) => ({
-  id: r.id as string,
-  nama_perusahaan: r.nama_perusahaan as string,
-  posisi_jabatan: r.posisi_jabatan as string,
-  deskripsi_pekerjaan: (r.deskripsi_pekerjaan as string) || '',
-  is_masih_aktif: r.is_masih_aktif as boolean,
-  tahun_mulai: (r.tahun_mulai as number) ?? '' as number | '',
-  tahun_selesai: (r.tahun_selesai as number) ?? '' as number | '',
-  urutan: r.urutan as number,
-})),
+      id: r.id as string,
+      nama_perusahaan: r.nama_perusahaan as string,
+      posisi_jabatan: r.posisi_jabatan as string,
+      deskripsi_pekerjaan: (r.deskripsi_pekerjaan as string) || '',
+      is_masih_aktif: r.is_masih_aktif as boolean,
+      tahun_mulai: (r.tahun_mulai as number) ?? '' as number | '',
+      tahun_selesai: (r.tahun_selesai as number) ?? '' as number | '',
+      urutan: r.urutan as number,
+    })),
 
     perjalananHidup: (perjalananHidup || []).map((r: Record<string, unknown>) => ({
-  id: r.id as string,
-  fase: r.fase as import('@/types').FaseHidup,
-  judul: r.judul as string,
-  cerita: (r.cerita as string) || '',
-  pelajaran: (r.pelajaran as string) || '',
-  tahun_mulai: (r.tahun_mulai as number) ?? '' as number | '',
-  tahun_selesai: (r.tahun_selesai as number) ?? '' as number | '',
-  urutan: r.urutan as number,
-})),
+      id: r.id as string,
+      fase: r.fase as import('@/types').FaseHidup,
+      judul: r.judul as string,
+      cerita: (r.cerita as string) || '',
+      pelajaran: (r.pelajaran as string) || '',
+      tahun_mulai: (r.tahun_mulai as number) ?? '' as number | '',
+      tahun_selesai: (r.tahun_selesai as number) ?? '' as number | '',
+      urutan: r.urutan as number,
+    })),
 
     riwayatOrganisasi: (riwayatOrganisasi || []).map((r: Record<string, unknown>) => ({
-  id: r.id as string,
-  nama_organisasi: r.nama_organisasi as string,
-  jabatan: (r.jabatan as string) || '',
-  deskripsi: (r.deskripsi as string) || '',
-  tahun_mulai: (r.tahun_mulai as number) ?? '' as number | '',
-  tahun_selesai: (r.tahun_selesai as number) ?? '' as number | '',
-  urutan: r.urutan as number,
-})),
+      id: r.id as string,
+      nama_organisasi: r.nama_organisasi as string,
+      jabatan: (r.jabatan as string) || '',
+      deskripsi: (r.deskripsi as string) || '',
+      tahun_mulai: (r.tahun_mulai as number) ?? '' as number | '',
+      tahun_selesai: (r.tahun_selesai as number) ?? '' as number | '',
+      urutan: r.urutan as number,
+    })),
 
-sosialMedia: (sosialMedia || []).map((r: Record<string, unknown>) => ({
-  id: r.id as string,
-  platform: r.platform as import('@/types').PlatformSosmed,
-  username: r.username as string,
-  url: (r.url as string) || '',
-  is_primary: r.is_primary as boolean,
-  tampil_di_pdf: r.tampil_di_pdf as boolean,
-  urutan: r.urutan as number,
-})),
+    sosialMedia: (sosialMedia || []).map((r: Record<string, unknown>) => ({
+      id: r.id as string,
+      platform: r.platform as import('@/types').PlatformSosmed,
+      username: r.username as string,
+      url: (r.url as string) || '',
+      is_primary: r.is_primary as boolean,
+      tampil_di_pdf: r.tampil_di_pdf as boolean,
+      urutan: r.urutan as number,
+    })),
 
     galeriFoto: (galeriFoto || []).map((r: Record<string, unknown>) => ({
-  id: r.id as string,
-  kategori: r.kategori as import('@/types').KategoriGaleri,
-  url: r.url as string,
-  keterangan: (r.keterangan as string) || '',
-  urutan: r.urutan as number,
-})),
+      id: r.id as string,
+      kategori: r.kategori as import('@/types').KategoriGaleri,
+      url: r.url as string,
+      keterangan: (r.keterangan as string) || '',
+      urutan: r.urutan as number,
+    })),
 
-anggotaKeluarga: (anggotaKeluarga || []).map((r: Record<string, unknown>) => ({
-  id: r.id as string,
-  hubungan: r.hubungan as import('@/types').HubunganKeluarga,
-  nama: r.nama as string,
-  pekerjaan: (r.pekerjaan as string) || '',
-  pendidikan: (r.pendidikan as string) || '',
-  keterangan: (r.keterangan as string) || '',
-  urutan: r.urutan as number,
-})),    
+    anggotaKeluarga: (anggotaKeluarga || []).map((r: Record<string, unknown>) => ({
+      id: r.id as string,
+      hubungan: r.hubungan as import('@/types').HubunganKeluarga,
+      nama: r.nama as string,
+      pekerjaan: (r.pekerjaan as string) || '',
+      pendidikan: (r.pendidikan as string) || '',
+      keterangan: (r.keterangan as string) || '',
+      urutan: r.urutan as number,
+    })),
 
     rencanaMasaDepan: (rencanaMasaDepan || []).map((r: Record<string, unknown>) => ({
-  id: r.id as string,
-  tipe: r.tipe as import('@/types').TipeRencana,
-  waktu: (r.waktu as string) || '',
-  rencana: r.rencana as string,
-  target: (r.target as string) || '',
-  urutan: r.urutan as number,
-})),
+      id: r.id as string,
+      tipe: r.tipe as import('@/types').TipeRencana,
+      waktu: (r.waktu as string) || '',
+      rencana: r.rencana as string,
+      target: (r.target as string) || '',
+      urutan: r.urutan as number,
+    })),
 
     // Metadata
-    profileId: profileId,
-    plan: fullProfile.user_plan || 'free', // Not relevant for public view
+    profileId,
+    plan: fullProfile.user_plan || 'free',
   }
 
   return { success: true, state }

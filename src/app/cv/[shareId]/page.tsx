@@ -18,15 +18,57 @@ import {
   Loader2,
   AlertTriangle,
 } from 'lucide-react'
+import dynamic from 'next/dynamic'
 import { loadProfilePublic } from '@/lib/loadProfilePublic'
-import { TemplateRingkas } from '@/components/templates/TemplateRingkas'
-import { TemplateSederhana } from '@/components/templates/TemplateSederhana'
-import { TemplateMinimalIslami } from '@/components/templates/TemplateMinimalIslami'
-import { TemplateAkademik } from '@/components/templates/TemplateAkademik'
-import { TemplateElegantIslamic } from '@/components/templates/TemplateElegantIslamic'
-import { TemplateModernPremium } from '@/components/templates/TemplateModernPremium'
 import type { FormState } from '@/types'
 import '../../preview/preview.css'
+
+// ── Lazy-loaded Templates (Phase 3: reduce initial JS bundle ~50%) ──
+const TemplateRingkas = dynamic<{ state: FormState }>(
+  () => import('@/components/templates/TemplateRingkas').then(m => ({ default: m.TemplateRingkas })),
+  { ssr: false, loading: () => <TemplateLoadingFallback /> }
+)
+const TemplateSederhana = dynamic<{ state: FormState }>(
+  () => import('@/components/templates/TemplateSederhana').then(m => ({ default: m.TemplateSederhana })),
+  { ssr: false, loading: () => <TemplateLoadingFallback /> }
+)
+const TemplateMinimalIslami = dynamic<{ state: FormState }>(
+  () => import('@/components/templates/TemplateMinimalIslami').then(m => ({ default: m.TemplateMinimalIslami })),
+  { ssr: false, loading: () => <TemplateLoadingFallback /> }
+)
+const TemplateAkademik = dynamic<{ state: FormState }>(
+  () => import('@/components/templates/TemplateAkademik').then(m => ({ default: m.TemplateAkademik })),
+  { ssr: false, loading: () => <TemplateLoadingFallback /> }
+)
+const TemplateElegantIslamic = dynamic<{ state: FormState }>(
+  () => import('@/components/templates/TemplateElegantIslamic').then(m => ({ default: m.TemplateElegantIslamic })),
+  { ssr: false, loading: () => <TemplateLoadingFallback /> }
+)
+const TemplateModernPremium = dynamic<{ state: FormState }>(
+  () => import('@/components/templates/TemplateModernPremium').then(m => ({ default: m.TemplateModernPremium })),
+  { ssr: false, loading: () => <TemplateLoadingFallback /> }
+)
+
+/** Inline loading fallback saat template sedang lazy-load */
+function TemplateLoadingFallback() {
+  return (
+    <div
+      id="taaruf-template"
+      style={{
+        width: 794,
+        minHeight: 1123,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: '#fff',
+        color: '#64748B',
+        fontSize: '14px',
+      }}
+    >
+      Memuat template…
+    </div>
+  )
+}
 
 // ── Template config ──────────────────────────────────────────
 const TEMPLATE_PAGE_COUNT: Record<string, number> = {
