@@ -22,7 +22,14 @@ export async function GET(request: NextRequest) {
   const type = searchParams.get('type') // 'signup', 'recovery', 'email'
 
   // Redirect destination after successful auth
-  const next = searchParams.get('next') ?? '/dashboard'
+  const rawNext = searchParams.get('next') ?? '/dashboard'
+
+  // FIX: Validate `next` parameter to prevent open redirect attacks.
+  // Only allow relative paths starting with "/" and block protocol-relative URLs ("//").
+  // Example attack: /auth/callback?next=https://evil.com → blocked
+  const next = (rawNext.startsWith('/') && !rawNext.startsWith('//'))
+    ? rawNext
+    : '/dashboard'
 
   if (code) {
     try {

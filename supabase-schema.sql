@@ -563,3 +563,241 @@ CREATE TRIGGER set_updated_at_subscriptions
 -- FROM pg_policies
 -- WHERE schemaname = 'public'
 --   AND policyname LIKE 'Admin can%';
+
+-- ============================================================
+-- NikahReady — Fase 1: Critical Database Schema Fixes
+--
+-- Jalankan file ini di Supabase SQL Editor.
+-- Migrasi ini menambahkan:
+--   1. UNIQUE constraint pada user_id (mencegah duplikat profil)
+--   2. Kolom share_id untuk fitur publish/share CV
+--   3. Index untuk performa query public CV
+--   4. RLS policies untuk anonymous read published profiles
+-- ============================================================
+
+-- ── Fix 1: Tambahkan UNIQUE constraint pada user_id ────────────
+-- Tanpa constraint ini, upsert di saveProfile() gagal dan
+-- setiap save membuat row baru (profil duplikat).
+-- 
+-- CATATAN: Jalankan hanya jika belum ada constraint. Jika ada
+-- duplikat, bersihkan dulu sebelum menambah constraint:
+--
+-- -- Cek duplikat:
+-- SELECT user_id, COUNT(*) FROM taaruf_profiles GROUP BY user_id HAVING COUNT(*) > 1;
+--
+-- -- Hapus duplikat (simpan yang paling baru):
+-- DELETE FROM taaruf_profiles a
+-- USING taaruf_profiles b
+-- WHERE a.user_id = b.user_id
+--   AND a.id < b.id;
+--
+-- -- Atau hapus semua duplikat per user_id, simpan yang terbaru:
+-- DELETE FROM taaruf_profiles
+-- WHERE id NOT IN (
+--   SELECT DISTINCT ON (user_id) id
+--   FROM taaruf_profiles
+--   ORDER BY user_id, created_at DESC
+-- );
+
+DO $$
+BEGIN
+  -- Cek apakah constraint sudah ada
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conname = 'unique_taaruf_user_id'
+    AND conrelid = 'public.taaruf_profiles'::regclass
+  ) THEN
+    -- Bersihkan duplikat dulu jika ada
+    DELETE FROM public.taaruf_profiles
+    WHERE id NOT IN (
+      SELECT DISTINCT ON (user_id) id
+      FROM public.taaruf_profiles
+      ORDER BY user_id, created_at DESC
+    );
+
+    ALTER TABLE public.taaruf_profiles
+      ADD CONSTRAINT unique_taaruf_user_id UNIQUE(user_id);
+
+    RAISE NOTICE '✅ UNIQUE(user_id) constraint berhasil ditambahkan';
+  ELSE
+    RAISE NOTICE 'ℹ️  UNIQUE(user_id) constraint sudah ada, dilewati';
+  END IF;
+END $$;
+
+-- ── Fix 2: Tambahkan kolom share_id ───────────────────────────
+-- Kolom ini digunakan oleh shareProfile.ts untuk fitur
+-- publish/share CV taaruf. Tanpa kolom ini, fitur share
+-- sama sekali tidak berfungsi.
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name = 'taaruf_profiles'
+      AND column_name = 'share_id'
+  ) THEN
+    ALTER TABLE public.taaruf_profiles
+      ADD COLUMN share_id TEXT;
+
+    -- Tambahkan UNIQUE constraint setelah kolom dibuat
+    ALTER TABLE public.taaruf_profiles
+      ADD CONSTRAINT unique_taaruf_share_id UNIQUE(share_id);
+
+    RAISE NOTICE '✅ Kolom share_id berhasil ditambahkan';
+  ELSE
+    RAISE NOTICE 'ℹ️  Kolom share_id sudah ada, dilewati';
+  END IF;
+END $$;
+
+-- ── Fix 3: Index untuk performa query public CV ────────────────
+-- Mempercepat query pada halaman /cv/[shareId] yang mencari
+-- profil berdasarkan share_id dan is_published.
+
+CREATE INDEX IF NOT EXISTS idx_taaruf_profiles_share
+  ON public.taaruf_profiles(share_id, is_published)
+  WHERE share_id IS NOT NULL;
+
+-- ── Fix 4: RLS policy untuk anonymous read published profiles ───
+-- Memungkinkan halaman publik /cv/[shareId] diakses tanpa login.
+-- RLS tetap membatasi hanya profil yang is_published = true.
+
+DO $$
+BEGIN
+  -- Drop policy lama jika ada (untuk idempotency)
+  DROP POLICY IF EXISTS "Public can read published profiles" ON public.taaruf_profiles;
+
+  CREATE POLICY "Public can read published profiles"
+    ON public.taaruf_profiles FOR SELECT
+    TO anon, authenticated
+    USING (is_published = true);
+
+  RAISE NOTICE '✅ RLS policy "Public can read published profiles" berhasil ditambahkan';
+END $$;
+
+-- ── Fix 5: RLS policies untuk tabel relasi (public read) ────────
+-- Agar halaman publik CV bisa menampilkan data dari tabel relasi
+-- (pendidikan, pekerjaan, dll) untuk profil yang dipublish.
+
+DO $$
+BEGIN
+  -- Riwayat Pendidikan
+  DROP POLICY IF EXISTS "Public can read published pendidikan" ON public.riwayat_pendidikan;
+  CREATE POLICY "Public can read published pendidikan"
+    ON public.riwayat_pendidikan FOR SELECT
+    TO anon, authenticated
+    USING (
+      profile_id IN (
+        SELECT id FROM public.taaruf_profiles WHERE is_published = true
+      )
+    );
+
+  -- Riwayat Pekerjaan
+  DROP POLICY IF EXISTS "Public can read published pekerjaan" ON public.riwayat_pekerjaan;
+  CREATE POLICY "Public can read published pekerjaan"
+    ON public.riwayat_pekerjaan FOR SELECT
+    TO anon, authenticated
+    USING (
+      profile_id IN (
+        SELECT id FROM public.taaruf_profiles WHERE is_published = true
+      )
+    );
+
+  -- Perjalanan Hidup
+  DROP POLICY IF EXISTS "Public can read published perjalanan" ON public.perjalanan_hidup;
+  CREATE POLICY "Public can read published perjalanan"
+    ON public.perjalanan_hidup FOR SELECT
+    TO anon, authenticated
+    USING (
+      profile_id IN (
+        SELECT id FROM public.taaruf_profiles WHERE is_published = true
+      )
+    );
+
+  -- Riwayat Organisasi
+  DROP POLICY IF EXISTS "Public can read published organisasi" ON public.riwayat_organisasi;
+  CREATE POLICY "Public can read published organisasi"
+    ON public.riwayat_organisasi FOR SELECT
+    TO anon, authenticated
+    USING (
+      profile_id IN (
+        SELECT id FROM public.taaruf_profiles WHERE is_published = true
+      )
+    );
+
+  -- Sosial Media
+  DROP POLICY IF EXISTS "Public can read published sosmed" ON public.sosial_media;
+  CREATE POLICY "Public can read published sosmed"
+    ON public.sosial_media FOR SELECT
+    TO anon, authenticated
+    USING (
+      profile_id IN (
+        SELECT id FROM public.taaruf_profiles WHERE is_published = true
+      )
+    );
+
+  -- Galeri Foto
+  DROP POLICY IF EXISTS "Public can read published galeri" ON public.galeri_foto;
+  CREATE POLICY "Public can read published galeri"
+    ON public.galeri_foto FOR SELECT
+    TO anon, authenticated
+    USING (
+      profile_id IN (
+        SELECT id FROM public.taaruf_profiles WHERE is_published = true
+      )
+    );
+
+  -- Anggota Keluarga
+  DROP POLICY IF EXISTS "Public can read published keluarga" ON public.anggota_keluarga;
+  CREATE POLICY "Public can read published keluarga"
+    ON public.anggota_keluarga FOR SELECT
+    TO anon, authenticated
+    USING (
+      profile_id IN (
+        SELECT id FROM public.taaruf_profiles WHERE is_published = true
+      )
+    );
+
+  -- Rencana Masa Depan
+  DROP POLICY IF EXISTS "Public can read published rencana" ON public.rencana_masa_depan;
+  CREATE POLICY "Public can read published rencana"
+    ON public.rencana_masa_depan FOR SELECT
+    TO anon, authenticated
+    USING (
+      profile_id IN (
+        SELECT id FROM public.taaruf_profiles WHERE is_published = true
+      )
+    );
+
+  RAISE NOTICE '✅ RLS policies untuk 8 tabel relasi berhasil ditambahkan';
+END $$;
+
+-- ── Verifikasi ──────────────────────────────────────────────────
+SELECT '=== VERIFIKASI FASE 1 SCHEMA FIXES ===' AS info;
+
+SELECT 'Constraints' AS category,
+  constraint_name, constraint_type
+FROM information_schema.table_constraints
+WHERE table_schema = 'public'
+  AND table_name = 'taaruf_profiles'
+  AND constraint_name IN ('unique_taaruf_user_id', 'unique_taaruf_share_id');
+
+SELECT 'Columns' AS category,
+  column_name, data_type, is_nullable
+FROM information_schema.columns
+WHERE table_schema = 'public'
+  AND table_name = 'taaruf_profiles'
+  AND column_name = 'share_id';
+
+SELECT 'Indexes' AS category,
+  indexname, indexdef
+FROM pg_indexes
+WHERE schemaname = 'public'
+  AND tablename = 'taaruf_profiles'
+  AND indexname = 'idx_taaruf_profiles_share';
+
+SELECT 'RLS Policies (public read)' AS category,
+  tablename, policyname, cmd
+FROM pg_policies
+WHERE schemaname = 'public'
+  AND policyname LIKE 'Public can read published%';
