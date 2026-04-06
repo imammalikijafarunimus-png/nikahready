@@ -80,7 +80,9 @@ export async function GET(request: NextRequest) {
 
       // Determine redirect based on type
       if (type === 'recovery') {
-        return NextResponse.redirect(`${origin}/login?message=${encodeURIComponent('Password berhasil direset. Silakan masuk.')}`)
+        // FIX: Redirect ke halaman ubah password, bukan langsung ke login.
+        // User perlu mengisi password baru sebelum bisa masuk.
+        return NextResponse.redirect(`${origin}/update-password`)
       }
 
       if (type === 'signup') {

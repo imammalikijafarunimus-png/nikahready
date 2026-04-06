@@ -35,6 +35,7 @@ export interface AuthState {
   userId: string | null
   userEmail: string | null
   plan: 'free' | 'premium'
+  role: 'user' | 'admin'
 }
 
 export interface AuthActions {
@@ -66,6 +67,7 @@ const DEFAULT_STATE: AuthState = {
   userId: null,
   userEmail: null,
   plan: 'free',
+  role: 'user',
 }
 
 // ── Provider ─────────────────────────────────────────────────
@@ -82,14 +84,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const ensureUserRow = useCallback(async (userId: string, email: string) => {
     try {
       const supabase = createClient()
-      const { error } = await supabase
+      // FIX: Cek dulu apakah row sudah ada.
+      // Sebelumnya upsert selalu set plan='free' yang menyebabkan
+      // plan premium di-reset setiap kali user login.
+      // Sekarang hanya INSERT jika row belum ada (tidak override data).
+      const { count } = await supabase
         .from('users')
-        .upsert(
-          { id: userId, email, plan: 'free' },
-          { onConflict: 'id' }
-        )
-      if (error) {
-        console.warn('[NikahReady] ensureUserRow failed:', error.message)
+        .select('*', { count: 'exact', head: true })
+        .eq('id', userId)
+
+      if (!count) {
+        const { error } = await supabase
+          .from('users')
+          .insert({ id: userId, email, plan: 'free' })
+        if (error) {
+          console.warn('[NikahReady] ensureUserRow insert failed:', error.message)
+        }
       }
     } catch (err) {
       console.warn('[NikahReady] ensureUserRow error:', err)
@@ -116,16 +126,43 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, [])
 
+  // ── Fetch user role from multiple sources ─────────────────
+  // FIX: Check both app_metadata and DB table for robustness
+  const fetchUserRole = useCallback(async (userId: string, user: import('@supabase/supabase-js').User | null): Promise<'user' | 'admin'> => {
+    // Source 1: app_metadata (fast, from JWT)
+    if (user?.app_metadata?.role === 'admin') return 'admin'
+
+    // Source 2: tabel public.users (fallback)
+    try {
+      const supabase = createClient()
+      const { data, error } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', userId)
+        .single()
+
+      if (!error && data?.role === 'admin') return 'admin'
+    } catch {
+      // Silently fail — default to 'user'
+    }
+
+    return 'user'
+  }, [])
+
   // ── Initialize: listen to auth state changes ──────────────
   useEffect(() => {
     const supabase = createClient()
 
     // Get initial session
     // FIX: Set status='authenticated' SEGERA setelah session valid,
-    // jangan tunggu ensureUserRow & fetchUserPlan (2 DB query berurutan).
+    // jangan tunggu ensureUserRow & fetchUserPlan (DB query berurutan).
     // Jalankan keduanya di background agar UI tidak stuck di loading.
+    // FIX: Juga fetch role untuk admin panel access.
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session?.user) {
+        // Cek app_metadata.role dulu untuk immediate role assignment
+        const immediateRole = session.user.app_metadata?.role === 'admin' ? 'admin' as const : 'user' as const
+
         // Set authenticated FIRST — user sudah login, jangan block UI
         setState({
           user: session.user,
@@ -134,12 +171,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
           userId: session.user.id,
           userEmail: session.user.email ?? null,
           plan: 'free' as const, // default dulu, nanti di-update
+          role: immediateRole,
         })
 
         // Background tasks — tidak blocking UI
         ensureUserRow(session.user.id, session.user.email ?? '')
         fetchUserPlan(session.user.id).then((plan) => {
           setState((prev) => ({ ...prev, plan }))
+        })
+        fetchUserRole(session.user.id, session.user).then((role) => {
+          setState((prev) => ({ ...prev, role }))
         })
       } else {
         setState((prev) => ({ ...prev, status: 'unauthenticated' }))
@@ -152,6 +193,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
         if (event === 'INITIAL_SESSION') return // already handled above
 
         if (session?.user) {
+          // Cek app_metadata.role dulu untuk immediate role assignment
+          const immediateRole = session.user.app_metadata?.role === 'admin' ? 'admin' as const : 'user' as const
+
           // Set authenticated FIRST
           setState({
             user: session.user,
@@ -160,12 +204,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
             userId: session.user.id,
             userEmail: session.user.email ?? null,
             plan: 'free' as const,
+            role: immediateRole,
           })
 
           // Background tasks
           ensureUserRow(session.user.id, session.user.email ?? '')
           fetchUserPlan(session.user.id).then((plan) => {
             setState((prev) => ({ ...prev, plan }))
+          })
+          fetchUserRole(session.user.id, session.user).then((role) => {
+            setState((prev) => ({ ...prev, role }))
           })
         } else {
           setState(DEFAULT_STATE)
@@ -177,7 +225,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     return () => {
       subscription.unsubscribe()
     }
-  }, [ensureUserRow, fetchUserPlan])
+  }, [ensureUserRow, fetchUserPlan, fetchUserRole])
 
   // ── Actions ───────────────────────────────────────────────
   const actions: AuthActions = useMemo(() => ({
@@ -207,6 +255,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
         // If no email confirmation required, user is immediately logged in
         if (data.session?.user) {
+          const immediateRole = data.session.user.app_metadata?.role === 'admin' ? 'admin' as const : 'user' as const
           setState({
             user: data.session.user,
             session: data.session,
@@ -214,10 +263,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
             userId: data.session.user.id,
             userEmail: data.session.user.email ?? null,
             plan: 'free' as const,
+            role: immediateRole,
           })
           ensureUserRow(data.session.user.id, data.session.user.email ?? '')
           fetchUserPlan(data.session.user.id).then((plan) => {
             setState((prev) => ({ ...prev, plan }))
+          })
+          fetchUserRole(data.session.user.id, data.session.user).then((role) => {
+            setState((prev) => ({ ...prev, role }))
           })
         }
 
@@ -252,6 +305,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
         if (data.session?.user) {
           // Set authenticated FIRST — jangan block UI
+          const immediateRole = data.session.user.app_metadata?.role === 'admin' ? 'admin' as const : 'user' as const
           setState({
             user: data.session.user,
             session: data.session,
@@ -259,11 +313,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
             userId: data.session.user.id,
             userEmail: data.session.user.email ?? null,
             plan: 'free' as const,
+            role: immediateRole,
           })
           // Background tasks
           ensureUserRow(data.session.user.id, data.session.user.email ?? '')
           fetchUserPlan(data.session.user.id).then((plan) => {
             setState((prev) => ({ ...prev, plan }))
+          })
+          fetchUserRole(data.session.user.id, data.session.user).then((role) => {
+            setState((prev) => ({ ...prev, role }))
           })
         }
 
@@ -311,6 +369,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
         if (data.session?.user) {
           const plan = await fetchUserPlan(data.session.user.id)
+          const role = await fetchUserRole(data.session.user.id, data.session.user)
           setState({
             user: data.session.user,
             session: data.session,
@@ -318,13 +377,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
             userId: data.session.user.id,
             userEmail: data.session.user.email ?? null,
             plan,
+            role,
           })
         }
       } catch (err) {
         console.error('[NikahReady] refreshSession error:', err)
       }
     },
-  }), [ensureUserRow, fetchUserPlan])
+  }), [ensureUserRow, fetchUserPlan, fetchUserRole])
 
   return (
     <AuthStateContext.Provider value={state}>
@@ -382,7 +442,7 @@ export function useAuth(): AuthState & AuthActions {
  * Berguna untuk halaman yang membutuhkan user wajib login.
  */
 export function useRequireAuth() {
-  const { user, status, userId, userEmail, plan } = useAuthState()
+  const { user, status, userId, userEmail, plan, role } = useAuthState()
 
   return {
     user,
@@ -390,8 +450,10 @@ export function useRequireAuth() {
     userId,
     userEmail,
     plan,
+    role,
     isLoading: status === 'loading',
     isAuthenticated: status === 'authenticated',
     isUnauthenticated: status === 'unauthenticated',
+    isAdmin: role === 'admin',
   }
 }
