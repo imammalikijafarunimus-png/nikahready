@@ -82,14 +82,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const ensureUserRow = useCallback(async (userId: string, email: string) => {
     try {
       const supabase = createClient()
-      const { error } = await supabase
+      // FIX: Cek dulu apakah row sudah ada.
+      // Sebelumnya upsert selalu set plan='free' yang menyebabkan
+      // plan premium di-reset setiap kali user login.
+      // Sekarang hanya INSERT jika row belum ada (tidak override data).
+      const { count } = await supabase
         .from('users')
-        .upsert(
-          { id: userId, email, plan: 'free' },
-          { onConflict: 'id' }
-        )
-      if (error) {
-        console.warn('[NikahReady] ensureUserRow failed:', error.message)
+        .select('*', { count: 'exact', head: true })
+        .eq('id', userId)
+
+      if (!count) {
+        const { error } = await supabase
+          .from('users')
+          .insert({ id: userId, email, plan: 'free' })
+        if (error) {
+          console.warn('[NikahReady] ensureUserRow insert failed:', error.message)
+        }
       }
     } catch (err) {
       console.warn('[NikahReady] ensureUserRow error:', err)

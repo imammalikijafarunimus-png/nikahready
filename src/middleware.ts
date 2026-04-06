@@ -4,7 +4,8 @@
 // Middleware untuk:
 // 1. Refresh Supabase auth token (auto-refresh session)
 // 2. Protect authenticated routes (/create, /preview, /dashboard)
-// 3. Redirect unauthenticated users to /login
+// 3. Protect admin routes (/admin/*) — requires admin role
+// 4. Redirect unauthenticated users to /login
 //
 // Pattern: Supabase SSR middleware with cookie-based session
 // ============================================================
@@ -14,6 +15,9 @@ import { NextRequest, NextResponse } from 'next/server'
 
 // Routes that require authentication
 const PROTECTED_ROUTES = ['/create', '/preview', '/dashboard']
+
+// Routes that require admin role (authentication + admin check)
+const ADMIN_ROUTES = ['/admin']
 
 // Routes that should redirect to dashboard if already authenticated
 const AUTH_ROUTES = ['/login', '/signup']
@@ -83,6 +87,41 @@ export async function middleware(request: NextRequest) {
     // Store original destination for redirect after login
     url.searchParams.set('next', pathname)
     return NextResponse.redirect(url)
+  }
+
+  // ── Protect admin routes (server-side) ───────────────────
+  // FIX: Admin protection di middleware SEBAGAI defense-in-depth.
+  // Client-side check di AdminLayout tetap ada sebagai UX layer,
+  // tapi middleware memastikan route tidak bisa di-bypass tanpa JS.
+  if (pathname.startsWith('/admin')) {
+    if (!user) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/login'
+      url.searchParams.set('next', pathname)
+      return NextResponse.redirect(url)
+    }
+
+    // Cek role admin via Supabase — server-side
+    try {
+      const { data: userData, error: userError } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', user.id)
+        .single()
+
+      if (userError || !userData || userData.role !== 'admin') {
+        // Bukan admin — redirect ke dashboard
+        const url = request.nextUrl.clone()
+        url.pathname = '/dashboard'
+        return NextResponse.redirect(url)
+      }
+    } catch (err) {
+      console.error('[NikahReady] Admin check error:', err)
+      // Fail-closed: redirect ke dashboard jika gagal cek role
+      const url = request.nextUrl.clone()
+      url.pathname = '/dashboard'
+      return NextResponse.redirect(url)
+    }
   }
 
   // ── Redirect authenticated users away from auth pages ─────
