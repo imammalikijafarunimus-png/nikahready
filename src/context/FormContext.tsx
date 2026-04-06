@@ -193,6 +193,9 @@ interface FormProviderProps {
   children: React.ReactNode
 }
 
+/** Routes that actually use form state — skip localStorage on other routes */
+const FORM_ROUTES = ['/create', '/preview', '/dashboard'] as const
+
 export function FormProvider({ children }: FormProviderProps) {
   // Init selalu dengan INITIAL_FORM_STATE (sama antara server & client)
   // Load dari localStorage hanya via useEffect untuk menghindari
@@ -203,9 +206,19 @@ export function FormProvider({ children }: FormProviderProps) {
   const isHydratedRef = useRef(false)
 
   // ── Load draft dari localStorage setelah hydration ─────────
+  // Phase 3 Optimasi: skip localStorage pada halaman publik
+  // (landing, login, signup, privacy, dll) yang tidak menggunakan FormContext.
+  // Ini menghindari pembacaan localStorage yang tidak perlu pada setiap
+  // kunjungan halaman publik.
   useEffect(() => {
     if (isHydratedRef.current) return
     isHydratedRef.current = true
+
+    // Skip localStorage on non-form pages
+    if (typeof window !== 'undefined') {
+      const pathname = window.location.pathname
+      if (!FORM_ROUTES.some((r) => pathname.startsWith(r))) return
+    }
 
     try {
       const raw = localStorage.getItem(FORM_DRAFT_KEY)

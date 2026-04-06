@@ -6,15 +6,18 @@
 "use client"
 
 import Link from "next/link"
+import dynamic from "next/dynamic"
 import { Lock, CheckCircle2, FileText, ShieldCheck, Eye } from "lucide-react"
-import { TemplateRingkas } from "./templates/TemplateRingkas"
-import { TemplateSederhana } from "./templates/TemplateSederhana"
-import { TemplateMinimalIslami } from "./templates/TemplateMinimalIslami"
-import { TemplateAkademik } from "./templates/TemplateAkademik"
-import { TemplateElegantIslamic } from "./templates/TemplateElegantIslamic"
-import { TemplateModernPremium } from "./templates/TemplateModernPremium"
 import { SAMPLE_STATE } from "@/lib/sample-state"
 import { components } from "@/lib/design-system"
+
+// ── Lazy-loaded Templates (Phase 3: reduce landing page JS bundle) ──
+const TemplateRingkas = dynamic(() => import("./templates/TemplateRingkas").then(m => ({ default: m.TemplateRingkas })), { ssr: false })
+const TemplateSederhana = dynamic(() => import("./templates/TemplateSederhana").then(m => ({ default: m.TemplateSederhana })), { ssr: false })
+const TemplateMinimalIslami = dynamic(() => import("./templates/TemplateMinimalIslami").then(m => ({ default: m.TemplateMinimalIslami })), { ssr: false })
+const TemplateAkademik = dynamic(() => import("./templates/TemplateAkademik").then(m => ({ default: m.TemplateAkademik })), { ssr: false })
+const TemplateElegantIslamic = dynamic(() => import("./templates/TemplateElegantIslamic").then(m => ({ default: m.TemplateElegantIslamic })), { ssr: false })
+const TemplateModernPremium = dynamic(() => import("./templates/TemplateModernPremium").then(m => ({ default: m.TemplateModernPremium })), { ssr: false })
 
 const TEMPLATES = [
   // ── FREE templates ──
