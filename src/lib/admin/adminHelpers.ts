@@ -61,22 +61,66 @@ export interface AuditLog {
 /**
  * Cek apakah user yang sedang login adalah admin.
  * Returns { isAdmin, userId }
+ *
+ * FIX: 3-layer check dengan fallback:
+ * 1. Cek app_metadata.role (paling cepat, dari JWT, tidak perlu DB query)
+ * 2. Cek tabel users.role (DB query, untuk admin yang di-set via SQL)
+ * 3. Jika keduanya gagal, log error dan return false
+ *
+ * Alasan: app_metadata lebih reliable karena:
+ * - Set via Supabase Admin API (bypass RLS)
+ * - Tersedia di JWT token tanpa DB query
+ * - Tidak terpengaruh RLS policy issues
  */
 export async function checkIsAdmin(): Promise<{
   isAdmin: boolean
   userId: string | null
 }> {
   const supabase = createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+
+  // Step 1: Get auth user
+  let user: import('@supabase/supabase-js').User | null = null
+  try {
+    const { data } = await supabase.auth.getUser()
+    user = data.user
+  } catch (err) {
+    console.error('[NikahReady] checkIsAdmin: auth.getUser() failed:', err)
+    return { isAdmin: false, userId: null }
+  }
+
   if (!user) return { isAdmin: false, userId: null }
 
-  const { data } = await supabase
-    .from('users')
-    .select('role')
-    .eq('id', user.id)
-    .single()
+  // Step 2: Cek app_metadata.role (fast path — no DB query needed)
+  // app_metadata bisa di-set via Supabase Dashboard > Authentication > Users > Edit
+  // atau via Admin API: updateUserById(id, { app_metadata: { role: 'admin' } })
+  if (user.app_metadata?.role === 'admin') {
+    console.log('[NikahReady] checkIsAdmin: admin via app_metadata ✅', user.email)
+    return { isAdmin: true, userId: user.id }
+  }
 
-  return { isAdmin: data?.role === 'admin', userId: user.id }
+  // Step 3: Cek tabel public.users.role (fallback — untuk admin yang di-set via SQL)
+  try {
+    const { data, error } = await supabase
+      .from('users')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+
+    if (error) {
+      // Kolom role mungkin belum ada (migration belum jalan)
+      console.warn('[NikahReady] checkIsAdmin: DB query failed:', error.message)
+      console.warn('[NikahReady] Tip: Pastikan migration "ALTER TABLE users ADD COLUMN role" sudah dijalankan di Supabase SQL Editor.')
+    } else if (data?.role === 'admin') {
+      console.log('[NikahReady] checkIsAdmin: admin via users.role ✅', user.email)
+      return { isAdmin: true, userId: user.id }
+    }
+  } catch (err) {
+    console.error('[NikahReady] checkIsAdmin: unexpected error:', err)
+  }
+
+  // Step 4: Bukan admin
+  console.log('[NikahReady] checkIsAdmin: NOT admin ❌', user.email)
+  return { isAdmin: false, userId: user.id }
 }
 
 // ── Dashboard Stats ──────────────────────────────────────────

@@ -93,6 +93,11 @@ export async function middleware(request: NextRequest) {
   // FIX: Admin protection di middleware SEBAGAI defense-in-depth.
   // Client-side check di AdminLayout tetap ada sebagai UX layer,
   // tapi middleware memastikan route tidak bisa di-bypass tanpa JS.
+  //
+  // FIX: 2-layer check:
+  // 1. Cek app_metadata.role (dari JWT, tanpa DB query)
+  // 2. Cek tabel users.role (fallback, untuk admin via SQL)
+  // Ini memastikan admin tetap bisa akses meskipun ada masalah RLS.
   if (pathname.startsWith('/admin')) {
     if (!user) {
       const url = request.nextUrl.clone()
@@ -101,23 +106,31 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(url)
     }
 
-    // Cek role admin via Supabase — server-side
-    try {
-      const { data: userData, error: userError } = await supabase
-        .from('users')
-        .select('role')
-        .eq('id', user.id)
-        .single()
+    // Layer 1: Cek app_metadata.role (fast, reliable, no DB query)
+    let isAdmin = user.app_metadata?.role === 'admin'
 
-      if (userError || !userData || userData.role !== 'admin') {
-        // Bukan admin — redirect ke dashboard
-        const url = request.nextUrl.clone()
-        url.pathname = '/dashboard'
-        return NextResponse.redirect(url)
+    // Layer 2: Fallback cek tabel users.role
+    if (!isAdmin) {
+      try {
+        const { data: userData, error: userError } = await supabase
+          .from('users')
+          .select('role')
+          .eq('id', user.id)
+          .single()
+
+        if (userError) {
+          console.warn('[NikahReady] Middleware: admin DB check failed:', userError.message)
+          console.warn('[NikahReady] Middleware: tip: run migration to add role column to users table')
+        } else if (userData?.role === 'admin') {
+          isAdmin = true
+        }
+      } catch (err) {
+        console.error('[NikahReady] Middleware: admin check error:', err)
       }
-    } catch (err) {
-      console.error('[NikahReady] Admin check error:', err)
-      // Fail-closed: redirect ke dashboard jika gagal cek role
+    }
+
+    // Fail-closed: redirect ke dashboard jika bukan admin
+    if (!isAdmin) {
       const url = request.nextUrl.clone()
       url.pathname = '/dashboard'
       return NextResponse.redirect(url)
