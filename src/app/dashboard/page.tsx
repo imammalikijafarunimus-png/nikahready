@@ -34,7 +34,9 @@ import {
   Sparkles,
   CheckCircle2,
   ChevronRight,
+ LayoutDashboard,
 } from 'lucide-react'
+import { ThemeToggle } from '@/components/ui/ThemeToggle'
 
 // ── Utility: calculate profile completion ──────────────────
 function calculateCompletion(state: ReturnType<typeof useFormState>): number {
@@ -86,7 +88,7 @@ function calculateCompletion(state: ReturnType<typeof useFormState>): number {
 // ── Dashboard Component ─────────────────────────────────────
 export default function DashboardPage() {
   const router = useRouter()
-  const { userId, userEmail, plan, isLoading: authLoading, user } = useRequireAuth()
+  const { userId, userEmail, plan, isLoading: authLoading, user, role } = useRequireAuth()
   const { signOut } = useAuthActions()
   const state = useFormState()
   const dispatch = useFormDispatch()
@@ -197,6 +199,7 @@ export default function DashboardPage() {
           </Link>
 
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <span className="hidden sm:block text-[11px] text-navy-500">
               {userEmail}
             </span>
@@ -362,6 +365,28 @@ export default function DashboardPage() {
             })}
           </div>
         </div>
+
+        {/* ── Admin Quick Access ───────────────────────────── */}
+        {role === 'admin' && (
+          <Link
+            href="/admin"
+            className="dash-action-card hover:border-sage-800/40"
+          >
+            <div className="dash-action-icon dash-action-icon-sage">
+              <LayoutDashboard className="text-sage-400" size={22} />
+            </div>
+            <span className="dash-action-title flex items-center gap-2">
+              Panel Admin
+              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-sage-900/40 text-sage-300 border border-sage-700/40">
+                ADMIN
+              </span>
+            </span>
+            <span className="dash-action-desc">
+              Kelola pengguna, subscription, dan statistik
+            </span>
+            <ChevronRight size={14} className="text-navy-600 mt-auto" />
+          </Link>
+        )}
 
         {/* ── Account Info (Polished) ──────────────────────── */}
         <div className="dash-account">

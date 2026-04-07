@@ -59,7 +59,7 @@ export function PremiumOverlay({ stepTitle, stepIcon }: PremiumOverlayProps) {
   return (
     <div className="absolute inset-0 z-30 flex items-center justify-center rounded-xl">
       {/* Backdrop — semi-transparent, form content terlihat di belakang */}
-      <div className="absolute inset-0 bg-navy-950/70 backdrop-blur-[2px] rounded-xl" />
+      <div className="absolute inset-0 bg-white/70 dark:bg-navy-950/70 backdrop-blur-[2px] rounded-xl" />
 
       {/* Overlay card */}
       <div className="relative z-10 max-w-xs w-[90%] mx-auto text-center px-4 py-6">

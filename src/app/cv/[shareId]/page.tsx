@@ -17,6 +17,7 @@ import {
   Heart,
   Loader2,
   AlertTriangle,
+  Printer,
 } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { loadProfilePublic } from '@/lib/loadProfilePublic'
@@ -250,8 +251,17 @@ export default function PublicCvPage({ params }: { params: Promise<{ shareId: st
               </p>
             </div>
 
-            {/* Right: CTA */}
+            {/* Right: Print + CTA */}
             <div className="preview-topbar-actions">
+              <button
+                type="button"
+                onClick={() => window.print()}
+                className="preview-btn-print"
+                title="Cetak / Save PDF"
+              >
+                <Printer />
+                <span className="hidden sm:inline">Cetak</span>
+              </button>
               <Link
                 href="/"
                 className="preview-btn-download"

@@ -406,7 +406,7 @@ export async function generatePdf({
         .slice(0, 10)
         .replace(/-/g, '')
 
-      const outputFilename = filename ?? `cv_nikahready_${safeName}_${dateStr}.pdf`
+      const outputFilename = filename ?? `CV_NikahReady_${safeName}_${dateStr}.pdf`
 
       // ── 8. Download ────────────────────────────────────────
       pdf.save(outputFilename)

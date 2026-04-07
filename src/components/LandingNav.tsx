@@ -14,6 +14,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useAuthState, useAuthActions } from '@/context/AuthContext'
+import { ThemeToggle } from '@/components/ui/ThemeToggle'
 
 export function LandingNav() {
   const router = useRouter()
@@ -65,6 +66,7 @@ export function LandingNav() {
                 >
                   Dashboard
                 </Link>
+                <ThemeToggle size={16} />
                 <button
                   onClick={() => setShowLogoutConfirm(true)}
                   className="landing-btn-ghost text-xs text-navy-400"
@@ -81,6 +83,7 @@ export function LandingNav() {
                 >
                   Mulai Gratis
                 </Link>
+                <ThemeToggle size={16} />
                 <Link
                   href="/login"
                   className="landing-btn-outline"
@@ -96,29 +99,29 @@ export function LandingNav() {
       {/* ── Logout Confirmation Modal ───────────────────────── */}
       {showLogoutConfirm && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-navy-950/80 backdrop-blur-sm"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 dark:bg-navy-950/80 backdrop-blur-sm"
           onClick={() => setShowLogoutConfirm(false)}
         >
           <div
-            className="w-[90%] max-w-80 rounded-2xl border border-navy-800/60 bg-navy-900/95 p-6"
+            className="w-[90%] max-w-80 rounded-2xl border border-gray-200 dark:border-navy-800/60 bg-white dark:bg-navy-900/95 p-6"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="text-base font-bold text-white mb-2">
+            <h3 className="text-base font-bold text-navy-900 dark:text-white mb-2">
               Keluar dari NikahReady?
             </h3>
-            <p className="text-xs text-navy-400 mb-5 leading-relaxed">
+            <p className="text-xs text-navy-500 dark:text-navy-400 mb-5 leading-relaxed">
               Data profilmu tetap tersimpan. Kamu bisa masuk kembali kapan saja.
             </p>
             <div className="flex gap-2">
               <button
                 onClick={() => setShowLogoutConfirm(false)}
-                className="flex-1 py-2.5 px-4 rounded-xl bg-transparent border border-navy-600/40 text-navy-400 text-xs font-medium cursor-pointer transition-all hover:border-navy-500 active:scale-95"
+                className="flex-1 py-2.5 px-4 rounded-xl bg-transparent border border-gray-300 dark:border-navy-600/40 text-navy-500 dark:text-navy-400 text-xs font-medium cursor-pointer transition-all hover:border-gray-400 dark:hover:border-navy-500 active:scale-95"
               >
                 Batal
               </button>
               <button
                 onClick={handleLogout}
-                className="flex-1 py-2.5 px-4 rounded-xl bg-red-900/15 border border-red-800/30 text-red-300 text-xs font-semibold cursor-pointer transition-all hover:bg-red-900/25 active:scale-95"
+                className="flex-1 py-2.5 px-4 rounded-xl bg-red-50 dark:bg-red-900/15 border border-red-200 dark:border-red-800/30 text-red-600 dark:text-red-300 text-xs font-semibold cursor-pointer transition-all hover:bg-red-100 dark:hover:bg-red-900/25 active:scale-95"
               >
                 Keluar
               </button>

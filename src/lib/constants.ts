@@ -298,13 +298,17 @@ export const STEP_DEFINITIONS: StepDefinition[] = [
     section: 'fotoTemplate',
     isPremiumOnly: false,
   },
-  // Steps 19-22 reserved untuk future features
+  // Steps 19-21: Fitur khusus premium (placeholder, belum ada dedicated section)
+  // Phase 2 FIX: Sebelumnya section: 'pandanganIsu' dan 'visiMisi' (OVERWRITE DATA!)
+  // Sekarang pakai 'navigation' karena belum ada dedicated form data section.
+  // TODO: Saat implementasi, buat interface SuratTaaruf, Referensi, HarapanDoa
+  // dan tambahkan ke ScalarSection di types/index.ts, lalu ganti section di sini.
   {
     step: 19,
     title: 'Surat Taaruf',
     subtitle: 'Surat perkenalan diri (opsional)',
     icon: '✉️',
-    section: 'pandanganIsu', // placeholder, extend later
+    section: 'navigation', // placeholder — belum ada dedicated section
     isPremiumOnly: true,
   },
   {
@@ -312,7 +316,7 @@ export const STEP_DEFINITIONS: StepDefinition[] = [
     title: 'Referensi',
     subtitle: 'Kontak referensi dari ustadz/keluarga',
     icon: '📋',
-    section: 'pandanganIsu', // placeholder
+    section: 'navigation', // placeholder — belum ada dedicated section
     isPremiumOnly: true,
   },
   {
@@ -320,7 +324,7 @@ export const STEP_DEFINITIONS: StepDefinition[] = [
     title: 'Harapan & Doa',
     subtitle: 'Harapanmu di pernikahan ini',
     icon: '🤲',
-    section: 'visiMisi', // placeholder
+    section: 'navigation', // placeholder — belum ada dedicated section
     isPremiumOnly: true,
   },
   {

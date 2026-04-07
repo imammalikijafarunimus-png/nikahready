@@ -6,7 +6,7 @@
 
 /* ── Dashboard Page Layout ───────────────────────────────── */
 .dashboard-page {
-  @apply min-h-screen bg-navy-950 relative overflow-hidden;
+  @apply min-h-screen bg-white relative overflow-hidden dark:bg-navy-950;
 }
 
 /* Islamic pattern overlay — subtle geometric texture */
@@ -30,13 +30,17 @@
   width: 60%;
   height: 50%;
   border-radius: 50%;
-  background: radial-gradient(ellipse, rgba(6, 78, 59, 0.08) 0%, transparent 70%);
+  background: radial-gradient(ellipse, rgba(5, 150, 105, 0.06) 0%, transparent 70%);
   pointer-events: none;
+}
+.dark .dashboard-glow {
+  background: radial-gradient(ellipse, rgba(6, 78, 59, 0.08) 0%, transparent 70%);
 }
 
 /* ── Dashboard Nav ────────────────────────────────────────── */
 .dashboard-nav {
-  @apply sticky top-0 z-50 bg-navy-900/80 backdrop-blur-xl border-b border-navy-800/50;
+  @apply sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-navy-200
+         dark:bg-navy-900/80 dark:border-navy-800/50;
 }
 
 .dashboard-nav-inner {
@@ -55,7 +59,7 @@
 }
 
 .dashboard-welcome-title {
-  @apply text-2xl sm:text-3xl font-bold text-white mb-1.5 tracking-tight;
+  @apply text-2xl sm:text-3xl font-bold text-navy-900 mb-1.5 tracking-tight dark:text-white;
   letter-spacing: -0.02em;
 }
 
@@ -67,16 +71,20 @@
 }
 
 .dashboard-welcome-subtitle {
-  @apply text-sm sm:text-base text-navy-400 leading-relaxed;
+  @apply text-sm sm:text-base text-navy-500 leading-relaxed dark:text-navy-400;
 }
 
 /* ── Dashboard Card (base) ───────────────────────────────── */
 .dash-card {
-  @apply rounded-2xl border border-navy-800/50 bg-navy-900/50 backdrop-blur-sm p-6;
+  @apply rounded-2xl border border-navy-200 bg-white/80 backdrop-blur-sm p-6
+         dark:border-navy-800/50 dark:bg-navy-900/50;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .dash-card:hover {
+  border-color: rgba(51, 65, 85, 0.3);
+}
+.dark .dash-card:hover {
   border-color: rgba(51, 65, 85, 0.6);
 }
 
@@ -103,7 +111,7 @@
 }
 
 .dash-completion-label {
-  @apply text-sm font-semibold text-navy-100;
+  @apply text-sm font-semibold text-navy-900 dark:text-navy-100;
 }
 
 .dash-completion-percent {
@@ -111,7 +119,7 @@
 }
 
 .dash-progress-track {
-  @apply w-full h-2.5 bg-navy-800/60 rounded-full overflow-hidden;
+  @apply w-full h-2.5 bg-navy-100 rounded-full overflow-hidden dark:bg-navy-800/60;
 }
 
 .dash-progress-bar {
@@ -138,7 +146,7 @@
 }
 
 .dash-completion-message {
-  @apply text-xs text-navy-400 mt-3 leading-relaxed;
+  @apply text-xs text-navy-500 mt-3 leading-relaxed dark:text-navy-400;
 }
 
 /* ── Quick Action Cards ───────────────────────────────────── */
@@ -148,11 +156,15 @@
 }
 
 .dash-action-card {
-  @apply flex flex-col items-center gap-3 p-6 rounded-2xl border border-navy-800/50 bg-navy-900/50 no-underline transition-all duration-200 text-center;
+  @apply flex flex-col items-center gap-3 p-6 rounded-2xl border border-navy-200 bg-white/80 no-underline transition-all duration-200 text-center
+         dark:border-navy-800/50 dark:bg-navy-900/50;
 }
 
 .dash-action-card:hover {
   @apply -translate-y-0.5;
+  box-shadow: 0 8px 30px -8px rgba(0, 0, 0, 0.1);
+}
+.dark .dash-action-card:hover {
   box-shadow: 0 8px 30px -8px rgba(0, 0, 0, 0.4);
 }
 
@@ -165,7 +177,7 @@
 }
 
 .dash-action-icon-sage {
-  @apply bg-sage-900/15;
+  @apply bg-sage-500/15 dark:bg-sage-900/15;
 }
 
 .dash-action-icon-gold {
@@ -173,11 +185,11 @@
 }
 
 .dash-action-icon-navy {
-  @apply bg-navy-800/50;
+  @apply bg-navy-100/50 dark:bg-navy-800/50;
 }
 
 .dash-action-title {
-  @apply text-sm font-semibold text-white;
+  @apply text-sm font-semibold text-navy-900 dark:text-white;
 }
 
 .dash-action-desc {
@@ -186,12 +198,13 @@
 
 /* ── Steps Overview ───────────────────────────────────────── */
 .dash-steps {
-  @apply rounded-2xl border border-navy-800/50 bg-navy-900/50 backdrop-blur-sm p-6 mb-8;
+  @apply rounded-2xl border border-navy-200 bg-white/80 backdrop-blur-sm p-6 mb-8
+         dark:border-navy-800/50 dark:bg-navy-900/50;
   animation: dash-fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
 }
 
 .dash-steps-title {
-  @apply text-base font-bold text-navy-100 mb-4;
+  @apply text-base font-bold text-navy-900 mb-4 dark:text-navy-100;
 }
 
 .dash-steps-grid {
@@ -203,15 +216,17 @@
 }
 
 .dash-step-chip-accessible {
-  @apply text-navy-300 hover:bg-navy-800/40 hover:border-navy-700/50;
+  @apply text-navy-600 hover:bg-navy-100/40 hover:border-navy-200
+         dark:text-navy-300 dark:hover:bg-navy-800/40 dark:hover:border-navy-700/50;
 }
 
 .dash-step-chip-locked {
-  @apply text-navy-600 cursor-default;
+  @apply text-navy-500 cursor-default;
 }
 
 .dash-step-chip-current {
-  @apply bg-sage-900/15 border border-sage-900/30;
+  @apply bg-sage-500/15 border border-sage-500/30
+         dark:bg-sage-900/15 dark:border-sage-900/30;
 }
 
 .dash-step-chip-icon {
@@ -228,12 +243,13 @@
 
 /* ── Account Info ─────────────────────────────────────────── */
 .dash-account {
-  @apply rounded-2xl border border-navy-800/40 bg-navy-900/30 p-5 mb-8;
+  @apply rounded-2xl border border-navy-200/60 bg-white/60 p-5 mb-8
+         dark:border-navy-800/40 dark:bg-navy-900/30;
   animation: dash-fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
 }
 
 .dash-account-title {
-  @apply text-sm font-semibold text-navy-100 mb-3;
+  @apply text-sm font-semibold text-navy-900 mb-3 dark:text-navy-100;
 }
 
 .dash-account-row {
@@ -245,7 +261,7 @@
 }
 
 .dash-account-value {
-  @apply text-navy-300;
+  @apply text-navy-600 dark:text-navy-300;
 }
 
 .dash-account-value-premium {
@@ -253,12 +269,13 @@
 }
 
 .dash-account-value-free {
-  @apply font-semibold text-sage-300;
+  @apply font-semibold text-sage-600 dark:text-sage-300;
 }
 
 /* ── Trust Strip ──────────────────────────────────────────── */
 .dash-trust {
-  @apply flex flex-wrap justify-center items-center gap-x-6 gap-y-2 py-4 px-5 rounded-xl border border-navy-800/30 bg-navy-900/30 mb-8;
+  @apply flex flex-wrap justify-center items-center gap-x-6 gap-y-2 py-4 px-5 rounded-xl border border-navy-200/50 bg-navy-50/50 mb-8
+         dark:border-navy-800/30 dark:bg-navy-900/30;
   animation: dash-fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.45s both;
 }
 
@@ -273,11 +290,11 @@
 }
 
 .dash-footer-brand {
-  @apply text-[10px] text-navy-600 tracking-wide;
+  @apply text-[10px] text-navy-400 dark:text-navy-600 tracking-wide;
 }
 
 .dash-footer-values {
-  @apply text-[10px] text-navy-600/60 mt-0.5;
+  @apply text-[10px] text-navy-400/60 mt-0.5 dark:text-navy-600/60;
 }
 
 /* ── Animations ───────────────────────────────────────────── */

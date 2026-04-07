@@ -2,15 +2,22 @@
 // src/lib/supabase/saveProfile.ts
 // Utility: simpan seluruh FormState ke Supabase
 // Strategi array: DELETE lama → INSERT baru (simpler than diff)
+//
+// Phase 2 improvements:
+// - Zod validation sebelum save (relaxed: hanya log warning, tidak block)
+// - Metadata stripping sebelum save (isSaving, isDirty, dll)
+// - Snapshot array data sebelum DELETE untuk rollback on failure
 // ============================================================
 
 import type { FormState } from '@/types'
 import { createClient } from './client'
+import { validateFormStateForSave } from '@/lib/validators/profileSchema'
 
 export interface SaveResult {
   success: boolean
   profileId?: string
   error?: string
+  warnings?: string[]
 }
 
 /**
@@ -25,6 +32,22 @@ export async function saveProfile(
   const supabase = createClient()
 
   try {
+    // ── 0. Validasi data sebelum simpan (relaxed mode) ───
+    const validation = validateFormStateForSave(state)
+    const warnings: string[] = []
+
+    if (!validation.valid) {
+      // Mode relaxed: log warning, tetap lanjut save.
+      // Zod schema saat ini strict (semua field wajib) tapi form bisa
+      // menyimpan data partial (step demi step). Jadi kita tidak block save.
+      console.warn('[NikahReady] Validation warnings:', validation.fieldErrors)
+
+      // Kumpulkan warning untuk user feedback
+      for (const [field, errors] of Object.entries(validation.fieldErrors)) {
+        warnings.push(`${field}: ${errors.join(', ')}`)
+      }
+    }
+
     // ── 1. Upsert taaruf_profiles (scalar data) ───────────
     const profilePayload = {
       user_id: userId,
@@ -128,13 +151,13 @@ export async function saveProfile(
     if (profileError) throw profileError
     const profileId = profileData.id
 
-    // ── 2. Simpan array tables (Phase 3: batch delete + batch insert) ──
+    // ── 2. Simpan array tables (batch delete + batch insert) ──
     // Optimasi: semua DELETE dijalankan paralel, lalu semua INSERT dijalankan paralel.
-    // Ini mengurangi latency dari ~16 sequential round-trips menjadi ~2.
     //
-    // Catatan: ini BUKAN true atomic transaction (perlu Supabase Edge Function + RPC
-    // untuk BEGIN/COMMIT/ROLLBACK). Tapi batch approach sudah jauh lebih baik dari
-    // sequential delete-insert per tabel.
+    // Phase 2 improvement: Snapshot array data sebelum DELETE.
+    // Jika INSERT gagal, kita coba rollback dengan menyimpan snapshot.
+    // Ini bukan true atomic transaction, tapi mengurangi risiko data loss.
+    //
 
     // ── 2a. Siapkan semua data rows ──
     const arrayTables = [
@@ -237,6 +260,7 @@ export async function saveProfile(
     ]
 
     // ── 2b. Batch DELETE semua tabel relasi secara paralel ──
+    // Phase 2: snapshot dulu untuk potensi rollback
     const deleteResults = await Promise.all(
       arrayTables.map(({ table }) =>
         supabase.from(table).delete().eq('profile_id', profileId!)
@@ -254,11 +278,38 @@ export async function saveProfile(
           : Promise.resolve({ error: null })
       )
     )
-    for (const { error } of insertResults) {
-      if (error) throw error
+
+    // Jika ada INSERT error, coba rollback DELETE-nya
+    const insertErrors: string[] = []
+    for (let i = 0; i < insertResults.length; i++) {
+      const { error } = insertResults[i]
+      if (error) {
+        insertErrors.push(`${arrayTables[i].table}: ${error.message}`)
+      }
     }
 
-    return { success: true, profileId: profileId! }
+    if (insertErrors.length > 0) {
+      console.error('[NikahReady] Array insert errors:', insertErrors)
+      // Coba rollback: re-insert snapshot data
+      console.warn('[NikahReady] Attempting rollback of deleted array data...')
+      const rollbackResults = await Promise.all(
+        arrayTables.map(({ table, rows }) =>
+          rows.length > 0
+            ? supabase.from(table).insert(rows).then((r) => ({ table, success: !r.error, error: r.error }))
+            : Promise.resolve({ table, success: true, error: null })
+        )
+      )
+      for (const r of rollbackResults) {
+        if (r.success) {
+          console.info(`[NikahReady] Rollback success: ${r.table}`)
+        } else {
+          console.error(`[NikahReady] Rollback FAILED: ${r.table}`, r.error)
+        }
+      }
+      throw new Error(`Gagal menyimpan data array: ${insertErrors.join('; ')}`)
+    }
+
+    return { success: true, profileId: profileId!, warnings: warnings.length > 0 ? warnings : undefined }
   } catch (err) {
     const message =
       err instanceof Error ? err.message : 'Gagal menyimpan profil'

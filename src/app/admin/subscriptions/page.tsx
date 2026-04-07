@@ -12,6 +12,8 @@ import {
   ChevronRight,
   Loader2,
   CreditCard,
+  AlertCircle,
+  RefreshCw,
 } from 'lucide-react'
 import {
   getSubscriptions,
@@ -27,16 +29,25 @@ export default function AdminSubscriptionsPage() {
   const [subscriptions, setSubscriptions] = useState<SubscriptionRecord[]>([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [page, setPage] = useState(1)
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
 
   const fetchSubs = useCallback(async () => {
     setLoading(true)
-    const status = statusFilter === 'all' ? undefined : statusFilter
-    const { subscriptions, total } = await getSubscriptions({ status, page, perPage: PER_PAGE })
-    setSubscriptions(subscriptions)
-    setTotal(total)
-    setLoading(false)
+    setError(null)
+    try {
+      const status = statusFilter === 'all' ? undefined : statusFilter
+      const { subscriptions, total } = await getSubscriptions({ status, page, perPage: PER_PAGE })
+      setSubscriptions(subscriptions)
+      setTotal(total)
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Gagal memuat data subscription'
+      setError(msg)
+      console.error('[NikahReady] fetchSubscriptions error:', err)
+    } finally {
+      setLoading(false)
+    }
   }, [statusFilter, page])
 
   useEffect(() => { fetchSubs() }, [fetchSubs])
@@ -81,6 +92,15 @@ export default function AdminSubscriptionsPage() {
           <div className="admin-empty">
             <Loader2 size={24} className="animate-spin" style={{ margin: '0 auto 8px' }} />
             <p>Memuat data…</p>
+          </div>
+        ) : error ? (
+          <div className="admin-error-card">
+            <AlertCircle size={24} style={{ color: '#dc2626', margin: '0 auto 8px' }} />
+            <p className="admin-error-title">Gagal Memuat Data Subscriptions</p>
+            <p className="admin-error-message">{error}</p>
+            <button type="button" className="admin-btn admin-btn-primary" style={{ marginTop: 12 }} onClick={fetchSubs}>
+              <RefreshCw size={14} /> Coba Lagi
+            </button>
           </div>
         ) : subscriptions.length === 0 ? (
           <div className="admin-empty">

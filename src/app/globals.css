@@ -146,13 +146,21 @@
     border-radius: 0 0 0.5rem 0;
   }
 
-  /* Gradient utilities */
+  /* Gradient utilities — sage gradients */
   .gradient-sage {
+    background: linear-gradient(135deg, #047857 0%, #059669 50%, #34D399 100%);
+  }
+  .dark .gradient-sage {
     background: linear-gradient(135deg, #064E3B 0%, #047857 50%, #059669 100%);
   }
+
   .gradient-navy-sage {
+    background: linear-gradient(135deg, #E2E8F0 0%, #059669 100%);
+  }
+  .dark .gradient-navy-sage {
     background: linear-gradient(135deg, #0F172A 0%, #064E3B 100%);
   }
+
   .gradient-gold {
     background: linear-gradient(135deg, #D97706 0%, #F59E0B 100%);
   }
@@ -195,6 +203,9 @@
 @layer utilities {
   .text-shadow-sm {
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  }
+  .dark .text-shadow-sm {
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
   }
   .animate-step-in {
     animation: var(--tw-animate-duration, 0.25s) ease-out forwards;

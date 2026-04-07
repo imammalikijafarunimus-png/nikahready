@@ -248,7 +248,12 @@ export function CreateFormClient() {
           )
         } catch { /* silent fail */ }
 
-        setToast({ type: 'success', message: 'Profil berhasil disimpan! 🎉' })
+        // Tampilkan warning jika ada (validasi Zod)
+        if (result.warnings && result.warnings.length > 0) {
+          setToast({ type: 'info', message: `Tersimpan dengan ${result.warnings.length} peringatan data.` })
+        } else {
+          setToast({ type: 'success', message: 'Profil berhasil disimpan! 🎉' })
+        }
 
         setTimeout(() => {
           router.push('/preview')
@@ -291,7 +296,11 @@ export function CreateFormClient() {
         )
       } catch { /* silent fail */ }
 
-      setToast({ type: 'success', message: 'Profil tersimpan!' })
+      if (result.warnings && result.warnings.length > 0) {
+        setToast({ type: 'info', message: `Tersimpan dengan ${result.warnings.length} peringatan.` })
+      } else {
+        setToast({ type: 'success', message: 'Profil tersimpan!' })
+      }
     } else {
       dispatch({ type: 'SET_SAVING', isSaving: false })
       setToast({
@@ -342,7 +351,7 @@ export function CreateFormClient() {
   // ── Show loading while checking auth ──────────────────────
   if (authLoading || !userId) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-navy-950">
+      <div className="flex items-center justify-center min-h-screen bg-white dark:bg-navy-950">
         <div className="flex flex-col items-center gap-3">
           <div className="auth-spinner" style={{ width: '2rem', height: '2rem', borderWidth: '3px' }} />
           <p className="text-sm text-navy-400">Memerikses autentikasi...</p>

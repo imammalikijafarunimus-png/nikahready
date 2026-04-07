@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <div className="min-h-screen bg-navy-950">
+    <div className="min-h-screen bg-white dark:bg-navy-950">
       {/* Nav back */}
       <nav className="sticky top-0 z-30 bg-navy-900/95 backdrop-blur-sm border-b border-navy-800">
         <div className="max-w-3xl mx-auto px-4 py-3 flex items-center gap-3">

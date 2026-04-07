@@ -11,6 +11,12 @@
 // - Audit log dibuat dari server (tidak bisa dimanipulasi client)
 // - Input validation di server sebelum DB operation
 // - Self-demotion/self-deletion prevention
+//
+// FASE 1 FIX:
+// - getAdminStats() sekarang THROW error alih-alih return 0
+// - getAdminUsers() sekarang THROW error alih-alih return empty
+// - Error dari API (401, 403, 500) di-propagate ke UI
+// - adminApi() sekarang log error detail untuk debugging
 // ============================================================
 
 import { createClient } from '@/lib/supabase/client'
@@ -60,6 +66,21 @@ export interface AuditLog {
   target_email: string | null
   details: Record<string, unknown>
   created_at: string
+}
+
+// ── Custom Error ─────────────────────────────────────────────
+
+/**
+ * Custom error untuk admin API yang membawa status code.
+ * Digunakan oleh UI untuk menampilkan pesan error yang sesuai.
+ */
+export class AdminApiError extends Error {
+  status: number
+  constructor(message: string, status: number) {
+    super(message)
+    this.status = status
+    this.name = 'AdminApiError'
+  }
 }
 
 // ── Admin Auth Check ─────────────────────────────────────────
@@ -130,53 +151,76 @@ export async function checkIsAdmin(): Promise<{
 /**
  * Wrapper untuk memanggil admin API routes.
  * Secara otomatis menyertakan session cookie untuk autentikasi.
+ *
+ * FIX (Fase 1): Error handling lebih detail.
+ * - 401 → session expired / not authenticated
+ * - 403 → bukan admin
+ * - 500 → server error
  */
 async function adminApi(path: string, options?: RequestInit): Promise<Response> {
   const supabase = createClient()
   const { data: { session } } = await supabase.auth.getSession()
 
-  return fetch(path, {
+  if (!session) {
+    console.error('[NikahReady] adminApi: No active session — user not logged in or session expired')
+    throw new AdminApiError('Sesi telah kadaluarsa. Silakan logout dan login ulang.', 401)
+  }
+
+  const res = await fetch(path, {
     ...options,
     headers: {
       'Content-Type': 'application/json',
       ...options?.headers,
     },
-    credentials: 'include', // Include cookies for session
+    credentials: 'include',
   })
+
+  // Log error responses for debugging
+  if (!res.ok) {
+    let errorBody = ''
+    try {
+      const json = await res.json()
+      errorBody = json.error || JSON.stringify(json)
+    } catch {
+      errorBody = `HTTP ${res.status}`
+    }
+
+    console.error(`[NikahReady] adminApi ${path} failed:`, res.status, errorBody)
+
+    // Map common errors to friendly messages
+    if (res.status === 401) {
+      throw new AdminApiError('Sesi telah kadaluarsa. Silakan logout dan login ulang.', 401)
+    }
+    if (res.status === 403) {
+      throw new AdminApiError('Akses ditolak. Akun Anda tidak memiliki role admin.', 403)
+    }
+
+    throw new AdminApiError(errorBody, res.status)
+  }
+
+  return res
 }
 
 // ── Dashboard Stats ──────────────────────────────────────────
 
 /**
- * FIX (Fase 2): Stats sekarang diambil dari server-side API route.
+ * FIX (Fase 1): Stats sekarang THROW error alih-alih silently return 0.
+ * UI akan menampilkan ErrorCard dengan pesan yang jelas.
+ *
+ * FIX (Fase 2): Stats diambil dari server-side API route.
  * Server-side memverifikasi admin + mengeksekusi query paralel.
  */
 export async function getAdminStats(): Promise<AdminStats> {
-  try {
-    const res = await adminApi('/api/admin/stats')
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}))
-      throw new Error(data.error || `HTTP ${res.status}`)
-    }
-    return await res.json()
-  } catch (err) {
-    console.error('[NikahReady] getAdminStats error:', err)
-    return {
-      totalUsers: 0,
-      freeUsers: 0,
-      premiumUsers: 0,
-      newUsersThisWeek: 0,
-      newUsersThisMonth: 0,
-      totalSubscriptions: 0,
-      activeSubscriptions: 0,
-    }
-  }
+  const res = await adminApi('/api/admin/stats')
+  return await res.json()
 }
 
 // ── Fetch All Users ──────────────────────────────────────────
 
 /**
- * FIX (Fase 2): User list sekarang dari server-side API route.
+ * FIX (Fase 1): Throw error alih-alih silently return empty array.
+ *
+ * FIX (Fase 2): User list dari server-side API route.
  * Search sanitization dilakukan server-side (regex whitelist).
  */
 export async function getAdminUsers(options?: {
@@ -186,24 +230,15 @@ export async function getAdminUsers(options?: {
   page?: number
   perPage?: number
 }): Promise<{ users: AdminUser[]; total: number }> {
-  try {
-    const params = new URLSearchParams()
-    if (options?.search) params.set('search', options.search)
-    if (options?.plan) params.set('plan', options.plan)
-    if (options?.role) params.set('role', options.role)
-    if (options?.page) params.set('page', String(options.page))
-    if (options?.perPage) params.set('perPage', String(options.perPage))
+  const params = new URLSearchParams()
+  if (options?.search) params.set('search', options.search)
+  if (options?.plan) params.set('plan', options.plan)
+  if (options?.role) params.set('role', options.role)
+  if (options?.page) params.set('page', String(options.page))
+  if (options?.perPage) params.set('perPage', String(options.perPage))
 
-    const res = await adminApi(`/api/admin/users?${params.toString()}`)
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}))
-      throw new Error(data.error || `HTTP ${res.status}`)
-    }
-    return await res.json()
-  } catch (err) {
-    console.error('[NikahReady] getAdminUsers error:', err)
-    return { users: [], total: 0 }
-  }
+  const res = await adminApi(`/api/admin/users?${params.toString()}`)
+  return await res.json()
 }
 
 // ── Update User Plan ─────────────────────────────────────────
@@ -223,11 +258,6 @@ export async function updateUserPlan(
       method: 'PATCH',
       body: JSON.stringify({ action: 'update_plan', value: newPlan, notes }),
     })
-
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}))
-      return { success: false, error: data.error || `HTTP ${res.status}` }
-    }
 
     return await res.json()
   } catch (err) {
@@ -253,11 +283,6 @@ export async function updateUserRole(
       body: JSON.stringify({ action: 'update_role', value: newRole, notes }),
     })
 
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}))
-      return { success: false, error: data.error || `HTTP ${res.status}` }
-    }
-
     return await res.json()
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Gagal mengubah role'
@@ -275,22 +300,13 @@ export async function getSubscriptions(options?: {
   perPage?: number
   status?: string
 }): Promise<{ subscriptions: SubscriptionRecord[]; total: number }> {
-  try {
-    const params = new URLSearchParams()
-    if (options?.status) params.set('status', options.status)
-    if (options?.page) params.set('page', String(options.page))
-    if (options?.perPage) params.set('perPage', String(options.perPage))
+  const params = new URLSearchParams()
+  if (options?.status) params.set('status', options.status)
+  if (options?.page) params.set('page', String(options.page))
+  if (options?.perPage) params.set('perPage', String(options.perPage))
 
-    const res = await adminApi(`/api/admin/subscriptions?${params.toString()}`)
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}))
-      throw new Error(data.error || `HTTP ${res.status}`)
-    }
-    return await res.json()
-  } catch (err) {
-    console.error('[NikahReady] getSubscriptions error:', err)
-    return { subscriptions: [], total: 0 }
-  }
+  const res = await adminApi(`/api/admin/subscriptions?${params.toString()}`)
+  return await res.json()
 }
 
 // ── Delete User (Danger Zone) ────────────────────────────────
@@ -307,11 +323,6 @@ export async function deleteUser(
     const res = await adminApi(`/api/admin/users/${userId}`, {
       method: 'DELETE',
     })
-
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}))
-      return { success: false, error: data.error || `HTTP ${res.status}` }
-    }
 
     return await res.json()
   } catch (err) {
