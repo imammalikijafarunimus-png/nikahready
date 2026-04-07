@@ -1,7 +1,5 @@
 /* ============================================================
-   src/app/globals.css
-   Base styles untuk NikahReady
-   Phase 1: Aligned with design-system.ts
+   src/app/globals.css — Theme + WCAG 2.1
    ============================================================ */
 
 @tailwind base;
@@ -13,7 +11,6 @@
   --font-inter:  'Inter', system-ui, sans-serif;
   --font-amiri:  'Amiri', Georgia, serif;
 
-  /* Brand colors — complete palette for JS access if needed */
   --color-sage-50:  #ECFDF5;
   --color-sage-100: #D1FAE5;
   --color-sage-200: #A7F3D0;
@@ -65,28 +62,24 @@
   body {
     @apply bg-white text-navy-900 antialiased dark:bg-navy-950 dark:text-white;
     font-family: var(--font-inter);
-    /* Prevent horizontal scroll */
     overflow-x: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
-  /* Semua heading pakai font sans (Inter) */
   h1, h2, h3, h4, h5, h6 {
     @apply font-sans font-bold tracking-tight;
   }
 
-  /* Arabic text helper */
   .font-arabic {
     font-family: var(--font-amiri);
     direction: rtl;
     line-height: 1.8;
   }
 
-  /* Focus outline — standardized: ring-sage-600/50 (canonical per design-system.ts) */
   :focus-visible {
     @apply outline-none ring-2 ring-sage-600/50 ring-offset-2 ring-offset-white dark:ring-offset-navy-900;
   }
 
-  /* Scrollbar custom (WebKit) */
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
@@ -101,16 +94,13 @@
     @apply bg-gray-400 dark:bg-navy-600;
   }
 
-  /* Native date input */
   input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: none;
     cursor: pointer;
   }
   .dark input[type="date"]::-webkit-calendar-picker-indicator {
     filter: invert(0.7);
   }
 
-  /* Native number input — sembunyikan spinner */
   input[type="number"]::-webkit-inner-spin-button,
   input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
@@ -120,7 +110,6 @@
     -moz-appearance: textfield;
   }
 
-  /* Native select styling reset */
   select {
     background-image: none;
   }
@@ -128,8 +117,8 @@
 
 /* ── Component Layer ─────────────────────────────────────── */
 @layer components {
-    /* WCAG 2.1: Skip to content — tersembunyi sampai user tekan Tab */
-    .skip-to-content {
+  /* WCAG 2.1: Skip to content — tersembunyi sampai user tekan Tab */
+  .skip-to-content {
     position: absolute;
     width: 0;
     height: 0;
@@ -140,22 +129,22 @@
     z-index: 50;
   }
   .skip-to-content:focus {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: auto;
-  height: auto;
-  padding: 1rem 2rem;
-  background: #047857;
-  color: #fff;
-  font-weight: 600;
-  font-size: 1rem;
-  z-index: 9999;
-  overflow: visible;
-  outline: 2px solid #FCD34D;
-  outline-offset: 2px;
-  border-radius: 0 0 0.5rem 0;
-}
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: auto;
+    height: auto;
+    padding: 1rem 2rem;
+    background: #047857;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1rem;
+    z-index: 9999;
+    overflow: visible;
+    outline: 2px solid #FCD34D;
+    outline-offset: 2px;
+    border-radius: 0 0 0.5rem 0;
+  }
 
   /* Gradient utilities */
   .gradient-sage {
@@ -168,19 +157,16 @@
     background: linear-gradient(135deg, #D97706 0%, #F59E0B 100%);
   }
 
-  /* Glass morphism card */
   .glass-card {
     @apply bg-white/80 backdrop-blur-sm border border-sage-100 rounded-2xl dark:bg-navy-900/80 dark:border-navy-800;
   }
 
-  /* Islamic ornament text */
   .text-arabic-lg {
     font-family: var(--font-amiri);
     @apply text-2xl text-gold-500 tracking-wide;
     direction: rtl;
   }
 
-  /* Spinner — now uses animate-spin from Tailwind config */
   .auth-spinner {
     @apply border-2 border-navy-300 dark:border-white/30 border-t-navy-700 dark:border-t-white rounded-full animate-spin;
   }
@@ -192,13 +178,11 @@
     background: white !important;
     color: black !important;
   }
-
   header,
   nav,
   .no-print {
     display: none !important;
   }
-
   .pdf-page {
     width: 100% !important;
     margin: 0 !important;
@@ -209,24 +193,17 @@
 
 /* ── Utility Layer ────────────────────────────────────────── */
 @layer utilities {
-  /* Text shadow halus untuk heading di atas background gelap */
   .text-shadow-sm {
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   }
-
-  /* Animasi step transition — now references animate-step-in from Tailwind config */
   .animate-step-in {
     animation: var(--tw-animate-duration, 0.25s) ease-out forwards;
     animation-name: step-in;
   }
-
-  /* Animasi sidebar slide-in — references animate-slide-in-right from Tailwind config */
   .animate-slide-in-right {
     animation: var(--tw-animate-duration, 0.25s) ease-out forwards;
     animation-name: slide-in-right;
   }
-
-  /* Safe area untuk mobile (notch, home indicator) */
   .pb-safe {
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }

@@ -1,5 +1,11 @@
 // ============================================================
-// src/app/layout.tsx  (FINAL — Phase 6)
+// src/app/layout.tsx (MODIFIED — Fase 4.3)
+//
+// Perubahan dari original:
+// 1. Viewport: HAPUS maximumScale=1 dan userScalable=false
+//    → WCAG 2.1 Success Criterion 1.4.4 (Resize Text)
+// 2. Tambahkan skip-to-content link (WCAG 2.1)
+// 3. <main> wrapper dengan tabIndex={-1} sebagai skip target
 // ============================================================
 
 import type { Metadata, Viewport } from 'next'
@@ -25,8 +31,8 @@ const amiri = Amiri({
 
 export const metadata = {
   metadataBase: new URL(
-    process.env.NODE_ENV === 'development' 
-      ? 'http://localhost:3000' 
+    process.env.NODE_ENV === 'development'
+      ? 'http://localhost:3000'
       : 'https://nikahready.vercel.app'
   ),
   title: {
@@ -62,6 +68,7 @@ export const metadata = {
   },
 }
 
+// WCAG 2.1 SC 1.4.4: User HARUS bisa zoom hingga 200%
 export const viewport: Viewport = {
   themeColor: '#FFFFFF',
   width: 'device-width',
@@ -82,10 +89,7 @@ export default function RootLayout({
     >
       <body className={inter.className}>
         {/* ── WCAG 2.1: Skip to main content link ── */}
-        <a
-          href="#main-content"
-          className="skip-to-content"
-        >
+        <a href="#main-content" className="skip-to-content">
           Langsung ke konten utama
         </a>
 
