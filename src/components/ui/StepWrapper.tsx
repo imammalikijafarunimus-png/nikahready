@@ -8,6 +8,7 @@
 
 import React from 'react'
 import '../../app/create/create.css'
+import { ThemeToggle } from '@/components/ui/ThemeToggle'
 
 interface StepWrapperProps {
   // Metadata step
@@ -74,7 +75,7 @@ function SaveStatus({
   }
   if (!isDirty && lastSavedLabel) {
     return (
-      <span className="flex items-center gap-1 text-xs text-navy-400">
+      <span className="flex items-center gap-1 text-xs text-navy-500 dark:text-navy-400">
         <svg className="w-3 h-3 text-sage-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
         </svg>
@@ -134,7 +135,7 @@ export function StepWrapper({
                   type="button"
                   onClick={onGoToDashboard}
                   aria-label="Kembali ke Dashboard"
-                  className="flex items-center gap-1 text-navy-400 hover:text-sage-400 transition-colors duration-200"
+                  className="flex items-center gap-1 text-navy-600 dark:text-navy-400 hover:text-sage-600 dark:hover:text-sage-400 transition-colors duration-200"
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955a1.126 1.126 0 011.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
@@ -146,12 +147,12 @@ export function StepWrapper({
               <div className="w-6 h-6 rounded-md bg-gradient-sage flex items-center justify-center">
                 <span className="text-xs">☪</span>
               </div>
-              <span className="text-xs font-medium text-navy-300">
+              <span className="text-xs font-medium text-navy-700 dark:text-navy-300">
                 NikahReady
               </span>
             </div>
 
-            {/* Right: Navigator toggle + Simpan + Save status */}
+            {/* Right: Save status + Simpan + Theme toggle + Navigator */}
             <div className="flex items-center gap-3">
               {/* Save status */}
               <SaveStatus
@@ -168,7 +169,7 @@ export function StepWrapper({
                   disabled={isSaving}
                   aria-label="Simpan profil"
                   className={[
-                    'flex items-center gap-1 text-navy-400 hover:text-sage-400 transition-colors duration-200',
+                    'flex items-center gap-1 text-navy-600 dark:text-navy-400 hover:text-sage-600 dark:hover:text-sage-400 transition-colors duration-200',
                     isSaving ? 'opacity-50 cursor-not-allowed' : '',
                   ].join(' ')}
                 >
@@ -179,6 +180,9 @@ export function StepWrapper({
                 </button>
               )}
 
+              {/* Theme toggle */}
+              <ThemeToggle size={16} />
+
               {/* Navigator toggle button */}
               {onToggleNavigator && (
                 <button
@@ -186,8 +190,8 @@ export function StepWrapper({
                   onClick={onToggleNavigator}
                   aria-label="Buka navigasi langkah"
                   className={[
-                    'flex items-center gap-1 text-navy-400 hover:text-sage-400 transition-colors duration-200',
-                    showNavigator ? 'text-sage-400' : '',
+                    'flex items-center gap-1 text-navy-600 dark:text-navy-400 hover:text-sage-600 dark:hover:text-sage-400 transition-colors duration-200',
+                    showNavigator ? 'text-sage-600 dark:text-sage-400' : '',
                   ].join(' ')}
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -222,7 +226,7 @@ export function StepWrapper({
               <h1 className="form-step-title">
                 {title}
               </h1>
-              <p className="text-sm text-navy-400 mt-1">{subtitle}</p>
+              <p className="text-sm text-navy-500 dark:text-navy-400 mt-1">{subtitle}</p>
             </div>
           </div>
 
@@ -292,7 +296,7 @@ export function StepWrapper({
               )
             })}
             {totalSteps > 7 && (
-              <span className="text-xs text-navy-500 ml-1">…</span>
+              <span className="text-xs text-navy-400 dark:text-navy-500 ml-1">…</span>
             )}
           </div>
 

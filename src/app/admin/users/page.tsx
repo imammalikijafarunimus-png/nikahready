@@ -16,6 +16,8 @@ import {
   ShieldCheck,
   Loader2,
   X,
+  AlertCircle,
+  RefreshCw,
 } from 'lucide-react'
 import {
   getAdminUsers,
@@ -100,6 +102,7 @@ export default function AdminUsersPage() {
   const [users, setUsers] = useState<AdminUser[]>([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
   const [planFilter, setPlanFilter] = useState<PlanFilter>('all')
@@ -116,16 +119,24 @@ export default function AdminUsersPage() {
   // ── Fetch Users ──
   const fetchUsers = useCallback(async () => {
     setLoading(true)
-    const planVal = planFilter === 'all' ? undefined : planFilter
-    const { users, total } = await getAdminUsers({
-      search: search || undefined,
-      plan: planVal,
-      page,
-      perPage: PER_PAGE,
-    })
-    setUsers(users)
-    setTotal(total)
-    setLoading(false)
+    setError(null)
+    try {
+      const planVal = planFilter === 'all' ? undefined : planFilter
+      const { users, total } = await getAdminUsers({
+        search: search || undefined,
+        plan: planVal,
+        page,
+        perPage: PER_PAGE,
+      })
+      setUsers(users)
+      setTotal(total)
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Gagal memuat data user'
+      setError(msg)
+      console.error('[NikahReady] fetchUsers error:', err)
+    } finally {
+      setLoading(false)
+    }
   }, [search, planFilter, page])
 
   useEffect(() => {
@@ -243,6 +254,15 @@ export default function AdminUsersPage() {
           <div className="admin-empty">
             <Loader2 size={24} className="animate-spin" style={{ margin: '0 auto 8px' }} />
             <p>Memuat data…</p>
+          </div>
+        ) : error ? (
+          <div className="admin-error-card">
+            <AlertCircle size={24} style={{ color: '#dc2626', margin: '0 auto 8px' }} />
+            <p className="admin-error-title">Gagal Memuat Data User</p>
+            <p className="admin-error-message">{error}</p>
+            <button type="button" className="admin-btn admin-btn-primary" style={{ marginTop: 12 }} onClick={fetchUsers}>
+              <RefreshCw size={14} /> Coba Lagi
+            </button>
           </div>
         ) : users.length === 0 ? (
           <div className="admin-empty">

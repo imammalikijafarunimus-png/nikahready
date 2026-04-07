@@ -6,7 +6,7 @@
 
 /* ── Form Page Layout ────────────────────────────────────── */
 .form-page {
-  @apply min-h-screen bg-navy-950 flex flex-col relative overflow-hidden;
+  @apply min-h-screen bg-white flex flex-col relative overflow-hidden dark:bg-navy-950;
 }
 
 /* Islamic pattern overlay — subtle geometric texture */
@@ -30,16 +30,23 @@
   width: 50%;
   height: 40%;
   border-radius: 50%;
-  background: radial-gradient(ellipse, rgba(6, 78, 59, 0.06) 0%, transparent 70%);
+  background: radial-gradient(ellipse, rgba(5, 150, 105, 0.04) 0%, transparent 70%);
   pointer-events: none;
+}
+.dark .form-glow {
+  background: radial-gradient(ellipse, rgba(6, 78, 59, 0.06) 0%, transparent 70%);
 }
 
 /* ── Form Header Bar ─────────────────────────────────────── */
 .form-header {
-  @apply sticky top-0 z-30 border-b border-navy-800/50;
-  background: rgba(15, 23, 42, 0.92);
+  @apply sticky top-0 z-30 border-b border-navy-200;
+  background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+}
+.dark .form-header {
+  border-color: rgba(30, 41, 59, 0.5);
+  background: rgba(15, 23, 42, 0.92);
 }
 
 .form-header-inner {
@@ -52,7 +59,7 @@
 
 /* ── Form Progress Bar ───────────────────────────────────── */
 .form-progress-track {
-  @apply w-full bg-navy-800/60 rounded-full overflow-hidden;
+  @apply w-full bg-navy-100 rounded-full overflow-hidden dark:bg-navy-800/60;
   height: 5px;
 }
 
@@ -136,12 +143,12 @@
 }
 
 .form-step-title {
-  @apply text-2xl font-bold text-white leading-tight;
+  @apply text-2xl font-bold text-navy-900 leading-tight dark:text-white;
   letter-spacing: -0.02em;
 }
 
 .form-step-subtitle {
-  @apply text-sm text-navy-400 mt-1;
+  @apply text-sm text-navy-500 mt-1 dark:text-navy-400;
 }
 
 /* Decorative accent lines */
@@ -156,11 +163,15 @@
 
 /* ── Bottom Navigation Bar ───────────────────────────────── */
 .form-bottom-nav {
-  @apply sticky bottom-0 z-30 border-t border-navy-800/50;
-  background: rgba(15, 23, 42, 0.92);
+  @apply sticky bottom-0 z-30 border-t border-navy-200;
+  background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+.dark .form-bottom-nav {
+  border-color: rgba(30, 41, 59, 0.5);
+  background: rgba(15, 23, 42, 0.92);
 }
 
 .form-bottom-nav-inner {
@@ -170,11 +181,18 @@
 .form-btn-prev {
   @apply flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-medium border
          transition-all duration-200 active:scale-95;
+  border-color: rgba(226, 232, 240, 0.8);
+  color: #475569;
+}
+.form-btn-prev:hover {
+  border-color: rgba(5, 150, 105, 0.5);
+  color: #047857;
+}
+.dark .form-btn-prev {
   border-color: rgba(51, 65, 85, 0.5);
   color: #CBD5E1;
 }
-
-.form-btn-prev:hover {
+.dark .form-btn-prev:hover {
   border-color: rgba(6, 78, 59, 0.5);
   color: #6EE7B7;
 }
@@ -182,11 +200,17 @@
 .form-btn-next {
   @apply flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-semibold
          transition-all duration-200 active:scale-95;
-  background: linear-gradient(135deg, #064E3B, #047857);
+  background: linear-gradient(135deg, #059669, #10B981);
   color: white;
+}
+.dark .form-btn-next {
+  background: linear-gradient(135deg, #064E3B, #047857);
 }
 
 .form-btn-next:hover {
+  box-shadow: 0 4px 20px -4px rgba(5, 150, 105, 0.4);
+}
+.dark .form-btn-next:hover {
   box-shadow: 0 4px 20px -4px rgba(6, 78, 59, 0.4);
 }
 
@@ -215,49 +239,64 @@
 .form-step-dot-past {
   width: 8px;
   height: 8px;
+  background: rgba(5, 150, 105, 0.5);
+}
+.dark .form-step-dot-past {
   background: rgba(6, 78, 59, 0.5);
 }
 
 .form-step-dot-upcoming {
   width: 8px;
   height: 8px;
+  background: rgba(226, 232, 240, 0.8);
+}
+.dark .form-step-dot-upcoming {
   background: rgba(51, 65, 85, 0.5);
 }
 
 /* ── Navigator Sidebar ───────────────────────────────────── */
 .form-navigator-backdrop {
   @apply fixed inset-0 z-50 transition-opacity duration-300;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
+}
+.dark .form-navigator-backdrop {
+  background: rgba(0, 0, 0, 0.5);
 }
 
 .form-navigator-panel {
   @apply fixed inset-y-0 right-0 z-50 flex flex-col;
   width: 320px;
   max-width: 85vw;
-  background: rgba(15, 23, 42, 0.98);
+  background: rgba(255, 255, 255, 0.98);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+  border-left: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: -8px 0 40px -12px rgba(0, 0, 0, 0.1);
+}
+.dark .form-navigator-panel {
+  background: rgba(15, 23, 42, 0.98);
   border-left: 1px solid rgba(51, 65, 85, 0.4);
   box-shadow: -8px 0 40px -12px rgba(0, 0, 0, 0.5);
 }
 
 .form-navigator-header {
-  @apply flex items-center justify-between px-5 py-4 border-b border-navy-800/50;
+  @apply flex items-center justify-between px-5 py-4 border-b border-navy-200
+         dark:border-navy-800/50;
 }
 
 .form-navigator-title {
-  @apply text-lg font-bold text-white;
+  @apply text-lg font-bold text-navy-900 dark:text-white;
   letter-spacing: -0.01em;
 }
 
 .form-navigator-progress {
-  @apply px-5 py-3 border-b border-navy-800/50;
+  @apply px-5 py-3 border-b border-navy-200 dark:border-navy-800/50;
 }
 
 .form-navigator-progress-bar {
-  @apply w-full bg-navy-800/60 rounded-full overflow-hidden;
+  @apply w-full bg-navy-100 rounded-full overflow-hidden dark:bg-navy-800/60;
   height: 6px;
 }
 
@@ -276,11 +315,11 @@
 }
 
 .form-navigator-item-current {
-  @apply bg-sage-900/20 border-sage-500;
+  @apply bg-sage-500/20 border-sage-500 dark:bg-sage-900/20;
 }
 
 .form-navigator-item-hover {
-  @apply hover:bg-navy-800/40 border-transparent;
+  @apply hover:bg-navy-100/40 border-transparent dark:hover:bg-navy-800/40;
 }
 
 .form-navigator-number {
@@ -289,7 +328,7 @@
 }
 
 .form-navigator-number-completed {
-  @apply bg-sage-800 text-sage-300 border-sage-600;
+  @apply bg-sage-600 text-white border-sage-500 dark:bg-sage-800 dark:text-sage-300 dark:border-sage-600;
 }
 
 .form-navigator-number-current {
@@ -297,7 +336,7 @@
 }
 
 .form-navigator-number-upcoming {
-  @apply bg-navy-800 text-navy-500 border-navy-700;
+  @apply bg-navy-100 text-navy-500 border-navy-300 dark:bg-navy-800 dark:text-navy-500 dark:border-navy-700;
 }
 
 .form-navigator-step-title {
@@ -305,15 +344,15 @@
 }
 
 .form-navigator-step-title-current {
-  @apply text-sage-300;
+  @apply text-sage-600 dark:text-sage-300;
 }
 
 .form-navigator-step-title-completed {
-  @apply text-white;
+  @apply text-navy-900 dark:text-white;
 }
 
 .form-navigator-step-title-upcoming {
-  @apply text-navy-400;
+  @apply text-navy-500 dark:text-navy-400;
 }
 
 .form-navigator-step-subtitle {
@@ -327,7 +366,7 @@
 }
 
 .form-navigator-footer {
-  @apply px-5 py-3 border-t border-navy-800/50;
+  @apply px-5 py-3 border-t border-navy-200 dark:border-navy-800/50;
 }
 
 /* ── Step Enter Animation ────────────────────────────────── */

@@ -141,7 +141,7 @@ const FAQ = [
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-navy-950 text-white antialiased">
+    <div className="landing-page min-h-screen text-navy-900 dark:text-white antialiased">
 
       <LandingNav />
 
@@ -161,7 +161,7 @@ export default function LandingPage() {
         <div className="relative max-w-3xl mx-auto">
 
           {/* Trust badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-sage-700/40 bg-navy-900/80 backdrop-blur text-xs text-sage-300 mb-8 font-medium tracking-wide">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-sage-700/40 bg-navy-900/80 dark:bg-navy-800/80 backdrop-blur text-xs text-sage-300 mb-8 font-medium tracking-wide">
             <span className="w-1.5 h-1.5 bg-sage-400 rounded-full animate-pulse" />
             Dipercaya lebih dari 10.000 Muslim Indonesia
           </div>
@@ -174,7 +174,7 @@ export default function LandingPage() {
           </h1>
 
           {/* Sub-headline — specific & actionable */}
-          <p className="mt-6 text-navy-300 text-lg md:text-xl leading-relaxed max-w-xl mx-auto">
+          <p className="mt-6 text-navy-600 dark:text-navy-300 text-lg md:text-xl leading-relaxed max-w-xl mx-auto">
             Buat CV taaruf profesional dalam 5 menit —
             lengkap, terstruktur, dan siap dibagikan
             kepada wali atau murabbi tanpa rasa canggung.
@@ -219,12 +219,12 @@ export default function LandingPage() {
       {/* ═══════════════════════════════════════════════════
           STATS STRIP
       ═══════════════════════════════════════════════════ */}
-      <section className="border-y border-navy-800 bg-navy-900/50">
+      <section className="border-y border-navy-200 dark:border-navy-800 bg-navy-50 dark:bg-navy-900/50">
         <div className="max-w-4xl mx-auto px-6 py-10 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {STATS.map(({ value, label }) => (
             <div key={label}>
               <p className="text-2xl font-bold text-sage-400">{value}</p>
-              <p className="text-xs text-navy-400 mt-1">{label}</p>
+              <p className="text-xs text-navy-500 dark:text-navy-400 mt-1">{label}</p>
             </div>
           ))}
         </div>
@@ -252,7 +252,7 @@ export default function LandingPage() {
               <div key={title} className={`${components.cards.glass} text-left`}>
                 <span className="text-2xl mb-4 block">{icon}</span>
                 <h3 className="font-semibold mb-2 text-sm">{title}</h3>
-                <p className="text-xs text-navy-400 leading-relaxed">{desc}</p>
+                <p className="text-xs text-navy-500 dark:text-navy-400 leading-relaxed">{desc}</p>
               </div>
             ))}
           </div>
@@ -351,7 +351,7 @@ export default function LandingPage() {
 
             {STEPS.map(({ step, title, desc }) => (
               <div key={step} className="relative text-center">
-                <div className="w-10 h-10 rounded-full bg-navy-950 border border-sage-700/50 flex items-center justify-center mx-auto mb-5 text-xs font-bold text-sage-400 relative z-10">
+                <div className="w-10 h-10 rounded-full bg-white dark:bg-navy-950 border border-sage-700/50 flex items-center justify-center mx-auto mb-5 text-xs font-bold text-sage-700 dark:text-sage-400 relative z-10">
                   {step}
                 </div>
                 <h3 className="font-semibold text-sm mb-2">{title}</h3>
@@ -395,8 +395,8 @@ export default function LandingPage() {
                 <p className="text-sm text-navy-200 leading-relaxed flex-1 italic">
                   &ldquo;{quote}&rdquo;
                 </p>
-                <div className="mt-4 pt-4 border-t border-navy-700/50">
-                  <p className="text-xs font-semibold text-white">{name}</p>
+                <div className="mt-4 pt-4 border-t border-navy-200 dark:border-navy-700/50">
+                  <p className="text-xs font-semibold text-navy-900 dark:text-white">{name}</p>
                   <p className="text-[10px] text-navy-500 mt-0.5">{city}</p>
                 </div>
               </div>
@@ -530,7 +530,7 @@ export default function LandingPage() {
       {/* ═══════════════════════════════════════════════════
           FOOTER — enterprise-grade
       ═══════════════════════════════════════════════════ */}
-      <footer className="border-t border-navy-800/60 bg-navy-950/80">
+      <footer className="border-t border-navy-200 dark:border-navy-800/60 bg-navy-50 dark:bg-navy-950/80">
         <div className="max-w-5xl mx-auto px-6">
 
           {/* ── Trust bar ─────────────────────────────── */}
@@ -564,7 +564,7 @@ export default function LandingPage() {
                 <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-sage-700 to-sage-500 flex items-center justify-center text-white text-xs font-bold">
                   N
                 </div>
-                <span className="font-bold text-sm text-white">NikahReady</span>
+                <span className="font-bold text-sm text-navy-900 dark:text-white">NikahReady</span>
               </div>
               <p className="text-xs text-navy-400 leading-relaxed max-w-xs mb-4">
                 Alat bantu membuat CV taaruf profesional untuk Muslim Indonesia.
@@ -578,7 +578,7 @@ export default function LandingPage() {
 
             {/* Product links */}
             <div>
-              <p className="text-white font-semibold mb-4 text-xs tracking-wide uppercase">Produk</p>
+              <p className="text-navy-900 dark:text-white font-semibold mb-4 text-xs tracking-wide uppercase">Produk</p>
               <ul className="space-y-2.5 text-xs text-navy-400">
                 <li>
                   <Link href="/create" className="hover:text-sage-400 transition-colors">
@@ -605,7 +605,7 @@ export default function LandingPage() {
 
             {/* Legal & support */}
             <div>
-              <p className="text-white font-semibold mb-4 text-xs tracking-wide uppercase">Informasi</p>
+              <p className="text-navy-900 dark:text-white font-semibold mb-4 text-xs tracking-wide uppercase">Informasi</p>
               <ul className="space-y-2.5 text-xs text-navy-400">
                 <li>
                   <Link href="/privacy" className="hover:text-sage-400 transition-colors">

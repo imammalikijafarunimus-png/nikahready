@@ -5,6 +5,12 @@
 //
 // Admin panel layout dengan sidebar dan auth guard.
 // Hanya user dengan role='admin' yang bisa akses.
+//
+// FASE 1 FIX:
+// - Sidebar sekarang bisa collapse/buka di desktop DAN mobile
+// - Main content bergeser saat sidebar terbuka (tidak overlap)
+// - Toggle button di top bar untuk desktop
+// - Default sidebar terbuka di desktop
 // ============================================================
 
 import { useState, useEffect } from 'react'
@@ -74,8 +80,9 @@ function AdminSidebar({
           </div>
           <button
             type="button"
-            className="admin-sidebar-close lg:hidden"
+            className="admin-sidebar-close"
             onClick={onClose}
+            aria-label="Tutup sidebar"
           >
             <X size={20} />
           </button>
@@ -153,7 +160,7 @@ export default function AdminLayout({
   children: React.ReactNode
 }) {
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null)
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(true) // default terbuka di desktop
 
   useEffect(() => {
     checkIsAdmin().then(({ isAdmin }) => {
@@ -176,15 +183,16 @@ export default function AdminLayout({
       />
 
       {/* Main Content */}
-      <div className="flex-1 min-w-0">
-        {/* Top bar (mobile) */}
-        <header className="lg:hidden sticky top-0 z-30 bg-white border-b border-slate-200 px-4 py-3 flex items-center gap-3">
+      <div className={`flex-1 min-w-0 transition-[margin] duration-200 ${sidebarOpen ? 'admin-main-shifted' : ''}`}>
+        {/* Top bar */}
+        <header className="sticky top-0 z-30 bg-white border-b border-slate-200 px-4 py-3 flex items-center gap-3">
           <button
             type="button"
-            onClick={() => setSidebarOpen(true)}
-            className="p-2 rounded-lg hover:bg-slate-100 text-slate-600"
+            className="admin-sidebar-toggle"
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            aria-label={sidebarOpen ? 'Tutup sidebar' : 'Buka sidebar'}
           >
-            <Menu size={20} />
+            {sidebarOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
           <span className="text-sm font-semibold text-slate-700">Admin Panel</span>
         </header>

@@ -164,11 +164,16 @@ interface DraftData {
   savedAt: string
 }
 
-/** Exported: serialize FormState ke JSON string untuk localStorage */
+/** Exported: serialize FormState ke JSON string untuk localStorage
+ * Phase 2 FIX: Strip metadata (isSaving, isDirty, lastSavedAt) sebelum save ke localStorage.
+ * Metadata ini hanya runtime state, tidak perlu di-persist.
+ */
 export function serializeDraft(state: FormState): string {
+  // Strip metadata yang tidak perlu di-persist
+  const { isSaving, isDirty, lastSavedAt, currentStep, totalSteps, ...persistableState } = state
   const draft: DraftData = {
     version: FORM_DRAFT_VERSION,
-    state,
+    state: persistableState as unknown as FormState,
     savedAt: new Date().toISOString(),
   }
   return JSON.stringify(draft)

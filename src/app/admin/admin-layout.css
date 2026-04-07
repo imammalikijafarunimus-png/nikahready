@@ -32,10 +32,19 @@
   transform: translateX(0);
 }
 
-/* Desktop: always visible */
+/* Desktop: sidebar visible by default, collapse via state */
 @media (min-width: 1024px) {
   .admin-sidebar {
+    transform: translateX(-100%);
+  }
+
+  .admin-sidebar-open {
     transform: translateX(0);
+  }
+
+  /* Main content shifts when sidebar is open on desktop */
+  .admin-main-shifted {
+    margin-left: 260px;
   }
 }
 
@@ -94,6 +103,26 @@
   cursor: pointer;
   margin-left: auto;
   transition: all 0.15s;
+}
+
+/* Toggle button in top bar for desktop */
+.admin-sidebar-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.admin-sidebar-toggle:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
 }
 
 .admin-sidebar-close:hover {
@@ -496,6 +525,46 @@
 .admin-empty p {
   font-size: 14px;
   margin: 0;
+}
+
+/* ── Error State ── */
+.admin-error-card {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+}
+
+.admin-error-card p {
+  margin: 0;
+}
+
+.admin-error-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #991b1b;
+  margin-bottom: 8px !important;
+}
+
+.admin-error-message {
+  font-size: 13px;
+  color: #b91c1c;
+  line-height: 1.5;
+}
+
+.admin-error-hint {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 12px !important;
+  line-height: 1.6;
+}
+
+.admin-error-hint code {
+  background: #f1f5f9;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
 }
 
 /* ── Mobile Responsive ── */

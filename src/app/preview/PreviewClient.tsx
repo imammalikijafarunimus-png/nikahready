@@ -24,10 +24,12 @@ import {
   Sparkles,
   Info,
   X,
+  Printer,
 } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import { useFormState } from '@/context/FormContext'
 import { useRequireAuth } from '@/context/AuthContext'
+import { ThemeToggle } from '@/components/ui/ThemeToggle'
 import { OPTIONS_TEMPLATE } from '@/lib/constants'
 import { generatePdf } from '@/lib/generatePdf'
 import type { FormState } from '@/types'
@@ -215,8 +217,18 @@ function PreviewTopBar({
           </p>
         </div>
 
-        {/* ── Right: Download ── */}
+        {/* ── Right: Print + Download ── */}
         <div className="preview-topbar-actions">
+          <ThemeToggle />
+          <button
+            type="button"
+            onClick={() => window.print()}
+            className="preview-btn-print"
+            title="Cetak / Save PDF"
+          >
+            <Printer />
+            <span className="hidden sm:inline">Cetak</span>
+          </button>
           <button
             type="button"
             onClick={onDownload}
@@ -403,7 +415,7 @@ export function PreviewClient() {
         <div className="relative z-10 flex items-center justify-center min-h-screen">
           <div className="text-center max-w-md mx-auto px-6">
             <div className="text-5xl mb-4">🔒</div>
-            <h2 className="text-xl font-bold text-white mb-2">Template Premium</h2>
+            <h2 className="text-xl font-bold text-navy-900 dark:text-white mb-2">Template Premium</h2>
             <p className="text-sm text-navy-400 mb-6">
               Template &ldquo;{currentTemplate?.label}&rdquo; hanya tersedia untuk pengguna NikahReady Pro.
               Upgrade untuk menggunakan semua template premium dan fitur lengkap lainnya.
@@ -413,7 +425,7 @@ export function PreviewClient() {
               Upgrade ke Pro
             </Link>
             <div className="mt-4">
-              <Link href="/create" className="text-xs text-sage-400 hover:text-sage-300 transition-colors">
+              <Link href="/create" className="text-xs text-sage-600 dark:text-sage-400 hover:text-sage-700 dark:hover:text-sage-300 transition-colors">
                 &larr; Kembali ke form (pilih template gratis)
               </Link>
             </div>
