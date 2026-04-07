@@ -6,6 +6,7 @@ import type { Metadata, Viewport } from 'next'
 import { Inter, Amiri } from 'next/font/google'
 import { FormProvider } from '@/context/FormContext'
 import { AuthProvider } from '@/context/AuthContext'
+import { ThemeProvider } from '@/context/ThemeContext'
 import { PWAInstallPrompt } from '@/components/PWAInstallPrompt'
 import './globals.css'
 
@@ -62,11 +63,9 @@ export const metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#0F172A',
+  themeColor: '#FFFFFF',
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
   viewportFit: 'cover',
 }
 
@@ -82,11 +81,23 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className={inter.className}>
+        {/* ── WCAG 2.1: Skip to main content link ── */}
+        <a
+          href="#main-content"
+          className="skip-to-content"
+        >
+          Langsung ke konten utama
+        </a>
+
         <AuthProvider>
-          <FormProvider>
-            {children}
-            <PWAInstallPrompt />
-          </FormProvider>
+          <ThemeProvider>
+            <FormProvider>
+              <main id="main-content" tabIndex={-1}>
+                {children}
+              </main>
+              <PWAInstallPrompt />
+            </FormProvider>
+          </ThemeProvider>
         </AuthProvider>
       </body>
     </html>

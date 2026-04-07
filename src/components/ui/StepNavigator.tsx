@@ -251,12 +251,10 @@ export function StepNavigator({
                       )}
                     </span>
 
-                    {/* Icon: premium steps show lock for free users */}
-                    {isLocked ? (
-                      <span className="text-base flex-shrink-0 opacity-50">{stepDef.icon}</span>
-                    ) : (
-                      <span className="text-base flex-shrink-0">{stepDef.icon}</span>
-                    )}
+                    {/* Icon: decorative emoji */}
+                    <span className="text-base flex-shrink-0" aria-hidden="true" style={isLocked ? { opacity: 0.5 } : undefined}>
+                      {stepDef.icon}
+                    </span>
 
                     {/* Title + subtitle */}
                     <div className="flex-1 min-w-0">

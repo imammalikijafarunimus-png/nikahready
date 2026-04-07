@@ -6,6 +6,8 @@
 // All queries run in parallel via Promise.all().
 // ============================================================
 
+export const dynamic = 'force-dynamic'
+
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyAdmin, AdminError } from '../verify'
 

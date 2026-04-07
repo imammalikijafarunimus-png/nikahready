@@ -7,6 +7,8 @@
 // All operations create audit logs server-side.
 // ============================================================
 
+export const dynamic = 'force-dynamic'
+
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyAdmin, AdminError } from '../../verify'
 
