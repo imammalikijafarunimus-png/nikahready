@@ -8,7 +8,7 @@
   @apply min-h-screen flex flex-col items-center justify-center px-4 py-6 relative overflow-hidden bg-white dark:bg-navy-950;
 }
 
-/* Decorative radial gradients — kept as raw CSS (alpha compositing, not available in Tailwind) */
+/* Decorative radial gradients — uses CSS custom properties for alpha compositing */
 .auth-page::before {
   content: '';
   position: absolute;
@@ -17,11 +17,11 @@
   width: 50%;
   height: 80%;
   border-radius: 50%;
-  background: radial-gradient(ellipse, rgba(5, 150, 105, 0.06) 0%, transparent 70%);
+  background: radial-gradient(ellipse, rgba(var(--rgb-sage-600), 0.06) 0%, transparent 70%);
   pointer-events: none;
 }
 .dark .auth-page::before {
-  background: radial-gradient(ellipse, rgba(6, 78, 59, 0.1) 0%, transparent 70%);
+  background: radial-gradient(ellipse, rgba(var(--rgb-sage-900), 0.1) 0%, transparent 70%);
 }
 
 .auth-page::after {
@@ -32,7 +32,7 @@
   width: 40%;
   height: 60%;
   border-radius: 50%;
-  background: radial-gradient(ellipse, rgba(217, 119, 6, 0.05) 0%, transparent 70%);
+  background: radial-gradient(ellipse, rgba(var(--rgb-gold-600), 0.05) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -83,10 +83,10 @@
   @apply text-xs font-semibold text-navy-700 tracking-wide dark:text-navy-200;
 }
 
-/* Matches components.inputs.base from design system */
+/* Matches components.inputs.base from design system — border aligned with FormFields.tsx */
 .auth-input {
-  @apply w-full rounded-xl border border-navy-200 bg-white px-4 py-3 text-sm text-navy-900 transition-all duration-200 outline-none hover:border-navy-300 focus:ring-2 focus:ring-sage-600/50 focus:border-sage-600 disabled:opacity-50 disabled:cursor-not-allowed
-         dark:border-navy-700/60 dark:bg-navy-950/60 dark:text-navy-100 dark:hover:border-navy-600;
+  @apply w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-navy-900 transition-all duration-200 outline-none hover:border-gray-300 focus:ring-2 focus:ring-sage-600/50 focus:ring-offset-2 focus:ring-offset-white focus:border-sage-600 disabled:opacity-50 disabled:cursor-not-allowed
+         dark:border-navy-700 dark:bg-navy-800/80 dark:text-white dark:hover:border-navy-500 dark:focus:ring-offset-navy-900;
 }
 
 /* Kept as raw CSS — @apply doesn't support ::placeholder */
@@ -186,17 +186,17 @@
   @apply flex items-center gap-3 my-2 text-navy-400 text-xs dark:text-navy-600;
 }
 
-/* Pseudo-elements kept as raw CSS — @apply doesn't compose with ::before/::after */
+/* Pseudo-elements — uses CSS custom properties for alpha compositing */
 .auth-divider::before,
 .auth-divider::after {
   content: '';
   flex: 1;
   height: 1px;
-  background: rgba(226, 232, 240, 0.6);
+  background: rgba(var(--rgb-navy-200), 0.6);
 }
 .dark .auth-divider::before,
 .dark .auth-divider::after {
-  background: rgba(30, 41, 59, 0.5);
+  background: rgba(var(--rgb-navy-800), 0.5);
 }
 
 /* ── Auth Message (success/error banner) ──────────────────── */
@@ -215,7 +215,8 @@
 
 /* ── Auth Footer ──────────────────────────────────────────── */
 .auth-footer {
-  @apply relative z-[1] text-center mt-6 text-2xs text-navy-400 dark:text-navy-600;
+  /* WCAG AA: navy-400 on white = 2.55:1 ❌ → navy-500 = 4.71:1 ✅; navy-600 on dark = 2.64:1 ❌ → navy-400 = 7.71:1 ✅ */
+  @apply relative z-[1] text-center mt-6 text-2xs text-navy-500 dark:text-navy-400;
 }
 
 /* ── Responsive padding merged into .auth-card base via sm:p-10 above ── */

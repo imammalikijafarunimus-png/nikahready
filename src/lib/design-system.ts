@@ -117,27 +117,46 @@ export const layout = {
  */
 export const components = {
   buttons: {
-    primary: 'px-5 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-sage-700 to-sage-600 text-white active:scale-95 transition-all',
-    secondary: 'px-4 py-2.5 rounded-xl text-sm font-medium border border-navy-600 text-navy-300 hover:border-sage-600 hover:text-sage-400 active:scale-95 transition-all',
-    premium: 'px-5 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-gold-600 to-gold-500 text-white shadow-gold active:scale-95 transition-all',
-    ghost: 'px-4 py-2.5 rounded-xl text-sm font-medium text-navy-300 hover:text-white transition-all',
+    primary: 'inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-sage-700 to-sage-600 text-white no-underline border-0 cursor-pointer active:scale-95 transition-all hover:-translate-y-px hover:shadow-card disabled:opacity-60 disabled:cursor-not-allowed dark:from-sage-900 dark:to-sage-700',
+    secondary: 'inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium bg-transparent border border-navy-200 text-navy-700 no-underline cursor-pointer active:scale-95 transition-all hover:border-navy-400 hover:bg-navy-100/10 dark:border-navy-600/50 dark:text-navy-300 dark:hover:border-navy-400 dark:hover:bg-navy-100/5',
+    premium: 'inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold bg-gradient-to-r from-gold-600 to-gold-500 text-white shadow-gold no-underline border-0 cursor-pointer active:scale-95 transition-all hover:-translate-y-px disabled:opacity-60 disabled:cursor-not-allowed',
+    ghost: 'inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium bg-transparent text-navy-700 no-underline border-0 cursor-pointer transition-all hover:text-sage-600 dark:text-navy-300 dark:hover:text-sage-300',
+    outline: 'inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-transparent text-sage-600 border border-sage-500 no-underline cursor-pointer transition-all hover:bg-sage-500/10 dark:text-sage-300 dark:border-sage-800 dark:hover:bg-sage-900/10',
+    danger: 'inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium bg-transparent border border-red-200 text-red-600 no-underline cursor-pointer transition-all hover:bg-red-50 active:scale-95 dark:border-red-800/30 dark:text-red-300 dark:hover:bg-red-900/15',
+    dangerSolid: 'inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-red-600 text-white no-underline border-0 cursor-pointer active:scale-95 transition-all hover:bg-red-500 dark:bg-red-900 dark:text-red-200',
+    iconOnly: 'inline-flex items-center justify-center w-8 h-8 rounded-lg bg-transparent border border-navy-200 text-navy-500 cursor-pointer transition-all hover:bg-navy-100 hover:text-navy-700 dark:border-navy-700 dark:text-navy-400 dark:hover:bg-navy-800 dark:hover:text-white',
     disabled: 'opacity-50 cursor-not-allowed grayscale-[50%]',
+    sizeLg: 'py-3.5 px-8 text-base rounded-2xl',
+    sizeSm: 'py-1.5 px-3 text-xs rounded-lg',
+    fullWidth: 'w-full',
   },
   inputs: {
-    base: 'w-full rounded-xl border border-navy-700 bg-navy-800/80 px-4 py-3 text-sm text-white placeholder:text-navy-500 transition-all duration-200 outline-none hover:border-navy-500 focus:ring-2 focus:ring-sage-600/50 focus:border-sage-600 disabled:opacity-50 disabled:cursor-not-allowed',
+    base: 'w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-navy-900 placeholder:text-navy-400 transition-all duration-200 outline-none hover:border-gray-300 focus:ring-2 focus:ring-sage-600/50 focus:ring-offset-2 focus:ring-offset-white focus:border-sage-600 disabled:opacity-50 disabled:cursor-not-allowed dark:border-navy-700 dark:bg-navy-800/80 dark:text-white dark:placeholder:text-navy-500 dark:hover:border-navy-500 dark:focus:ring-offset-navy-900',
     error: 'border-red-500/70 focus:ring-red-500/50 focus:border-red-500',
-    label: 'text-sm font-medium text-navy-200 mb-1.5',
+    label: 'text-sm font-medium text-navy-700 dark:text-navy-200 mb-1.5',
     hint: 'text-xs text-navy-500 mt-1.5',
   },
   cards: {
-    default: 'rounded-2xl border border-navy-800 bg-navy-900/50 p-4',
-    glass: 'rounded-2xl border border-navy-800 bg-navy-900/80 backdrop-blur-sm p-4',
-    highlight: 'rounded-2xl border border-sage-700/50 bg-sage-900/20 p-4',
+    default: 'rounded-2xl border border-gray-200 bg-white/80 p-4 dark:border-navy-800/50 dark:bg-navy-900/50',
+    glass: 'rounded-2xl border border-gray-200 bg-white/80 backdrop-blur-sm p-4 dark:border-navy-800 dark:bg-navy-900/80',
+    highlight: 'rounded-2xl border border-sage-200 bg-sage-50/50 p-4 dark:border-sage-700/50 dark:bg-sage-900/20',
+    auth: 'rounded-3xl border border-navy-200 bg-white/90 backdrop-blur-xl p-8 sm:p-10 dark:border-navy-800/60 dark:bg-navy-900/70',
   },
   navigation: {
     header: 'sticky top-0 z-30 bg-navy-900/95 backdrop-blur-sm border-b border-navy-800',
     bottomNav: 'sticky bottom-0 z-30 bg-navy-900/95 backdrop-blur-sm border-t border-navy-800 pb-safe',
     sidebar: 'fixed right-0 z-50 w-80 bg-navy-900 border-l border-navy-700',
+  },
+  badges: {
+    default: 'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-navy-100 text-navy-700 dark:bg-navy-800 dark:text-navy-300',
+    pro: 'inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] font-semibold bg-gold-900/30 border border-gold-700/40 text-gold-500',
+    premium: 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gold-900/30 border border-gold-700/40 text-gold-400 text-[10px] font-bold uppercase tracking-wider',
+    statusActive: 'inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-sage-500/10 border border-sage-500/20 text-sage-700 dark:bg-sage-900/15 dark:border-sage-900/30 dark:text-sage-300',
+    statusExpired: 'inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-red-50 border border-red-200 text-red-600 dark:bg-red-900/10 dark:border-red-800/30 dark:text-red-300',
+    statusCancelled: 'inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-navy-50 border border-navy-200 text-navy-400 dark:bg-navy-900/30 dark:border-navy-700 dark:text-navy-500',
+    statusTrial: 'inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 border border-blue-200 text-blue-600 dark:bg-blue-900/10 dark:border-blue-800/30 dark:text-blue-300',
+    statusFree: 'inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-navy-50 border border-navy-200 text-navy-500 dark:bg-navy-900/30 dark:border-navy-700 dark:text-navy-400',
+    statusAdmin: 'inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-gold-100 border border-gold-300 text-gold-700 dark:bg-gold-900/20 dark:border-gold-700/40 dark:text-gold-400',
   },
   status: {
     toast: {
@@ -162,69 +181,56 @@ export const auditFindings = [
     recommendation: 'Refactor all inline styles to use canonical Tailwind utility classes defined in this design system.'
   },
   {
-    severity: 'critical',
-    file: 'landing.css, auth.css',
-    issue: 'Contains hardcoded hex values (#064E3B, #0F172A, etc.) instead of utilizing Tailwind theme tokens.',
-    recommendation: 'Remove plain CSS color declarations and replace with @apply directives using Tailwind color tokens, or refactor to use inline Tailwind classes in the respective TSX files.'
-  },
-  {
-    severity: 'critical',
-    file: 'globals.css, auth.css',
-    issue: 'Duplicate animation definitions (e.g., authSpin defined in both files, fade-in defined in tailwind.config.ts and landing.css).',
-    recommendation: 'Consolidate all animation keyframes into tailwind.config.ts and remove from plain CSS files.'
-  },
-  {
-    severity: 'critical',
-    file: 'globals.css',
-    issue: 'CSS custom properties (:root) only define 4 variables, completely missing the rest of the brand palette.',
-    recommendation: 'If CSS variables are strictly needed, map the entire Tailwind scale to :root. Otherwise, rely solely on Tailwind config.'
+    severity: 'high',
+    file: 'cv/[shareId]/page.tsx',
+    issue: 'Uses emerald-600/500 for primary CTA instead of brand sage color.',
+    recommendation: 'Replace from-emerald-600/500 with from-sage-700/600 to match brand palette.'
   },
   {
     severity: 'high',
-    file: 'Multiple (StepWrapper vs auth.css vs landing.css)',
-    issue: 'Button styling is heavily fragmented (3 different button systems).',
-    recommendation: 'Standardize all buttons to use `components.buttons` definitions. Drop custom CSS gradients in auth/landing in favor of Tailwind `bg-gradient-to-r`.'
+    file: 'ThemeToggle.tsx',
+    issue: 'Uses raw style={{}} object for button styling instead of Tailwind.',
+    recommendation: 'Replace inline style with Tailwind className using design-system tokens.'
   },
   {
     severity: 'high',
-    file: 'FormFields.tsx vs auth.css',
-    issue: 'Input field styling differs. .auth-input uses hardcoded bg/border while FormFields uses Tailwind.',
-    recommendation: 'Apply `components.inputs.base` canonical classes to auth inputs and delete .auth-input from auth.css.'
+    file: 'admin-layout.css',
+    issue: 'Button system uses hardcoded hex with no Tailwind, no dark mode, no design system alignment.',
+    recommendation: 'Migrate admin buttons to use Tailwind classes aligned with components.buttons tokens.'
   },
   {
-    severity: 'high',
-    file: 'Multiple (globals.css vs landing vs dashboard)',
-    issue: 'Card styling is fragmented. .glass-card exists but landing/dashboard redefine cards inline.',
-    recommendation: 'Standardize all cards to use `components.cards.glass` or `components.cards.default`.'
+    severity: 'medium',
+    file: 'create.css',
+    issue: 'form-btn-prev/next/submit use raw CSS gradients instead of @apply Tailwind tokens.',
+    recommendation: 'Migrate to @apply using components.buttons.secondary/primary/premium tokens.'
   },
   {
-    severity: 'low',
-    file: 'auth.css, globals.css',
-    issue: 'Duplicate definition of `.pb-safe` utility.',
-    recommendation: 'Keep `.pb-safe` in globals.css as a utility class and remove from auth.css.'
+    severity: 'medium',
+    file: 'preview.css',
+    issue: 'Multiple button classes (download, print, edit, success) use hardcoded rgba values.',
+    recommendation: 'Migrate to @apply using Tailwind tokens aligned with design system.'
   },
   {
-    severity: 'low',
-    file: 'tailwind.config.ts vs landing.css',
-    issue: 'Box shadow values differ (Tailwind config shadow-card vs inline box-shadow).',
-    recommendation: 'Migrate inline box-shadow in landing.css to use Tailwind `shadow-card`.'
-  },
-  {
-    severity: 'low',
-    file: 'FormFields.tsx vs globals.css',
-    issue: 'Focus ring opacity mismatch (ring-sage-600/50 vs ring-sage-500/60).',
-    recommendation: 'Standardize all focus rings to `focus:ring-sage-600/50 focus:border-sage-600`.'
+    severity: 'medium',
+    file: 'dashboard.css',
+    issue: 'dash-card hover uses hardcoded rgba border-color instead of Tailwind tokens.',
+    recommendation: 'Replace with Tailwind hover:border-gray-300 dark:hover:border-navy-600.'
   },
   {
     severity: 'low',
-    file: 'FormFields.tsx vs auth.css',
-    issue: 'Error color mismatch (text-red-400 vs #F87171). Same hex value, but one is hardcoded.',
-    recommendation: 'Use Tailwind `text-red-400` globally.'
+    file: 'Multiple TSX files',
+    issue: 'Inline button className strings duplicate design-system tokens (e.g., PremiumOverlay, PWAInstallPrompt, DynamicList).',
+    recommendation: 'Import and use components.buttons.* tokens from design-system.ts.'
   },
   {
     severity: 'low',
-    file: 'globals.css / layout.tsx',
-    issue: 'color-scheme: dark is only applied to DateInput.',
-    recommendation: 'Apply `color-scheme: dark` globally to the <body> or <html> tag to improve native element styling.'
+    file: 'share-menu.css',
+    issue: 'Button classes prefixed with .preview-btn-* causing naming collision with preview.css.',
+    recommendation: 'Rename to .share-btn-* prefix.'
   },
+  // ── Resolved in Fase 1 (kept for reference) ──
+  // ✅ pb-safe duplication — cleaned
+  // ✅ Focus ring opacity — standardized to ring-sage-600/50
+  // ✅ Hardcoded hex in auth.css — migrated to CSS custom properties
+  // ✅ color-scheme: dark global — now toggles dynamically via ThemeContext
 ];

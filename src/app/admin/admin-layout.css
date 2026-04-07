@@ -430,8 +430,8 @@
 }
 
 .admin-search:focus-within {
-  border-color: #065F46;
-  box-shadow: 0 0 0 3px rgba(6, 95, 70, 0.1);
+  border-color: #059669;
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.2);
 }
 
 .admin-search input {
@@ -707,8 +707,8 @@
 
 .admin-notes-input:focus {
   outline: none;
-  border-color: #065F46;
-  box-shadow: 0 0 0 3px rgba(6, 95, 70, 0.1);
+  border-color: #059669;
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.2);
 }
 
 .admin-notes-label {

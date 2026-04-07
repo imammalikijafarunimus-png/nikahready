@@ -20,6 +20,7 @@ import {
   ChevronDown,
 } from "lucide-react"
 import { components } from "@/lib/design-system"
+import { CURRENT_YEAR } from '@/lib/constants'
 
 // ─── Static data ───────────────────────────────────────────
 
@@ -630,7 +631,7 @@ export default function LandingPage() {
           {/* ── Bottom bar ─────────────────────────────── */}
           <div className="py-5 border-t border-navy-800/40 flex flex-col sm:flex-row justify-between items-center gap-3">
             <p className="text-[11px] text-navy-600">
-              © {new Date().getFullYear()} NikahReady. Hak cipta dilindungi.
+              © {CURRENT_YEAR} NikahReady. Hak cipta dilindungi.
             </p>
             <p className="text-[10px] text-navy-600/70">
               Dibuat di Indonesia untuk Muslim Indonesia

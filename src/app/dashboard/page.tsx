@@ -22,7 +22,7 @@ import Link from 'next/link'
 import { useRequireAuth, useAuthActions } from '@/context/AuthContext'
 import { useFormState, useFormDispatch } from '@/context/FormContext'
 import { loadProfile } from '@/lib/supabase/loadProfile'
-import { STEP_DEFINITIONS } from '@/lib/constants'
+import { STEP_DEFINITIONS, CURRENT_YEAR } from '@/lib/constants'
 import {
   ShieldCheck,
   Lock,
@@ -376,7 +376,7 @@ export default function DashboardPage() {
               <LayoutDashboard className="text-sage-400" size={22} />
             </div>
             <span className="dash-action-title flex items-center gap-2">
-              Panel Admin
+              Admin Panel
               <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-sage-900/40 text-sage-300 border border-sage-700/40">
                 ADMIN
               </span>
@@ -443,7 +443,7 @@ export default function DashboardPage() {
         {/* ── Footer ───────────────────────────────────────── */}
         <div className="dash-footer">
           <p className="dash-footer-brand">
-            © {new Date().getFullYear()} NikahReady · Alat Bantu CV Taaruf
+            © {CURRENT_YEAR} NikahReady · Alat Bantu CV Taaruf
           </p>
           <p className="dash-footer-values">
             Jujur · Bermartabat · Aman

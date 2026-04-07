@@ -459,7 +459,7 @@ export function PreviewClient() {
           >
             <Info />
             <span>{errorMsg}</span>
-            <button type="button" onClick={() => setErrorMsg(null)}>
+            <button type="button" onClick={() => setErrorMsg(null)} aria-label="Tutup pesan error">
               <X />
             </button>
           </div>

@@ -13,7 +13,7 @@ import {
   TextArea,
   NumberInput,
 } from '@/components/ui/FormFields'
-import { getMaxItemsForSection } from '@/lib/constants'
+import { getMaxItemsForSection, CURRENT_YEAR } from '@/lib/constants'
 import type { RiwayatOrganisasiItem } from '@/types'
 
 // ── Default item factory ──────────────────────────────────────
@@ -92,7 +92,7 @@ function renderForm(
           onChange={(v) => onChange('tahun_mulai', v)}
           placeholder="2018"
           min={1990}
-          max={new Date().getFullYear()}
+          max={CURRENT_YEAR}
         />
         <NumberInput
           label="Tahun Selesai"
@@ -100,7 +100,7 @@ function renderForm(
           onChange={(v) => onChange('tahun_selesai', v)}
           placeholder="2022 (kosongkan jika masih aktif)"
           min={1990}
-          max={new Date().getFullYear()}
+          max={CURRENT_YEAR}
         />
       </div>
     </div>

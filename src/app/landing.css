@@ -11,6 +11,8 @@
 /* ── Navbar ────────────────────────────────────────────── */
 .landing-nav {
   @apply fixed top-0 inset-x-0 z-50 bg-white/85 backdrop-blur-xl border-b border-navy-200 dark:bg-navy-900/85 dark:border-navy-800/60;
+  /* PERF: promote to own compositor layer — fixed nav with backdrop-blur */
+  will-change: backdrop-filter;
 }
 
 .landing-nav-inner {
@@ -416,8 +418,6 @@
 .landing-hero-content {
   padding-top: env(safe-area-inset-top, 0px);
 }
-
-/* NOTE: .pb-safe removed — already defined in globals.css */
 
 /* ── Landing page body override ─────────────────────────── */
 .landing-page {

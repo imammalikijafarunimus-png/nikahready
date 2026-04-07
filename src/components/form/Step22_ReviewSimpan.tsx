@@ -11,6 +11,7 @@
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { useFormState } from '@/context/FormContext'
+import { OPTIONS_TEMPLATE } from '@/lib/constants'
 import { SectionCard } from '@/components/ui/FormFields'
 import { FileText, ChevronRight } from 'lucide-react'
 
@@ -280,16 +281,22 @@ export function Step22_ReviewSimpan() {
             <FileText className="w-5 h-5 text-sage-300" />
           </div>
           <div className="flex-1">
-            <p className="text-sm font-semibold text-white capitalize">
-              {selectedTemplate.replace(/_/g, ' ')}
+            <p className="text-sm font-semibold text-white">
+              {OPTIONS_TEMPLATE.find(t => t.value === selectedTemplate)?.label ?? selectedTemplate.replace(/_/g, ' ')}
             </p>
             <p className="text-xs text-navy-500 mt-0.5">
               {selectedTemplate === 'ringkas'
-                ? 'Template gratis — 1 halaman padat'
+                ? 'Template gratis — 1 halaman padat · Clean'
                 : selectedTemplate === 'sederhana'
-                ? 'Template gratis — 2 halaman data inti'
+                ? 'Template gratis — 2 halaman data inti · Simple'
                 : selectedTemplate === 'minimal_islami'
-                ? 'Template gratis — 1 halaman ornamental'
+                ? 'Template gratis — 1 halaman ornamental · Soft'
+                : selectedTemplate === 'akademik'
+                ? 'Template premium — 5 halaman komprehensif · Pro'
+                : selectedTemplate === 'elegant_islamic'
+                ? "Template premium — 4 halaman ornamental · Elegant"
+                : selectedTemplate === 'modern_dark'
+                ? 'Template premium — 4 halaman modern · Bold'
                 : 'Template premium — tersedia untuk NikahReady Pro'}
             </p>
           </div>

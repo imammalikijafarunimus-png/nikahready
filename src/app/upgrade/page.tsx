@@ -30,8 +30,8 @@ const ADMIN_WA_NUMBER = process.env.NEXT_PUBLIC_WA_NUMBER || ''
 const FREE_FEATURES = [
   '12 langkah pengenalan diri (termasuk Kriteria Pasangan & Review)',
   'Template Ringkas (1 halaman)',
-  'Template Sederhana (2 halaman)',
-  'Template Minimal Islami (1 halaman)',
+  'Template Qonaah (2 halaman)',
+  'Template Sakinah (1 halaman)',
   'Upload foto pribadi & formal',
   'Sosial Media (akun yang aktif)',
   'Anggota Keluarga',
@@ -40,7 +40,7 @@ const FREE_FEATURES = [
 
 const PRO_FEATURES = [
   'Semua 22 langkah pengenalan diri',
-  '6 template premium (Akademik, Elegant Islamic, Modern Dark)',
+  '6 template premium (Amanah, Syar\'i, Modern Dark)',
   'Financial Planning & alokasi keuangan',
   'Pandangan Isu (parenting, poligami, karir istri)',
   'Perjalanan Hidup & Riwayat Organisasi',

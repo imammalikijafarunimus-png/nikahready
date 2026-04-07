@@ -14,7 +14,7 @@ import {
   NumberInput,
   SelectInput,
 } from '@/components/ui/FormFields'
-import { OPTIONS_JENJANG_PENDIDIKAN, getMaxItemsForSection } from '@/lib/constants'
+import { OPTIONS_JENJANG_PENDIDIKAN, getMaxItemsForSection, CURRENT_YEAR } from '@/lib/constants'
 import { useFormState } from '@/context/FormContext'
 import type { RiwayatPendidikanItem } from '@/types'
 
@@ -96,7 +96,7 @@ function renderForm(
           onChange={(v) => onChange('tahun_mulai', v)}
           placeholder="2010"
           min={1980}
-          max={new Date().getFullYear()}
+          max={CURRENT_YEAR}
         />
         <NumberInput
           label="Tahun Selesai"
@@ -104,7 +104,7 @@ function renderForm(
           onChange={(v) => onChange('tahun_selesai', v)}
           placeholder="2016 (kosongkan jika masih berlangsung)"
           min={1980}
-          max={new Date().getFullYear() + 5}
+          max={CURRENT_YEAR + 5}
         />
       </div>
 

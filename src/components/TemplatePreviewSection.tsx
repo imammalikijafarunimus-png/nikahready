@@ -29,52 +29,52 @@ const TEMPLATES = [
     badgeColor: "bg-sage-600",
     borderColor: "border-sage-700/50",
     available: true,
-    meta: "1 halaman · Data inti",
+    meta: "1 halaman · Data inti · Clean",
     component: TemplateRingkas,
   },
   {
     id: "sederhana",
-    name: "Sederhana",
+    name: "Qonaah",
     desc: "2 halaman, nuansa sage-green yang bersih",
     badge: "Gratis",
     badgeColor: "bg-sage-600",
     borderColor: "border-sage-700/50",
     available: true,
-    meta: "2 halaman · Data lengkap",
+    meta: "2 halaman · Data lengkap · Simple",
     component: TemplateSederhana,
   },
   {
     id: "minimal-islami",
-    name: "Minimal Islami",
+    name: "Sakinah",
     desc: "1 halaman ornamental, cream & gold",
     badge: "Gratis",
     badgeColor: "bg-sage-600",
     borderColor: "border-sage-700/50",
     available: true,
-    meta: "1 halaman · Nuansa Islami",
+    meta: "1 halaman · Nuansa Islami · Soft",
     component: TemplateMinimalIslami,
   },
   // ── PREMIUM templates ──
   {
     id: "akademik",
-    name: "Akademik",
+    name: "Amanah",
     desc: "5 halaman komprehensif, semua data",
     badge: "Premium",
     badgeColor: "bg-gold-600",
     borderColor: "border-gold-600/30",
     available: false,
-    meta: "5 halaman · Semua data",
+    meta: "5 halaman · Semua data · Pro",
     component: TemplateAkademik,
   },
   {
     id: "elegant-islamic",
-    name: "Elegant Islamic",
+    name: "Syar'i",
     desc: "4 halaman, gold & deep green ornamental",
     badge: "Premium",
     badgeColor: "bg-gold-600",
     borderColor: "border-gold-600/30",
     available: false,
-    meta: "4 halaman · Elegan & hangat",
+    meta: "4 halaman · Elegan & hangat · Elegant",
     component: TemplateElegantIslamic,
   },
   {
@@ -85,12 +85,15 @@ const TEMPLATES = [
     badgeColor: "bg-gold-600",
     borderColor: "border-gold-600/30",
     available: false,
-    meta: "4 halaman · Modern & berkarakter",
+    meta: "4 halaman · Modern & berkarakter · Bold",
     component: TemplateModernPremium,
   },
 ]
 
-export function TemplatePreviewSection() {
+import React from "react";
+
+// PERF: React.memo — static content, no props, should never re-render after mount
+export const TemplatePreviewSection = React.memo(function TemplatePreviewSection() {
   return (
     <section className="py-20 px-6 border-t border-navy-800">
       <div className="max-w-6xl mx-auto">
@@ -212,4 +215,4 @@ export function TemplatePreviewSection() {
       </div>
     </section>
   )
-}
+})

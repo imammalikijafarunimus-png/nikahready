@@ -83,10 +83,10 @@ const TEMPLATE_PAGE_COUNT: Record<string, number> = {
 
 const TEMPLATE_LABEL: Record<string, string> = {
   ringkas: 'Ringkas',
-  sederhana: 'Sederhana',
-  minimal_islami: 'Minimal Islami',
-  akademik: 'Akademik',
-  elegant_islamic: 'Elegant Islamic',
+  sederhana: 'Qonaah',
+  minimal_islami: 'Sakinah',
+  akademik: 'Amanah',
+  elegant_islamic: "Syar'i",
   modern_dark: 'Modern Dark',
 }
 

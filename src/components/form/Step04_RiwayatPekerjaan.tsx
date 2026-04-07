@@ -13,7 +13,7 @@ import {
   NumberInput,
   ToggleSwitch,
 } from '@/components/ui/FormFields'
-import { getMaxItemsForSection } from '@/lib/constants'
+import { getMaxItemsForSection, CURRENT_YEAR } from '@/lib/constants'
 import { useFormState } from '@/context/FormContext'
 import type { RiwayatPekerjaanItem } from '@/types'
 
@@ -102,7 +102,7 @@ function renderForm(
           onChange={(v) => onChange('tahun_mulai', v)}
           placeholder="2020"
           min={1990}
-          max={new Date().getFullYear()}
+          max={CURRENT_YEAR}
         />
         {!item.is_masih_aktif && (
           <NumberInput
@@ -111,7 +111,7 @@ function renderForm(
             onChange={(v) => onChange('tahun_selesai', v)}
             placeholder="2023"
             min={1990}
-            max={new Date().getFullYear()}
+            max={CURRENT_YEAR}
           />
         )}
         {item.is_masih_aktif && (

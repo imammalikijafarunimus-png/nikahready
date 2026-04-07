@@ -145,64 +145,44 @@ async function ensureFontsLoaded(): Promise<void> {
 }
 
 /**
- * Menambahkan watermark "NikahReady" di setiap halaman PDF.
- * Watermark ini tidak mengganggu konten utama, tapi cukup
- * terlihat untuk mendorong user upgrade ke Pro.
+ * Menambahkan watermark footer bar "NikahReady Free" di setiap halaman PDF.
+ * Strip branding tipis di bagian bawah halaman, berisi teks branding
+ * di kiri dan nomor halaman di kanan.
  * 
- * Watermark di-render langsung di PDF menggunakan jsPDF text,
+ * Footer bar di-render langsung di PDF menggunakan jsPDF,
  * sehingga tidak terlihat di browser preview.
  */
 function addWatermark(pdf: { [K: string]: any }, totalPages: number): void {
-  const watermarkText = 'NikahReady · Free Plan'
-  
+  const FOOTER_HEIGHT_MM = 12
+  const FOOTER_Y = PDF_H_MM - FOOTER_HEIGHT_MM // Top edge of footer bar
+  const TEXT_Y = FOOTER_Y + (FOOTER_HEIGHT_MM / 2) + 1.2 // Vertically centered text
+  const MARGIN_LEFT = 10
+  const MARGIN_RIGHT = 10
+  const FOOTER_BG: [number, number, number] = [15, 23, 42] // #0F172A
+  const TEXT_COLOR: [number, number, number] = [200, 210, 220] // Semi-transparent white
+
   for (let page = 0; page < totalPages; page++) {
     pdf.setPage(page + 1)
-    
-    // Posisi: diagonal di tengah halaman
-    const centerX = PDF_W_MM / 2
-    const centerY = PDF_H_MM / 2
-    
+
     pdf.saveGraphicsState()
-    
-    // Rotasi 45 derajat di sekitar titik tengah
-    pdf.setGState(new (pdf as any).GState({ opacity: 0.06 }))
-    
-    // Font besar untuk watermark
-    pdf.setFont('helvetica', 'bold')
-    pdf.setFontSize(42)
-    
-    // Hitung posisi text (diagonal dari kiri bawah ke kanan atas)
-    // Karena jsPDF tidak support rotation text secara langsung,
-    // kita gunakan transform matrix
-    const angle = -45 * (Math.PI / 180)
-    const cos = Math.cos(angle)
-    const sin = Math.sin(angle)
-    const textWidth = pdf.getTextWidth(watermarkText)
-    
-    // Multiple watermark lines untuk efek repeating
-    const positions = [
-      { x: centerX - 30, y: centerY - 40 },
-      { x: centerX + 20, y: centerY + 20 },
-      { x: centerX - 60, y: centerY + 10 },
-    ]
-    
-    for (const pos of positions) {
-      // Gunakan transformation matrix untuk rotasi
-      pdf.text(watermarkText, pos.x, pos.y, {
-        angle: -45,
-        // Tidak ada align option yang baik, jadi manual adjust
-      })
-    }
-    
-    // Tambahkan garis tipis branding di bawah
+
+    // ── Background bar ──────────────────────────────────────
+    pdf.setFillColor(...FOOTER_BG)
+    pdf.rect(0, FOOTER_Y, PDF_W_MM, FOOTER_HEIGHT_MM, 'F')
+
+    // ── Text styling ────────────────────────────────────────
     pdf.setFont('helvetica', 'normal')
-    pdf.setFontSize(9)
-    pdf.setTextColor(150, 150, 150)
-    pdf.text('Upgrade ke Pro untuk tanpa watermark', centerX - 35, PDF_H_MM - 8, {
-      angle: 0,
-    })
-    pdf.setTextColor(0, 0, 0)
-    
+    pdf.setFontSize(8)
+    pdf.setTextColor(...TEXT_COLOR)
+
+    // ── Left: branding text ─────────────────────────────────
+    pdf.text('NikahReady Free \u2014 Upgrade untuk tanpa watermark', MARGIN_LEFT, TEXT_Y)
+
+    // ── Right: page number ──────────────────────────────────
+    const pageLabel = `Hal. ${page + 1}/${totalPages}`
+    const pageLabelWidth = pdf.getTextWidth(pageLabel)
+    pdf.text(pageLabel, PDF_W_MM - MARGIN_RIGHT - pageLabelWidth, TEXT_Y)
+
     pdf.restoreGraphicsState()
   }
 }

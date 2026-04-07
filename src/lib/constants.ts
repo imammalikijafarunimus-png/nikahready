@@ -440,37 +440,43 @@ export const OPTIONS_TEMPLATE = [
     value: 'ringkas',
     label: 'Ringkas',
     description: '1 halaman padat. Cukup untuk first impression taaruf.',
+    subtitle: 'Clean',
     isPremiumOnly: false,
   },
   {
     value: 'sederhana',
-    label: 'Sederhana',
+    label: 'Qonaah',
     description: '2 halaman. Data inti dengan nuansa sage-green.',
+    subtitle: 'Simple',
     isPremiumOnly: false,
   },
   {
     value: 'minimal_islami',
-    label: 'Minimal Islami',
+    label: 'Sakinah',
     description: '1 halaman ornamental. Cream, gold, nuansa Islami.',
+    subtitle: 'Soft',
     isPremiumOnly: false,
   },
   // ── PREMIUM templates (3) ──
   {
     value: 'akademik',
-    label: 'Akademik',
+    label: 'Amanah',
     description: '5 halaman komprehensif. Formal, lengkap, semua data.',
+    subtitle: 'Pro',
     isPremiumOnly: true,
   },
   {
     value: 'elegant_islamic',
-    label: 'Elegant Islamic',
+    label: "Syar'i",
     description: '4 halaman ornamental. Gold, deep green, hangat & elegan.',
+    subtitle: 'Elegant',
     isPremiumOnly: true,
   },
   {
     value: 'modern_dark',
     label: 'Modern Dark',
     description: '4 halaman. Sidebar gelap, personal branding modern.',
+    subtitle: 'Bold',
     isPremiumOnly: true,
   },
 ]
@@ -592,3 +598,7 @@ export function getMaxTags(
 // ── Local storage key ────────────────────────────────────────
 export const FORM_DRAFT_KEY = 'nikahready_form_draft'
 export const FORM_DRAFT_VERSION = '2.0.0' // bumped: TF-1 added 3 free templates, schema changed
+
+// ── Performance: module-level constants (avoid repeated new Date() in render) ──
+/** PERF: cached at module load — avoids `new Date().getFullYear()` on every render */
+export const CURRENT_YEAR = new Date().getFullYear()

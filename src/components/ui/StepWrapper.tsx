@@ -94,8 +94,8 @@ function SaveStatus({
   return null
 }
 
-// ── Main Component ───────────────────────────────────────────
-export function StepWrapper({
+// ── Main Component (memoized — prevents re-render when parent form state changes) ──
+export const StepWrapper = React.memo(function StepWrapper({
   stepNumber,
   totalSteps,
   title,
@@ -327,4 +327,4 @@ export function StepWrapper({
       </nav>
     </div>
   )
-}
+})
