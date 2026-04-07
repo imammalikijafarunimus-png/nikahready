@@ -59,11 +59,11 @@
   html {
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;
-    color-scheme: dark;
+    color-scheme: light dark;
   }
 
   body {
-    @apply bg-navy-950 text-white antialiased;
+    @apply bg-white text-navy-900 antialiased dark:bg-navy-950 dark:text-white;
     font-family: var(--font-inter);
     /* Prevent horizontal scroll */
     overflow-x: hidden;
@@ -83,7 +83,7 @@
 
   /* Focus outline — standardized: ring-sage-600/50 (canonical per design-system.ts) */
   :focus-visible {
-    @apply outline-none ring-2 ring-sage-600/50 ring-offset-2 ring-offset-navy-900;
+    @apply outline-none ring-2 ring-sage-600/50 ring-offset-2 ring-offset-white dark:ring-offset-navy-900;
   }
 
   /* Scrollbar custom (WebKit) */
@@ -92,19 +92,22 @@
     height: 6px;
   }
   ::-webkit-scrollbar-track {
-    @apply bg-navy-900;
+    @apply bg-gray-100 dark:bg-navy-900;
   }
   ::-webkit-scrollbar-thumb {
-    @apply bg-navy-700 rounded-full;
+    @apply bg-gray-300 dark:bg-navy-700 rounded-full;
   }
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-navy-600;
+    @apply bg-gray-400 dark:bg-navy-600;
   }
 
-  /* Native date input di dark mode */
+  /* Native date input */
   input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: invert(0.7);
+    filter: none;
     cursor: pointer;
+  }
+  .dark input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.7);
   }
 
   /* Native number input — sembunyikan spinner */
@@ -125,6 +128,35 @@
 
 /* ── Component Layer ─────────────────────────────────────── */
 @layer components {
+    /* WCAG 2.1: Skip to content — tersembunyi sampai user tekan Tab */
+    .skip-to-content {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    z-index: 50;
+  }
+  .skip-to-content:focus {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: auto;
+  height: auto;
+  padding: 1rem 2rem;
+  background: #047857;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  z-index: 9999;
+  overflow: visible;
+  outline: 2px solid #FCD34D;
+  outline-offset: 2px;
+  border-radius: 0 0 0.5rem 0;
+}
+
   /* Gradient utilities */
   .gradient-sage {
     background: linear-gradient(135deg, #064E3B 0%, #047857 50%, #059669 100%);
@@ -138,7 +170,7 @@
 
   /* Glass morphism card */
   .glass-card {
-    @apply bg-navy-900/80 backdrop-blur-sm border border-navy-800 rounded-2xl;
+    @apply bg-white/80 backdrop-blur-sm border border-sage-100 rounded-2xl dark:bg-navy-900/80 dark:border-navy-800;
   }
 
   /* Islamic ornament text */
@@ -150,7 +182,7 @@
 
   /* Spinner — now uses animate-spin from Tailwind config */
   .auth-spinner {
-    @apply border-2 border-white/30 border-t-white rounded-full animate-spin;
+    @apply border-2 border-navy-300 dark:border-white/30 border-t-navy-700 dark:border-t-white rounded-full animate-spin;
   }
 }
 

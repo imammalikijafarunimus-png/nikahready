@@ -1,6 +1,17 @@
+// ============================================================
+// tailwind.config.ts (MODIFIED — Theme Overhaul)
+//
+// Perubahan dari original:
+// 1. darkMode: 'class' untuk mendukung light/dark toggle
+// 2. Tidak ada perubahan warna — palette tetap sama
+// ============================================================
+
 import type { Config } from 'tailwindcss'
 
 const config: Config = {
+  // ── FASE THEME: dark mode via class toggle ────────────────
+  darkMode: 'class',
+
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
@@ -20,7 +31,7 @@ const config: Config = {
           600: '#059669',
           700: '#047857',
           800: '#065F46',
-          900: '#064E3B',  // ← Primary brand color
+          900: '#064E3B',
           950: '#022C22',
         },
         navy: {
@@ -33,12 +44,12 @@ const config: Config = {
           600: '#475569',
           700: '#334155',
           800: '#1E293B',
-          900: '#0F172A',  // ← Dark background
+          900: '#0F172A',
           950: '#020617',
         },
         cream: {
           50:  '#FFFBEB',
-          100: '#FEF3C7',  // ← Soft background / card
+          100: '#FEF3C7',
           200: '#FDE68A',
           300: '#FCD34D',
           400: '#FBBF24',
@@ -47,25 +58,22 @@ const config: Config = {
           300: '#FCD34D',
           400: '#FBBF24',
           500: '#F59E0B',
-          600: '#D97706',  // ← Accent / highlight
+          600: '#D97706',
           700: '#B45309',
           800: '#92400E',
         },
       },
 
-      // ── Font Family ──────────────────────────────────────
       fontFamily: {
         sans:   ['Inter', 'system-ui', 'sans-serif'],
         arabic: ['Amiri', 'serif'],
         serif:  ['Georgia', 'serif'],
       },
 
-      // ── Font Size Extensions ─────────────────────────────
       fontSize: {
         '2xs': ['0.625rem', { lineHeight: '0.875rem' }],
       },
 
-      // ── Spacing & Sizing ─────────────────────────────────
       spacing: {
         '18': '4.5rem',
         '88': '22rem',
@@ -73,12 +81,10 @@ const config: Config = {
         '128': '32rem',
       },
 
-      // ── Border Radius ────────────────────────────────────
       borderRadius: {
         '4xl': '2rem',
       },
 
-      // ── Box Shadow ───────────────────────────────────────
       boxShadow: {
         'soft':      '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
         'card':      '0 4px 24px -2px rgba(6, 78, 59, 0.08)',
@@ -86,7 +92,6 @@ const config: Config = {
         'inner-sm':  'inset 0 1px 3px 0 rgba(0, 0, 0, 0.08)',
       },
 
-      // ── Background Gradient ──────────────────────────────
       backgroundImage: {
         'islamic-pattern':     "url('/images/pattern-islamic.svg')",
         'gradient-sage':       'linear-gradient(135deg, #064E3B 0%, #047857 50%, #059669 100%)',
@@ -95,9 +100,6 @@ const config: Config = {
         'gradient-gold':       'linear-gradient(135deg, #D97706 0%, #F59E0B 100%)',
       },
 
-      // ── Animation ────────────────────────────────────────
-      // Canonical: all animations consolidated here.
-      // Duplicates removed from globals.css, auth.css, landing.css.
       keyframes: {
         'slide-up': {
           '0%':   { transform: 'translateY(100%)', opacity: '0' },
@@ -115,17 +117,14 @@ const config: Config = {
           '0%':   { backgroundPosition: '-200% 0' },
           '100%': { backgroundPosition: '200% 0' },
         },
-        // ── Step transition (from globals.css animate-step-in) ──
         'step-in': {
           '0%':   { opacity: '0', transform: 'translateY(8px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
-        // ── Sidebar slide-in (from globals.css animate-slide-in-right) ──
         'slide-in-right': {
           '0%':   { transform: 'translateX(100%)' },
           '100%': { transform: 'translateX(0)' },
         },
-        // ── Spinner (from globals.css .auth-spinner + auth.css duplicate) ──
         'spin': {
           '0%':   { transform: 'rotate(0deg)' },
           '100%': { transform: 'rotate(360deg)' },
@@ -141,14 +140,11 @@ const config: Config = {
         'spin':            'spin 0.6s linear infinite',
       },
 
-      // ── Screen Breakpoints ───────────────────────────────
       screens: {
         'xs': '375px',
-        // Default Tailwind: sm(640), md(768), lg(1024), xl(1280), 2xl(1536)
         'print': { 'raw': 'print' },
       },
 
-      // ── Typography / Prose ───────────────────────────────
       typography: {
         DEFAULT: {
           css: {

@@ -11,6 +11,8 @@
 // - Tetap bisa input URL manual (opsional)
 // ============================================================
 
+/* eslint-disable @next/next/no-img-element */
+
 import React, { useRef, useState, useCallback } from 'react'
 import { useArraySection } from '@/context/FormContext'
 import { DynamicList } from '@/components/ui/DynamicList'

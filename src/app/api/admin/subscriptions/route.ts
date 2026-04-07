@@ -5,6 +5,8 @@
 // Query params: status, page, perPage
 // ============================================================
 
+export const dynamic = 'force-dynamic'
+
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyAdmin, AdminError } from '../verify'
 

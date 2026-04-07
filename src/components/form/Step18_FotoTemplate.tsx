@@ -11,6 +11,8 @@
 // - Pilihan template CV (free & premium)
 // ============================================================
 
+/* eslint-disable @next/next/no-img-element */
+
 import React, { useRef, useState, useCallback } from 'react'
 import { useFormState, useFormDispatch } from '@/context/FormContext'
 import { useRequireAuth } from '@/context/AuthContext'

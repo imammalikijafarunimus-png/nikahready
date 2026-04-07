@@ -386,7 +386,7 @@ export function PreviewClient() {
       setIsDownloading(false)
       setDownloadStep('')
     }
-  }, [isDownloading, state.dataPribadi.nama_lengkap])
+  }, [isDownloading, plan, state.dataPribadi.nama_lengkap])
 
   if (!isHydrated) return <LoadingSkeleton />
   if (!hasMinimumData(state)) return <EmptyState />

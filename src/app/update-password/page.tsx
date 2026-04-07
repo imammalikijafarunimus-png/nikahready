@@ -18,7 +18,11 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Eye, EyeOff, CheckCircle2, AlertTriangle } from 'lucide-react'
+import { EyeOff, CheckCircle2, AlertTriangle } from 'lucide-react'
+import { getPasswordStrength } from '@/lib/passwordStrength'
+import { TrustIndicator } from '@/components/ui/TrustIndicator'
+import type { TrustItem } from '@/components/ui/TrustIndicator'
+import { ShieldCheck } from 'lucide-react'
 import '../auth.css'
 
 export default function UpdatePasswordPage() {
@@ -32,6 +36,10 @@ export default function UpdatePasswordPage() {
 
   // Password strength check
   const passwordStrength = getPasswordStrength(newPassword)
+
+  const passwordTrustItems: TrustItem[] = [
+    { icon: <ShieldCheck size={14} />, text: 'Password Terenkripsi' },
+  ]
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -165,7 +173,7 @@ export default function UpdatePasswordPage() {
                 aria-label={showPassword ? 'Sembunyikan password' : 'Tampilkan password'}
                 tabIndex={-1}
               >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                <EyeOff size={18} />
               </button>
             </div>
             {/* Password strength indicator */}
@@ -220,7 +228,7 @@ export default function UpdatePasswordPage() {
                 aria-label={showPassword ? 'Sembunyikan password' : 'Tampilkan password'}
                 tabIndex={-1}
               >
-                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                <EyeOff size={18} />
               </button>
             </div>
             {confirmPassword.length > 0 && newPassword !== confirmPassword && (
@@ -236,19 +244,7 @@ export default function UpdatePasswordPage() {
         </form>
 
         {/* Trust indicators */}
-        <div
-          className="auth-trust"
-          style={{
-            display: 'flex', flexDirection: 'row', justifyContent: 'center',
-            alignItems: 'center', gap: '1.25rem', flexWrap: 'wrap',
-            marginTop: '1.25rem', paddingTop: '1rem',
-            borderTop: '1px solid rgba(100,116,139,0.15)',
-          }}
-        >
-          <span className="auth-trust-item" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.72rem', color: '#6EE7B7', fontWeight: 500 }}>
-            Password Terenkripsi
-          </span>
-        </div>
+        <TrustIndicator items={passwordTrustItems} />
       </div>
 
       <div className="auth-footer">
@@ -257,23 +253,4 @@ export default function UpdatePasswordPage() {
       </div>
     </div>
   )
-}
-
-// ── Password Strength Helper ─────────────────────────────────
-function getPasswordStrength(password: string): {
-  score: number
-  color: string
-  label: string
-} {
-  let score = 0
-  if (password.length >= 8) score++
-  if (password.length >= 12) score++
-  if (/[A-Z]/.test(password) && /[a-z]/.test(password)) score++
-  if (/\d/.test(password)) score++
-  if (/[^A-Za-z0-9]/.test(password)) score++
-
-  if (score <= 1) return { score: 1, color: '#EF4444', label: 'Lemah — tambahkan huruf besar, angka, dan simbol' }
-  if (score <= 2) return { score: 2, color: '#F97316', label: 'Cukup — gunakan kombinasi huruf besar, angka, simbol' }
-  if (score <= 3) return { score: 3, color: '#EAB308', label: 'Baik — tambahkan simbol untuk keamanan lebih' }
-  return { score: 4, color: '#10B981', label: 'Kuat — password sudah aman' }
 }
