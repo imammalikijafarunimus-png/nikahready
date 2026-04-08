@@ -1,6 +1,12 @@
 // ============================================================
 // src/components/TemplatePreviewSection.tsx
-// Preview 3 template di landing page — Phase 5 Polish
+// Preview 6 template di landing page — Phase 6 Refactor
+//
+// Fixes:
+//   - Arabic text removed (no Bismillah header)
+//   - bg-navy-950 forced for light mode visibility
+//   - Template IDs use underscores (match constants.ts)
+//   - Full display names (e.g. "Modern Dark Bold")
 // ============================================================
 
 "use client"
@@ -19,73 +25,74 @@ const TemplateAkademik = dynamic(() => import("./templates/TemplateAkademik").th
 const TemplateElegantIslamic = dynamic(() => import("./templates/TemplateElegantIslamic").then(m => ({ default: m.TemplateElegantIslamic })), { ssr: false })
 const TemplateModernPremium = dynamic(() => import("./templates/TemplateModernPremium").then(m => ({ default: m.TemplateModernPremium })), { ssr: false })
 
+// IDs must match src/lib/constants.ts OPTIONS_TEMPLATE
 const TEMPLATES = [
   // ── FREE templates ──
   {
     id: "ringkas",
-    name: "Ringkas",
+    name: "Ringkas Clean",
     desc: "1 halaman padat, cukup untuk first impression",
     badge: "Gratis",
     badgeColor: "bg-sage-600",
     borderColor: "border-sage-700/50",
     available: true,
-    meta: "1 halaman · Data inti · Clean",
+    meta: "1 halaman \u00b7 Data inti \u00b7 Clean",
     component: TemplateRingkas,
   },
   {
     id: "sederhana",
-    name: "Qonaah",
+    name: "Qonaah Simple",
     desc: "2 halaman, nuansa sage-green yang bersih",
     badge: "Gratis",
     badgeColor: "bg-sage-600",
     borderColor: "border-sage-700/50",
     available: true,
-    meta: "2 halaman · Data lengkap · Simple",
+    meta: "2 halaman \u00b7 Data lengkap \u00b7 Simple",
     component: TemplateSederhana,
   },
   {
-    id: "minimal-islami",
-    name: "Sakinah",
+    id: "minimal_islami",
+    name: "Sakinah Soft",
     desc: "1 halaman ornamental, cream & gold",
     badge: "Gratis",
     badgeColor: "bg-sage-600",
     borderColor: "border-sage-700/50",
     available: true,
-    meta: "1 halaman · Nuansa Islami · Soft",
+    meta: "1 halaman \u00b7 Nuansa Islami \u00b7 Soft",
     component: TemplateMinimalIslami,
   },
   // ── PREMIUM templates ──
   {
     id: "akademik",
-    name: "Amanah",
+    name: "Amanah Pro",
     desc: "5 halaman komprehensif, semua data",
     badge: "Premium",
     badgeColor: "bg-gold-600",
     borderColor: "border-gold-600/30",
     available: false,
-    meta: "5 halaman · Semua data · Pro",
+    meta: "5 halaman \u00b7 Semua data \u00b7 Pro",
     component: TemplateAkademik,
   },
   {
-    id: "elegant-islamic",
-    name: "Syar'i",
+    id: "elegant_islamic",
+    name: "Syar\u2019i Elegant",
     desc: "4 halaman, gold & deep green ornamental",
     badge: "Premium",
     badgeColor: "bg-gold-600",
     borderColor: "border-gold-600/30",
     available: false,
-    meta: "4 halaman · Elegan & hangat · Elegant",
+    meta: "4 halaman \u00b7 Elegan & hangat \u00b7 Elegant",
     component: TemplateElegantIslamic,
   },
   {
-    id: "modern-premium",
-    name: "Modern Dark",
+    id: "modern_dark",
+    name: "Modern Dark Bold",
     desc: "4 halaman, personal branding modern",
     badge: "Premium",
     badgeColor: "bg-gold-600",
     borderColor: "border-gold-600/30",
     available: false,
-    meta: "4 halaman · Modern & berkarakter · Bold",
+    meta: "4 halaman \u00b7 Modern & berkarakter \u00b7 Bold",
     component: TemplateModernPremium,
   },
 ]
@@ -95,7 +102,10 @@ import React from "react";
 // PERF: React.memo — static content, no props, should never re-render after mount
 export const TemplatePreviewSection = React.memo(function TemplatePreviewSection() {
   return (
-    <section className="py-20 px-6 border-t border-navy-800">
+    <section
+      id="preview"
+      className="py-20 px-6 border-t border-navy-800 bg-navy-950"
+    >
       <div className="max-w-6xl mx-auto">
 
         {/* HEADER */}
@@ -108,7 +118,7 @@ export const TemplatePreviewSection = React.memo(function TemplatePreviewSection
             بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيم
           </p>
 
-          <h2 className="text-2xl font-bold">
+          <h2 className="text-2xl font-bold text-white">
             Pilih Tampilan Lembar Taarufmu
           </h2>
 

@@ -82,12 +82,12 @@ const TEMPLATE_PAGE_COUNT: Record<string, number> = {
 }
 
 const TEMPLATE_LABEL: Record<string, string> = {
-  ringkas: 'Ringkas',
-  sederhana: 'Qonaah',
-  minimal_islami: 'Sakinah',
-  akademik: 'Amanah',
-  elegant_islamic: "Syar'i",
-  modern_dark: 'Modern Dark',
+  ringkas: 'Ringkas Clean',
+  sederhana: 'Qonaah Simple',
+  minimal_islami: 'Sakinah Soft',
+  akademik: 'Amanah Pro',
+  elegant_islamic: "Syar'i Elegant",
+  modern_dark: 'Modern Dark Bold',
 }
 
 const templateMap: Record<string, React.ComponentType<{ state: FormState }>> = {

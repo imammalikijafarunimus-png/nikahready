@@ -35,6 +35,25 @@
   @apply flex items-center gap-2;
 }
 
+/* ── Center nav links ────────────────────── */
+.landing-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.landing-nav-link {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-navy-500, #64748b);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.landing-nav-link:hover {
+  color: var(--color-sage-400, #8dcea0);
+}
+
 /* ── Buttons ────────────────────────────────────────────── */
 .landing-btn-primary {
   @apply inline-flex items-center gap-2 py-2.5 px-5 rounded-xl text-sm font-semibold

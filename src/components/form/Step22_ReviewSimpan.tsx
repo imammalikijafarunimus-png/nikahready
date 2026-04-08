@@ -286,17 +286,17 @@ export function Step22_ReviewSimpan() {
             </p>
             <p className="text-xs text-navy-500 mt-0.5">
               {selectedTemplate === 'ringkas'
-                ? 'Template gratis — 1 halaman padat · Clean'
+                ? 'Template gratis — 1 halaman padat'
                 : selectedTemplate === 'sederhana'
-                ? 'Template gratis — 2 halaman data inti · Simple'
+                ? 'Template gratis — 2 halaman data inti'
                 : selectedTemplate === 'minimal_islami'
-                ? 'Template gratis — 1 halaman ornamental · Soft'
+                ? 'Template gratis — 1 halaman ornamental'
                 : selectedTemplate === 'akademik'
-                ? 'Template premium — 5 halaman komprehensif · Pro'
+                ? 'Template premium — 5 halaman komprehensif'
                 : selectedTemplate === 'elegant_islamic'
-                ? "Template premium — 4 halaman ornamental · Elegant"
+                ? "Template premium — 4 halaman ornamental"
                 : selectedTemplate === 'modern_dark'
-                ? 'Template premium — 4 halaman modern · Bold'
+                ? 'Template premium — 4 halaman modern'
                 : 'Template premium — tersedia untuk NikahReady Pro'}
             </p>
           </div>

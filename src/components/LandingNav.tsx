@@ -5,8 +5,10 @@
 //
 // Landing page navbar yang menampilkan state berbeda
 // berdasarkan status autentikasi:
-// - Not logged in: "Mulai Gratis" + "Masuk"
-// - Logged in: User greeting + "Dashboard" + "Keluar"
+// - Not logged in: Nav links + "Mulai Gratis" + "Masuk"
+// - Logged in: Nav links + User greeting + "Dashboard" + "Keluar"
+//
+// Nav links: Cara Kerja, Template, FAQ (anchor ke section)
 // ============================================================
 
 import { useState, useCallback } from 'react'
@@ -47,9 +49,16 @@ export function LandingNav() {
             <span className="landing-logo-text">NikahReady</span>
           </Link>
 
+          {/* ── Center nav links (desktop) ──────────────── */}
+          <div className="landing-nav-links">
+            <a href="#cara-kerja" className="landing-nav-link">Cara Kerja</a>
+            <a href="#preview" className="landing-nav-link">Template</a>
+            <a href="#faq" className="landing-nav-link">FAQ</a>
+          </div>
+
           <div className="landing-nav-actions">
             {isLoading ? (
-              // Loading skeleton — animate-pulse replaces non-existent authSpin
+              // Loading skeleton
               <div className="w-[120px] h-7 rounded-lg bg-navy-700/40 animate-pulse" />
             ) : isAuthenticated ? (
               <>

@@ -438,21 +438,21 @@ export const OPTIONS_TEMPLATE = [
   // ── FREE templates (3) ──
   {
     value: 'ringkas',
-    label: 'Ringkas',
+    label: 'Ringkas Clean',
     description: '1 halaman padat. Cukup untuk first impression taaruf.',
     subtitle: 'Clean',
     isPremiumOnly: false,
   },
   {
     value: 'sederhana',
-    label: 'Qonaah',
+    label: 'Qonaah Simple',
     description: '2 halaman. Data inti dengan nuansa sage-green.',
     subtitle: 'Simple',
     isPremiumOnly: false,
   },
   {
     value: 'minimal_islami',
-    label: 'Sakinah',
+    label: 'Sakinah Soft',
     description: '1 halaman ornamental. Cream, gold, nuansa Islami.',
     subtitle: 'Soft',
     isPremiumOnly: false,
@@ -460,21 +460,21 @@ export const OPTIONS_TEMPLATE = [
   // ── PREMIUM templates (3) ──
   {
     value: 'akademik',
-    label: 'Amanah',
+    label: 'Amanah Pro',
     description: '5 halaman komprehensif. Formal, lengkap, semua data.',
     subtitle: 'Pro',
     isPremiumOnly: true,
   },
   {
     value: 'elegant_islamic',
-    label: "Syar'i",
+    label: "Syar'i Elegant",
     description: '4 halaman ornamental. Gold, deep green, hangat & elegan.',
     subtitle: 'Elegant',
     isPremiumOnly: true,
   },
   {
     value: 'modern_dark',
-    label: 'Modern Dark',
+    label: 'Modern Dark Bold',
     description: '4 halaman. Sidebar gelap, personal branding modern.',
     subtitle: 'Bold',
     isPremiumOnly: true,
