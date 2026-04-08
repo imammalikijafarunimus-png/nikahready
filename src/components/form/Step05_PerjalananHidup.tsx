@@ -15,7 +15,7 @@ import {
   NumberInput,
   SectionCard,
 } from '@/components/ui/FormFields'
-import { OPTIONS_FASE_HIDUP, getMaxItemsForSection } from '@/lib/constants'
+import { OPTIONS_FASE_HIDUP, getMaxItemsForSection, CURRENT_YEAR } from '@/lib/constants'
 import type { PerjalananHidupItem, FaseHidup } from '@/types'
 
 // Label + warna per fase
@@ -110,7 +110,7 @@ function renderForm(
           onChange={(v) => onChange('tahun_mulai', v)}
           placeholder="2010"
           min={1980}
-          max={new Date().getFullYear()}
+          max={CURRENT_YEAR}
         />
         <NumberInput
           label="Tahun Selesai"
@@ -118,7 +118,7 @@ function renderForm(
           onChange={(v) => onChange('tahun_selesai', v)}
           placeholder="2015 (kosongkan jika berlanjut)"
           min={1980}
-          max={new Date().getFullYear()}
+          max={CURRENT_YEAR}
         />
       </div>
 

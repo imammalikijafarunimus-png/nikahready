@@ -18,8 +18,10 @@ import {
   Lock,
   Star,
   ChevronDown,
+  MessageCircle,
 } from "lucide-react"
 import { components } from "@/lib/design-system"
+import { CURRENT_YEAR } from '@/lib/constants'
 
 // ─── Static data ───────────────────────────────────────────
 
@@ -445,7 +447,7 @@ export default function LandingPage() {
       {/* ═══════════════════════════════════════════════════
           FAQ — new, answers objections
       ═══════════════════════════════════════════════════ */}
-      <section className="py-20 px-6 border-t border-navy-800">
+      <section id="faq" className="py-20 px-6 border-t border-navy-800">
         <div className="max-w-2xl mx-auto">
 
           <div className="text-center mb-10">
@@ -528,13 +530,13 @@ export default function LandingPage() {
       </section>
 
       {/* ═══════════════════════════════════════════════════
-          FOOTER — enterprise-grade
+          FOOTER — 3 kolom: Produk, Legal, Hubungi Kami
       ═══════════════════════════════════════════════════ */}
       <footer className="border-t border-navy-200 dark:border-navy-800/60 bg-navy-50 dark:bg-navy-950/80">
         <div className="max-w-5xl mx-auto px-6">
 
           {/* ── Trust bar ─────────────────────────────── */}
-          <div className="py-6 border-b border-navy-800/40">
+          <div className="py-6 border-b border-navy-200 dark:border-navy-800/40">
             <div className="flex flex-wrap justify-center items-center gap-x-8 gap-y-3 text-[11px] text-navy-400">
               <span className="flex items-center gap-1.5">
                 <ShieldCheck size={13} className="text-sage-600" />
@@ -555,28 +557,25 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* ── Main footer grid ──────────────────────── */}
+          {/* ── Main footer grid: Brand + 3 kolom ─────── */}
           <div className="py-10 grid grid-cols-1 md:grid-cols-4 gap-10">
 
             {/* Brand column */}
-            <div className="md:col-span-2">
+            <div>
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-sage-700 to-sage-500 flex items-center justify-center text-white text-xs font-bold">
                   N
                 </div>
                 <span className="font-bold text-sm text-navy-900 dark:text-white">NikahReady</span>
               </div>
-              <p className="text-xs text-navy-400 leading-relaxed max-w-xs mb-4">
+              <p className="text-xs text-navy-400 leading-relaxed max-w-xs">
                 Alat bantu membuat CV taaruf profesional untuk Muslim Indonesia.
                 Bukan platform kencan. Bukan layanan matching.
                 Hanya alat yang membantu kamu memperkenalkan diri dengan bermartabat.
               </p>
-              <p className="text-[10px] text-navy-600 italic leading-relaxed">
-                بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ — Dibuat dengan niat baik untuk umat.
-              </p>
             </div>
 
-            {/* Product links */}
+            {/* Produk */}
             <div>
               <p className="text-navy-900 dark:text-white font-semibold mb-4 text-xs tracking-wide uppercase">Produk</p>
               <ul className="space-y-2.5 text-xs text-navy-400">
@@ -596,16 +595,16 @@ export default function LandingPage() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/login" className="hover:text-sage-400 transition-colors">
-                    Masuk ke Akun
+                  <Link href="#faq" className="hover:text-sage-400 transition-colors">
+                    FAQ
                   </Link>
                 </li>
               </ul>
             </div>
 
-            {/* Legal & support */}
+            {/* Legal */}
             <div>
-              <p className="text-navy-900 dark:text-white font-semibold mb-4 text-xs tracking-wide uppercase">Informasi</p>
+              <p className="text-navy-900 dark:text-white font-semibold mb-4 text-xs tracking-wide uppercase">Legal</p>
               <ul className="space-y-2.5 text-xs text-navy-400">
                 <li>
                   <Link href="/privacy" className="hover:text-sage-400 transition-colors">
@@ -617,10 +616,34 @@ export default function LandingPage() {
                     Syarat Penggunaan
                   </Link>
                 </li>
+              </ul>
+            </div>
+
+            {/* Hubungi Kami */}
+            <div>
+              <p className="text-navy-900 dark:text-white font-semibold mb-4 text-xs tracking-wide uppercase">Hubungi Kami</p>
+              <ul className="space-y-2.5 text-xs text-navy-400">
                 <li>
-                  <Link href="mailto:salam@nikahready.id" className="hover:text-sage-400 transition-colors">
-                    Hubungi Kami
-                  </Link>
+                  <a
+                    href="https://wa.me/6288980507501"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-sage-400 transition-colors inline-flex items-center gap-2"
+                  >
+                    <MessageCircle size={13} className="text-green-500" />
+                    WhatsApp: 0889-8050-7501
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://wa.me/6288980507501"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:text-sage-400 transition-colors inline-flex items-center gap-2"
+                  >
+                    <MessageCircle size={13} className="text-green-500" />
+                    Layanan Pelanggan
+                  </a>
                 </li>
               </ul>
             </div>
@@ -628,11 +651,11 @@ export default function LandingPage() {
           </div>
 
           {/* ── Bottom bar ─────────────────────────────── */}
-          <div className="py-5 border-t border-navy-800/40 flex flex-col sm:flex-row justify-between items-center gap-3">
-            <p className="text-[11px] text-navy-600">
-              © {new Date().getFullYear()} NikahReady. Hak cipta dilindungi.
+          <div className="py-5 border-t border-navy-200 dark:border-navy-800/40 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <p className="text-[11px] text-navy-500 dark:text-navy-600">
+              &copy; {CURRENT_YEAR} NikahReady. Hak cipta dilindungi.
             </p>
-            <p className="text-[10px] text-navy-600/70">
+            <p className="text-[10px] text-navy-400 dark:text-navy-700">
               Dibuat di Indonesia untuk Muslim Indonesia
             </p>
           </div>

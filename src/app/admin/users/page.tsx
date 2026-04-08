@@ -61,7 +61,7 @@ function ConfirmModal({
       <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
         <div className="admin-modal-header">
           <h3 className="admin-modal-title">{title}</h3>
-          <button type="button" className="admin-modal-close" onClick={onCancel}>
+          <button type="button" className="admin-modal-close" onClick={onCancel} aria-label="Tutup dialog">
             <X size={16} />
           </button>
         </div>
@@ -74,8 +74,9 @@ function ConfirmModal({
           )}
           {showNotes && (
             <div style={{ marginBottom: 0 }}>
-              <label className="admin-notes-label">Catatan (opsional)</label>
+              <label className="admin-notes-label" htmlFor="admin-notes">Catatan (opsional)</label>
               <textarea
+                id="admin-notes"
                 className="admin-notes-input"
                 value={notesValue}
                 onChange={(e) => onNotesChange(e.target.value)}
@@ -208,9 +209,10 @@ export default function AdminUsersPage() {
       <div style={{ display: 'flex', gap: 12, marginBottom: 16, flexWrap: 'wrap', alignItems: 'center' }}>
         {/* Search */}
         <div className="admin-search">
-          <Search size={16} color="#94a3b8" />
+          <Search size={16} color="#94a3b8" aria-hidden="true" />
           <input
             type="text"
+            aria-label="Cari pengguna berdasarkan email"
             placeholder="Cari email..."
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
@@ -371,6 +373,7 @@ export default function AdminUsersPage() {
                     className="admin-pagination-btn"
                     disabled={page <= 1}
                     onClick={() => setPage(page - 1)}
+                    aria-label="Halaman sebelumnya"
                   >
                     <ChevronLeft size={16} />
                   </button>
@@ -379,6 +382,7 @@ export default function AdminUsersPage() {
                     className="admin-pagination-btn"
                     disabled={page >= totalPages}
                     onClick={() => setPage(page + 1)}
+                    aria-label="Halaman berikutnya"
                   >
                     <ChevronRight size={16} />
                   </button>

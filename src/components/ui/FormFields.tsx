@@ -568,7 +568,7 @@ export function TagInput({
           'min-h-[3rem] w-full rounded-xl border px-3 py-2',
           'bg-white dark:bg-navy-800/80 flex flex-wrap gap-1.5 items-center',
           'transition-all duration-200',
-          error ? 'border-red-500/70' : 'border-gray-200 dark:border-navy-700 focus-within:border-sage-600 focus-within:ring-2 focus-within:ring-sage-600/30',
+          error ? 'border-red-500/70' : 'border-gray-200 dark:border-navy-700 focus-within:border-sage-600 focus-within:ring-2 focus-within:ring-sage-600/50',
         ].join(' ')}
         onClick={() => {
           document.getElementById(id)?.focus()
@@ -684,8 +684,7 @@ export function DateInput({
           className={[
             BASE_INPUT_CLASS,
             inputBorderClass(!!error),
-            // Native date picker styling
-            '[color-scheme:light] dark:[color-scheme:dark]',
+            // color-scheme handled globally by ThemeContext
           ].join(' ')}
         />
       </div>

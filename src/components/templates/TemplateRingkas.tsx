@@ -1,16 +1,16 @@
 // ============================================================
 // src/components/templates/TemplateRingkas.tsx
 //
-// Template CV Taaruf — Gaya Ringkas (FREE Template)
-// Warna: Navy (#0F172A), White (#FFFFFF), Gold (#D97706)
-// 1 halaman A4 — compact, clean, profesional
+// Template CV Taaruf -- Gaya Ringkas (FREE Template)
+// Theme: Navy + Gold (THEME_NAVY from pdf-tokens)
+// 1 halaman A4 -- compact, clean, profesional
 //
-// PDF-SAFE RULES (WAJIB DIPATUHI):
-// ✓ Setiap page: width 794px, min-height 1123px, overflow hidden
-// ✓ Warna: hex literal di inline style (bukan CSS var / Tailwind color)
-// ✓ Tidak ada: position fixed/sticky, backdrop-filter, box-shadow spread
-// ✓ Flexbox / explicit grid — tidak ada auto row height pada grid
-// ✓ Font: Inter (body) dan Amiri (Arabic)
+// PDF-SAFE RULES:
+// - Every page: width 794px, min-height 1123px, overflow hidden
+// - Colors: hex literals in inline styles only
+// - No CSS vars, no Tailwind, no position fixed/sticky
+// - Font: Inter (body), Amiri (Arabic)
+// - No emojis -- shapes and text only
 // ============================================================
 
 import React from 'react'
@@ -20,206 +20,35 @@ import type {
   RiwayatPekerjaanItem,
 } from '@/types'
 
-// ── Design Tokens (hex — bukan CSS var) ──────────────────────
-const C = {
-  navy900:    '#0F172A',
-  navy800:    '#1E293B',
-  navy700:    '#334155',
-  navy600:    '#475569',
-  navy500:    '#64748B',
-  navy400:    '#94A3B8',
-  navy300:    '#CBD5E1',
-  navy200:    '#E2E8F0',
-  navy100:    '#F1F5F9',
-  navy50:     '#F8FAFC',
-  gold700:    '#B45309',
-  gold600:    '#D97706',
-  gold500:    '#F59E0B',
-  gold400:    '#FBBF24',
-  gold100:    '#FEF3C7',
-  gold50:     '#FFFBEB',
-  white:      '#FFFFFF',
-  text:       '#1E293B',
-  textMid:    '#475569',
-  textSoft:   '#94A3B8',
-}
+import {
+  PAGE_W,
+  PAGE_H,
+  SPACING,
+  FONT,
+  THEME_NAVY,
+  SHALAT_LABELS,
+  TIPE_LABELS,
+  STATUS_LABELS,
+  hitungUsia,
+  formatTTL,
+} from '@/lib/pdf-tokens'
 
-// ── Ukuran A4 @96dpi ─────────────────────────────────────────
-const PAGE_W = 794
-const PAGE_H = 1123
-const PAGE_PAD = 32
-const CONTENT_W = PAGE_W - PAGE_PAD * 2
+import {
+  PdfSectionTitle,
+  PdfInfoRow,
+  PdfTag,
+  PdfPhotoPlaceholder,
+  PdfPageFooter,
+  PdfDivider,
+  PdfTimelineItem,
+} from '@/lib/pdf-shared-components'
 
-// ── Shared compact section heading ───────────────────────────
-function SectionHeading({
-  title,
-  icon,
-}: {
-  title: string
-  icon?: string
-}) {
-  return (
-    <div style={{ marginBottom: 8 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-        {icon && (
-          <span style={{ fontSize: 12 }}>{icon}</span>
-        )}
-        <h2
-          style={{
-            fontSize: 11,
-            fontWeight: 700,
-            color: C.navy900,
-            letterSpacing: '0.05em',
-            textTransform: 'uppercase',
-            margin: 0,
-          }}
-        >
-          {title}
-        </h2>
-      </div>
-      <div style={{ display: 'flex', gap: 3, marginTop: 3 }}>
-        <div style={{ height: 2, width: 28, backgroundColor: C.navy800, borderRadius: 1 }} />
-        <div style={{ height: 2, width: 10, backgroundColor: C.gold600, borderRadius: 1 }} />
-      </div>
-    </div>
-  )
-}
+// ── Shorthand for theme colors ───────────────────────────────
+const T = THEME_NAVY
 
-// ── Compact info row (inline label:value) ────────────────────
-function InfoRow({
-  label,
-  value,
-  fullWidth = false,
-}: {
-  label: string
-  value: string | number | undefined | null
-  fullWidth?: boolean
-}) {
-  if (!value && value !== 0) return null
-  return (
-    <div style={{ marginBottom: 4, width: fullWidth ? '100%' : undefined }}>
-      <span style={{ fontSize: 8, color: C.textSoft, fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase', display: 'block' }}>
-        {label}
-      </span>
-      <span style={{ fontSize: 10, color: C.text, fontWeight: 500, display: 'block', marginTop: 1, lineHeight: 1.35 }}>
-        {value}
-      </span>
-    </div>
-  )
-}
-
-// ── Inline info pair (label: value side by side) ─────────────
-function InfoPair({
-  label,
-  value,
-}: {
-  label: string
-  value: string | number | undefined | null
-}) {
-  if (!value && value !== 0) return null
-  return (
-    <span style={{ fontSize: 10, color: C.text, lineHeight: 1.35 }}>
-      <span style={{ color: C.textSoft, fontWeight: 600, fontSize: 9 }}>{label}: </span>
-      {value}
-    </span>
-  )
-}
-
-// ── Tag chip (compact) ──────────────────────────────────────
-function Tag({ text, color = 'navy' }: { text: string; color?: 'navy' | 'gold' | 'navylight' }) {
-  const styles = {
-    navy:      { bg: '#EFF6FF', border: '#BFDBFE', text: '#1E40AF' },
-    gold:      { bg: C.gold50,  border: '#FDE68A', text: C.gold700 },
-    navylight: { bg: C.navy100, border: C.navy300, text: C.navy800 },
-  }[color]
-
-  return (
-    <span
-      style={{
-        display: 'inline-block',
-        padding: '1px 7px',
-        borderRadius: 999,
-        backgroundColor: styles.bg,
-        border: `1px solid ${styles.border}`,
-        fontSize: 9,
-        color: styles.text,
-        fontWeight: 500,
-        margin: '0 3px 3px 0',
-        lineHeight: 1.5,
-      }}
-    >
-      {text}
-    </span>
-  )
-}
-
-// ── Mini timeline row ────────────────────────────────────────
-function MiniTimeline({
-  year,
-  title,
-  subtitle,
-  isLast,
-}: {
-  year?: string
-  title: string
-  subtitle?: string
-  isLast?: boolean
-}) {
-  return (
-    <div style={{ display: 'flex', gap: 8, paddingBottom: isLast ? 0 : 8 }}>
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: 40, flexShrink: 0 }}>
-        <span style={{ fontSize: 8, color: C.textSoft, fontWeight: 600, whiteSpace: 'nowrap', letterSpacing: '0.02em' }}>
-          {year ?? ''}
-        </span>
-        <div style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: C.navy800, marginTop: 2, flexShrink: 0 }} />
-        {!isLast && (
-          <div style={{ width: 1, flex: 1, backgroundColor: C.navy200, marginTop: 2 }} />
-        )}
-      </div>
-      <div style={{ flex: 1, paddingTop: 0 }}>
-        <p style={{ fontSize: 10, fontWeight: 700, color: C.text, margin: 0, lineHeight: 1.3 }}>
-          {title}
-        </p>
-        {subtitle && (
-          <p style={{ fontSize: 9, color: C.textMid, margin: '1px 0 0', lineHeight: 1.3 }}>
-            {subtitle}
-          </p>
-        )}
-      </div>
-    </div>
-  )
-}
-
-// ── Page footer ───────────────────────────────────────────────
-function PageFooter({
-  nama,
-}: {
-  nama: string
-}) {
-  return (
-    <div
-      style={{
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        height: 24,
-        backgroundColor: C.navy900,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingLeft: PAGE_PAD,
-        paddingRight: PAGE_PAD,
-      }}
-    >
-      <span style={{ fontSize: 7, color: 'rgba(255,255,255,0.45)', letterSpacing: '0.06em', fontWeight: 600 }}>
-        CV TAARUF — DOKUMEN RAHASIA
-      </span>
-      <span style={{ fontSize: 7, color: 'rgba(255,255,255,0.55)', fontWeight: 600 }}>
-        {nama || 'Nama'} · Hal. 1
-      </span>
-    </div>
-  )
+// ── Truncation helpers ───────────────────────────────────────
+function truncate(text: string, max: number): string {
+  return text.length > max ? `${text.slice(0, max)}...` : text
 }
 
 // ── MAIN TEMPLATE ────────────────────────────────────────────
@@ -233,39 +62,8 @@ export function TemplateRingkas({ state }: { state: FormState }) {
   const kr     = state.kriteria
 
   const nama = p.nama_lengkap || 'Nama Lengkap'
-
-  // Hitung usia
-  const usia = p.tanggal_lahir
-    ? Math.floor(
-        (Date.now() - new Date(p.tanggal_lahir).getTime()) /
-          (1000 * 60 * 60 * 24 * 365.25)
-      )
-    : null
-
-  // Status label map
-  const statusLabel: Record<string, string> = {
-    lajang:      'Lajang',
-    duda:        'Duda',
-    janda:       'Janda',
-    cerai_mati:  'Cerai Mati',
-    cerai_hidup: 'Cerai Hidup',
-  }
-
-  // Shalat label map
-  const shalatLabel: Record<string, string> = {
-    selalu_berjamaah: 'Selalu berjamaah',
-    sering_berjamaah: 'Sering berjamaah',
-    sering_sendiri:   'Sering sendiri',
-    kadang:           'Kadang-kadang',
-    masih_berjuang:   'Masih berjuang',
-  }
-
-  // Tipe kepribadian label
-  const tipeLabel: Record<string, string> = {
-    introvert:  'Introvert',
-    ekstrovert: 'Ekstrovert',
-    ambivert:   'Ambivert',
-  }
+  const usia = hitungUsia(p.tanggal_lahir)
+  const ttl  = formatTTL(p.tempat_lahir, p.tanggal_lahir)
 
   // Pendidikan items (sorted, take last 3 for compact)
   const pendidikan = [...state.riwayatPendidikan]
@@ -282,17 +80,19 @@ export function TemplateRingkas({ state }: { state: FormState }) {
     .filter((s) => s.tampil_di_pdf)
     .slice(0, 2)
 
+  const pad = SPACING.pagePadFree
+
   return (
     <div
       id="taaruf-template"
       style={{
         width: PAGE_W,
         minHeight: PAGE_H,
-        backgroundColor: C.white,
+        backgroundColor: T.bg,
         position: 'relative',
         overflow: 'hidden',
         fontFamily: "'Inter', system-ui, sans-serif",
-        color: C.text,
+        color: T.text,
       }}
     >
       {/* ═══════════════════════════════════════════════════════
@@ -300,8 +100,8 @@ export function TemplateRingkas({ state }: { state: FormState }) {
           ═══════════════════════════════════════════════════════ */}
       <div
         style={{
-          backgroundColor: C.navy900,
-          padding: `${18}px ${PAGE_PAD}px 16px`,
+          backgroundColor: T.primary,
+          padding: `${18}px ${pad}px 16px`,
           position: 'relative',
         }}
       >
@@ -312,7 +112,7 @@ export function TemplateRingkas({ state }: { state: FormState }) {
           backgroundColor: 'rgba(255,255,255,0.03)',
         }} />
         <div style={{
-          position: 'absolute', bottom: -15, left: PAGE_PAD,
+          position: 'absolute', bottom: -15, left: pad,
           width: 40, height: 40, borderRadius: '50%',
           backgroundColor: 'rgba(255,255,255,0.03)',
         }} />
@@ -330,28 +130,21 @@ export function TemplateRingkas({ state }: { state: FormState }) {
                   height: 88,
                   objectFit: 'cover',
                   borderRadius: 6,
-                  border: `2px solid ${C.gold600}`,
+                  border: `2px solid ${T.accent}`,
                   display: 'block',
                 }}
                 crossOrigin="anonymous"
               />
             ) : (
-              <div
-                style={{
-                  width: 72,
-                  height: 88,
-                  borderRadius: 6,
-                  backgroundColor: 'rgba(255,255,255,0.07)',
-                  border: `2px dashed rgba(255,255,255,0.15)`,
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: 2,
-                }}
-              >
-                <span style={{ fontSize: 20 }}>👤</span>
-                <span style={{ fontSize: 7, color: 'rgba(255,255,255,0.3)' }}>Foto</span>
+              <div style={{ borderRadius: 6, overflow: 'hidden' }}>
+                <PdfPhotoPlaceholder
+                  width={72}
+                  height={88}
+                  borderRadius={0}
+                  borderColor="rgba(255,255,255,0.25)"
+                  bg="rgba(255,255,255,0.07)"
+                  label="Foto"
+                />
               </div>
             )}
           </div>
@@ -363,7 +156,7 @@ export function TemplateRingkas({ state }: { state: FormState }) {
               style={{
                 fontFamily: "'Amiri', Georgia, serif",
                 fontSize: 14,
-                color: C.gold400,
+                color: T.accentAlt,
                 direction: 'rtl',
                 margin: 0,
                 lineHeight: 1.6,
@@ -380,7 +173,7 @@ export function TemplateRingkas({ state }: { state: FormState }) {
               style={{
                 fontSize: 20,
                 fontWeight: 800,
-                color: C.white,
+                color: '#FFFFFF',
                 margin: 0,
                 lineHeight: 1.15,
                 letterSpacing: '-0.02em',
@@ -412,10 +205,10 @@ export function TemplateRingkas({ state }: { state: FormState }) {
               {p.status_pernikahan && (
                 <span style={{
                   padding: '2px 8px', borderRadius: 999,
-                  backgroundColor: C.gold600,
-                  fontSize: 9, color: C.white, fontWeight: 600,
+                  backgroundColor: T.accent,
+                  fontSize: 9, color: '#FFFFFF', fontWeight: 600,
                 }}>
-                  {statusLabel[p.status_pernikahan] ?? p.status_pernikahan}
+                  {STATUS_LABELS[p.status_pernikahan] ?? p.status_pernikahan}
                 </span>
               )}
               {p.suku_bangsa && (
@@ -458,71 +251,63 @@ export function TemplateRingkas({ state }: { state: FormState }) {
       <div
         style={{
           display: 'flex',
-          gap: PAGE_PAD,
-          padding: `${14}px ${PAGE_PAD}px 0`,
+          gap: pad,
+          padding: `${14}px ${pad}px 0`,
         }}
       >
         {/* ─── LEFT COLUMN ─── */}
         <div style={{ flex: 1, minWidth: 0 }}>
           {/* Data Pribadi */}
-          <SectionHeading title="Data Pribadi" icon="👤" />
+          <PdfSectionTitle title="Data Pribadi" color={T.primary} accentColor={T.accent} />
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0 12px', marginBottom: 10 }}>
-            <InfoRow
+            <PdfInfoRow
               label="TTL"
-              value={
-                [p.tempat_lahir, p.tanggal_lahir]
-                  .filter(Boolean)
-                  .map((v, i) => i === 1 ? new Date(v as string).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : v)
-                  .join(', ')
-              }
+              value={ttl}
               fullWidth
             />
-            {p.kewarganegaraan && <InfoRow label="WN" value={p.kewarganegaraan} />}
+            {p.kewarganegaraan && <PdfInfoRow label="WN" value={p.kewarganegaraan} />}
           </div>
 
-          {/* Divider */}
-          <div style={{ height: 1, backgroundColor: C.navy100, marginBottom: 8 }} />
+          <PdfDivider color={T.divider} margin="0 0 8px" />
 
           {/* Fisik & Kesehatan */}
-          <SectionHeading title="Fisik & Kesehatan" icon="💪" />
+          <PdfSectionTitle title="Fisik & Kesehatan" color={T.primary} accentColor={T.accent} />
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0 12px', marginBottom: 10 }}>
             {(f.tinggi_badan || f.berat_badan) && (
-              <InfoRow
+              <PdfInfoRow
                 label="TB/BB"
                 value={`${f.tinggi_badan || '?'} cm / ${f.berat_badan || '?'} kg`}
               />
             )}
-            <InfoRow label="Gol. Darah" value={f.golongan_darah || null} />
-            <InfoRow label="Warna Kulit" value={f.warna_kulit} />
-            {f.kondisi_kesehatan && <InfoRow label="Kondisi" value={f.kondisi_kesehatan} />}
+            <PdfInfoRow label="Gol. Darah" value={f.golongan_darah || null} />
+            <PdfInfoRow label="Warna Kulit" value={f.warna_kulit} />
+            {f.kondisi_kesehatan && <PdfInfoRow label="Kondisi" value={f.kondisi_kesehatan} />}
           </div>
 
-          {/* Divider */}
-          <div style={{ height: 1, backgroundColor: C.navy100, marginBottom: 8 }} />
+          <PdfDivider color={T.divider} margin="0 0 8px" />
 
           {/* Ibadah & Keislaman */}
-          <SectionHeading title="Ibadah" icon="🕌" />
+          <PdfSectionTitle title="Ibadah" color={T.primary} accentColor={T.accent} />
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0 12px', marginBottom: 10 }}>
-            <InfoRow label="Mazhab" value={ibadah.mazhab} />
-            <InfoRow label="Shalat" value={shalatLabel[ibadah.shalat_fardhu] ?? ibadah.shalat_fardhu} />
-            <InfoRow label="Sunnah" value={ibadah.shalat_sunnah} />
-            <InfoRow label="Hafalan" value={ibadah.hafalan_quran} />
-            <InfoRow label="Tilawah" value={ibadah.tilawah_rutin ? 'Ya' : null} />
-            <InfoRow label="Kajian" value={ibadah.kajian_rutin ? 'Ya' : null} />
-            <InfoRow label="Berpakaian" value={ibadah.cara_berpakaian} />
+            <PdfInfoRow label="Mazhab" value={ibadah.mazhab} />
+            <PdfInfoRow label="Shalat" value={SHALAT_LABELS[ibadah.shalat_fardhu] ?? ibadah.shalat_fardhu} />
+            <PdfInfoRow label="Sunnah" value={ibadah.shalat_sunnah} />
+            <PdfInfoRow label="Hafalan" value={ibadah.hafalan_quran} />
+            <PdfInfoRow label="Tilawah" value={ibadah.tilawah_rutin ? 'Ya' : null} />
+            <PdfInfoRow label="Kajian" value={ibadah.kajian_rutin ? 'Ya' : null} />
+            <PdfInfoRow label="Berpakaian" value={ibadah.cara_berpakaian} />
           </div>
 
-          {/* Divider */}
-          <div style={{ height: 1, backgroundColor: C.navy100, marginBottom: 8 }} />
+          <PdfDivider color={T.divider} margin="0 0 8px" />
 
           {/* Gaya Hidup */}
-          <SectionHeading title="Gaya Hidup" icon="🌱" />
+          <PdfSectionTitle title="Gaya Hidup" color={T.primary} accentColor={T.accent} />
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0 12px', marginBottom: 4 }}>
-            {gl.gaya_hidup && <InfoRow label="Gaya Hidup" value={gl.gaya_hidup} />}
-            {gl.pola_makan && <InfoRow label="Pola Makan" value={gl.pola_makan} />}
-            <InfoRow label="Olahraga" value={gl.olahraga_rutin ? 'Ya' : null} />
+            {gl.gaya_hidup && <PdfInfoRow label="Gaya Hidup" value={gl.gaya_hidup} />}
+            {gl.pola_makan && <PdfInfoRow label="Pola Makan" value={gl.pola_makan} />}
+            <PdfInfoRow label="Olahraga" value={gl.olahraga_rutin ? 'Ya' : null} />
             {gl.tipe_kepribadian && (
-              <InfoRow label="Kepribadian" value={tipeLabel[gl.tipe_kepribadian] ?? gl.tipe_kepribadian} />
+              <PdfInfoRow label="Kepribadian" value={TIPE_LABELS[gl.tipe_kepribadian] ?? gl.tipe_kepribadian} />
             )}
           </div>
         </div>
@@ -532,85 +317,123 @@ export function TemplateRingkas({ state }: { state: FormState }) {
           {/* Pendidikan */}
           {pendidikan.length > 0 && (
             <>
-              <SectionHeading title="Pendidikan" icon="🎓" />
+              <PdfSectionTitle title="Pendidikan" color={T.primary} accentColor={T.accent} />
               <div style={{ marginBottom: 10 }}>
                 {pendidikan.map((item: RiwayatPendidikanItem, i: number) => (
-                  <MiniTimeline
+                  <PdfTimelineItem
                     key={item.id}
-                    year={item.tahun_selesai ? String(item.tahun_selesai) : item.tahun_mulai ? `${item.tahun_mulai}–` : undefined}
-                    title={`${item.jenjang}${item.jurusan ? ` — ${item.jurusan}` : ''}`}
-                    subtitle={item.nama_institusi}
+                    year={
+                      item.tahun_selesai
+                        ? String(item.tahun_selesai)
+                        : item.tahun_mulai
+                          ? `${item.tahun_mulai}\u2013`
+                          : undefined
+                    }
+                    dotColor={T.secondary}
+                    lineColor={T.divider}
                     isLast={i === pendidikan.length - 1}
-                  />
+                  >
+                    <p style={{ fontSize: 10, fontWeight: 700, color: T.text, margin: 0, lineHeight: 1.3 }}>
+                      {item.jenjang}{item.jurusan ? ` \u2014 ${item.jurusan}` : ''}
+                    </p>
+                    {item.nama_institusi && (
+                      <p style={{ fontSize: 9, color: T.textMid, margin: '1px 0 0', lineHeight: 1.3 }}>
+                        {item.nama_institusi}
+                      </p>
+                    )}
+                  </PdfTimelineItem>
                 ))}
               </div>
 
-              {/* Divider */}
-              <div style={{ height: 1, backgroundColor: C.navy100, marginBottom: 8 }} />
+              <PdfDivider color={T.divider} margin="0 0 8px" />
             </>
           )}
 
           {/* Pekerjaan */}
           {pekerjaan.length > 0 && (
             <>
-              <SectionHeading title="Pekerjaan" icon="💼" />
+              <PdfSectionTitle title="Pekerjaan" color={T.primary} accentColor={T.accent} />
               <div style={{ marginBottom: 10 }}>
                 {pekerjaan.map((item: RiwayatPekerjaanItem, i: number) => (
-                  <MiniTimeline
+                  <PdfTimelineItem
                     key={item.id}
-                    year={item.is_masih_aktif ? 'Kini' : item.tahun_selesai ? String(item.tahun_selesai) : undefined}
-                    title={`${item.posisi_jabatan}${item.is_masih_aktif ? ' (Aktif)' : ''}`}
-                    subtitle={`${item.nama_perusahaan}${item.tahun_mulai ? ` · ${item.tahun_mulai}${item.is_masih_aktif ? '–sekarang' : item.tahun_selesai ? `–${item.tahun_selesai}` : ''}` : ''}`}
+                    year={
+                      item.is_masih_aktif
+                        ? 'Kini'
+                        : item.tahun_selesai
+                          ? String(item.tahun_selesai)
+                          : undefined
+                    }
+                    dotColor={T.accent}
+                    lineColor={T.divider}
                     isLast={i === pekerjaan.length - 1}
-                  />
+                  >
+                    <p style={{ fontSize: 10, fontWeight: 700, color: T.text, margin: 0, lineHeight: 1.3 }}>
+                      {item.posisi_jabatan}{item.is_masih_aktif ? ' (Aktif)' : ''}
+                    </p>
+                    <p style={{ fontSize: 9, color: T.textMid, margin: '1px 0 0', lineHeight: 1.3 }}>
+                      {item.nama_perusahaan}{item.tahun_mulai ? ` \u00b7 ${item.tahun_mulai}${item.is_masih_aktif ? '\u2013sekarang' : item.tahun_selesai ? `\u2013${item.tahun_selesai}` : ''}` : ''}
+                    </p>
+                  </PdfTimelineItem>
                 ))}
               </div>
 
-              {/* Divider */}
-              <div style={{ height: 1, backgroundColor: C.navy100, marginBottom: 8 }} />
+              <PdfDivider color={T.divider} margin="0 0 8px" />
             </>
           )}
 
           {/* Karakter */}
           {(k.kelebihan.length > 0 || k.kekurangan.length > 0 || k.hobi.length > 0 || k.karakter_diri) && (
             <>
-              <SectionHeading title="Karakter" icon="✨" />
+              <PdfSectionTitle title="Karakter" color={T.primary} accentColor={T.accent} />
               {k.karakter_diri && (
-                <p style={{ fontSize: 9, color: C.textMid, lineHeight: 1.4, margin: '0 0 6px' }}>
-                  {k.karakter_diri.length > 120 ? `${k.karakter_diri.slice(0, 120)}...` : k.karakter_diri}
+                <p style={{ fontSize: 9, color: T.textMid, lineHeight: 1.4, margin: '0 0 6px' }}>
+                  {truncate(k.karakter_diri, 120)}
                 </p>
               )}
               <div style={{ display: 'flex', gap: 16, marginBottom: 6 }}>
                 {k.kelebihan.length > 0 && (
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <span style={{ fontSize: 8, color: C.textSoft, fontWeight: 600, textTransform: 'uppercase', display: 'block', marginBottom: 3 }}>
+                    <span style={{ fontSize: 8, color: T.textSoft, fontWeight: 600, textTransform: 'uppercase', display: 'block', marginBottom: 3 }}>
                       Kelebihan
                     </span>
-                    <div>{k.kelebihan.slice(0, 4).map((tag) => <Tag key={tag} text={tag} color="navy" />)}</div>
+                    <div>
+                      {k.kelebihan.slice(0, 4).map((tag) => (
+                        <PdfTag key={tag} text={tag} variant="primary" />
+                      ))}
+                    </div>
                   </div>
                 )}
                 {k.kekurangan.length > 0 && (
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <span style={{ fontSize: 8, color: C.textSoft, fontWeight: 600, textTransform: 'uppercase', display: 'block', marginBottom: 3 }}>
+                    <span style={{ fontSize: 8, color: T.textSoft, fontWeight: 600, textTransform: 'uppercase', display: 'block', marginBottom: 3 }}>
                       Kekurangan
                     </span>
-                    <div>{k.kekurangan.slice(0, 3).map((tag) => <Tag key={tag} text={tag} color="navylight" />)}</div>
+                    <div>
+                      {k.kekurangan.slice(0, 3).map((tag) => (
+                        <PdfTag key={tag} text={tag} variant="muted" />
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
               <div style={{ display: 'flex', gap: 16, marginBottom: 10 }}>
                 {k.hobi.length > 0 && (
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <span style={{ fontSize: 8, color: C.textSoft, fontWeight: 600, textTransform: 'uppercase', display: 'block', marginBottom: 3 }}>
+                    <span style={{ fontSize: 8, color: T.textSoft, fontWeight: 600, textTransform: 'uppercase', display: 'block', marginBottom: 3 }}>
                       Hobi
                     </span>
-                    <div>{k.hobi.slice(0, 4).map((tag) => <Tag key={tag} text={tag} color="gold" />)}</div>
+                    <div>
+                      {k.hobi.slice(0, 4).map((tag) => (
+                        <PdfTag key={tag} text={tag} variant="accent" />
+                      ))}
+                    </div>
                   </div>
                 )}
                 <div style={{ width: 100, flexShrink: 0 }}>
-                  {k.mbti_type && <InfoRow label="MBTI" value={k.mbti_type} />}
+                  {k.mbti_type && <PdfInfoRow label="MBTI" value={k.mbti_type} />}
                   {k.bahasa_cinta && (
-                    <InfoRow
+                    <PdfInfoRow
                       label="Cinta"
                       value={k.bahasa_cinta.replace(/_/g, ' ')}
                     />
@@ -618,53 +441,47 @@ export function TemplateRingkas({ state }: { state: FormState }) {
                 </div>
               </div>
 
-              {/* Divider */}
-              <div style={{ height: 1, backgroundColor: C.navy100, marginBottom: 8 }} />
+              <PdfDivider color={T.divider} margin="0 0 8px" />
             </>
           )}
 
           {/* Kriteria Pasangan */}
           {(kr.kriteria_usia_min || kr.kriteria_usia_max || kr.kriteria_domisili || kr.kriteria_pendidikan || kr.kriteria_pekerjaan || kr.kriteria_karakter || kr.kriteria_ibadah) && (
-            <SectionHeading title="Kriteria Pasangan" icon="💍" />
+            <PdfSectionTitle title="Kriteria Pasangan" color={T.primary} accentColor={T.accent} />
           )}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0 14px', marginBottom: 4 }}>
             {(kr.kriteria_usia_min || kr.kriteria_usia_max) && (
-              <InfoRow
+              <PdfInfoRow
                 label="Usia"
-                value={`${kr.kriteria_usia_min || '?'}–${kr.kriteria_usia_max || '?'} th`}
+                value={`${kr.kriteria_usia_min || '?'}\u2013${kr.kriteria_usia_max || '?'} th`}
               />
             )}
-            <InfoRow label="Domisili" value={kr.kriteria_domisili} />
-            <InfoRow label="Pendidikan" value={kr.kriteria_pendidikan} />
-            <InfoRow label="Pekerjaan" value={kr.kriteria_pekerjaan} />
-            <InfoRow label="Karakter" value={kr.kriteria_karakter} />
-            <InfoRow label="Ibadah" value={kr.kriteria_ibadah} />
+            <PdfInfoRow label="Domisili" value={kr.kriteria_domisili} />
+            <PdfInfoRow label="Pendidikan" value={kr.kriteria_pendidikan} />
+            <PdfInfoRow label="Pekerjaan" value={kr.kriteria_pekerjaan} />
+            <PdfInfoRow label="Karakter" value={kr.kriteria_karakter} />
+            <PdfInfoRow label="Ibadah" value={kr.kriteria_ibadah} />
             {kr.bersedia_poligami !== null && (
-              <InfoRow label="Poligami" value={kr.bersedia_poligami ? 'Bersedia' : 'Tidak'} />
+              <PdfInfoRow label="Poligami" value={kr.bersedia_poligami ? 'Bersedia' : 'Tidak'} />
             )}
           </div>
         </div>
       </div>
 
       {/* ═══════════════════════════════════════════════════════
-          3. BOTTOM — Visi Pernikahan (full-width card)
+          3. BOTTOM -- Visi Pernikahan (full-width card)
           ═══════════════════════════════════════════════════════ */}
       {(vm.visi || vm.misi_suami || vm.misi_istri || vm.tujuan_pernikahan.length > 0) && (
         <div
           style={{
-            margin: `${10}px ${PAGE_PAD}px 0`,
-            backgroundColor: C.navy50,
-            border: `1px solid ${C.navy200}`,
+            margin: `${10}px ${pad}px 0`,
+            backgroundColor: T.bgAlt,
+            border: `1px solid ${T.divider}`,
             borderRadius: 6,
             padding: '8px 12px',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginBottom: 5 }}>
-            <span style={{ fontSize: 11 }}>🌟</span>
-            <h2 style={{ fontSize: 10, fontWeight: 700, color: C.navy900, margin: 0, letterSpacing: '0.04em', textTransform: 'uppercase' }}>
-              Visi & Misi Pernikahan
-            </h2>
-          </div>
+          <PdfSectionTitle title="Visi & Misi Pernikahan" color={T.primary} accentColor={T.accent} />
 
           <div style={{ display: 'flex', gap: 12 }}>
             {/* Visi */}
@@ -672,7 +489,7 @@ export function TemplateRingkas({ state }: { state: FormState }) {
               <div
                 style={{
                   flex: 1.5,
-                  backgroundColor: C.navy900,
+                  backgroundColor: T.primary,
                   borderRadius: 5,
                   padding: '6px 10px',
                 }}
@@ -681,7 +498,7 @@ export function TemplateRingkas({ state }: { state: FormState }) {
                   Visi
                 </span>
                 <p style={{ fontSize: 9, color: 'rgba(255,255,255,0.9)', margin: 0, lineHeight: 1.4, fontStyle: 'italic' }}>
-                  &lsquo;{vm.visi.length > 150 ? `${vm.visi.slice(0, 150)}...` : vm.visi}&rsquo;
+                  &lsquo;{truncate(vm.visi, 150)}&rsquo;
                 </p>
               </div>
             )}
@@ -689,24 +506,26 @@ export function TemplateRingkas({ state }: { state: FormState }) {
             {/* Misi cards */}
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 5 }}>
               {vm.misi_suami && (
-                <div style={{ backgroundColor: C.white, borderRadius: 4, padding: '4px 8px', border: `1px solid ${C.navy200}` }}>
-                  <span style={{ fontSize: 7, fontWeight: 700, color: C.navy700, textTransform: 'uppercase' }}>Suami: </span>
-                  <span style={{ fontSize: 9, color: C.textMid, lineHeight: 1.3 }}>
-                    {vm.misi_suami.length > 80 ? `${vm.misi_suami.slice(0, 80)}...` : vm.misi_suami}
+                <div style={{ backgroundColor: T.bg, borderRadius: 4, padding: '4px 8px', border: `1px solid ${T.divider}` }}>
+                  <span style={{ fontSize: 7, fontWeight: 700, color: T.tertiary, textTransform: 'uppercase' }}>Suami: </span>
+                  <span style={{ fontSize: 9, color: T.textMid, lineHeight: 1.3 }}>
+                    {truncate(vm.misi_suami, 80)}
                   </span>
                 </div>
               )}
               {vm.misi_istri && (
-                <div style={{ backgroundColor: C.white, borderRadius: 4, padding: '4px 8px', border: `1px solid #FDE68A` }}>
-                  <span style={{ fontSize: 7, fontWeight: 700, color: C.gold700, textTransform: 'uppercase' }}>Istri: </span>
-                  <span style={{ fontSize: 9, color: C.textMid, lineHeight: 1.3 }}>
-                    {vm.misi_istri.length > 80 ? `${vm.misi_istri.slice(0, 80)}...` : vm.misi_istri}
+                <div style={{ backgroundColor: T.bg, borderRadius: 4, padding: '4px 8px', border: '1px solid #FDE68A' }}>
+                  <span style={{ fontSize: 7, fontWeight: 700, color: '#B45309', textTransform: 'uppercase' }}>Istri: </span>
+                  <span style={{ fontSize: 9, color: T.textMid, lineHeight: 1.3 }}>
+                    {truncate(vm.misi_istri, 80)}
                   </span>
                 </div>
               )}
               {vm.tujuan_pernikahan.length > 0 && (
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-                  {vm.tujuan_pernikahan.slice(0, 4).map((t) => <Tag key={t} text={t} color="navy" />)}
+                  {vm.tujuan_pernikahan.slice(0, 4).map((t) => (
+                    <PdfTag key={t} text={t} variant="primary" />
+                  ))}
                 </div>
               )}
             </div>
@@ -717,7 +536,16 @@ export function TemplateRingkas({ state }: { state: FormState }) {
       {/* ═══════════════════════════════════════════════════════
           4. PAGE FOOTER
           ═══════════════════════════════════════════════════════ */}
-      <PageFooter nama={nama} />
+      <PdfPageFooter
+        nama={nama}
+        pageNum={1}
+        totalPages={1}
+        footerBg={T.footerBg}
+        footerText={T.footerText}
+        footerTextStrong={T.footerTextStrong}
+        brandText="CV TAARUF -- DOKUMEN RAHASIA"
+        pad={pad}
+      />
     </div>
   )
 }

@@ -173,6 +173,7 @@ export default function AdminSubscriptionsPage() {
                     className="admin-pagination-btn"
                     disabled={page <= 1}
                     onClick={() => setPage(page - 1)}
+                    aria-label="Halaman sebelumnya"
                   >
                     <ChevronLeft size={16} />
                   </button>
@@ -181,6 +182,7 @@ export default function AdminSubscriptionsPage() {
                     className="admin-pagination-btn"
                     disabled={page >= totalPages}
                     onClick={() => setPage(page + 1)}
+                    aria-label="Halaman berikutnya"
                   >
                     <ChevronRight size={16} />
                   </button>

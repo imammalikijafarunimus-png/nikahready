@@ -159,6 +159,7 @@ export function ShareMenu({
         onClick={() => setIsOpen(!isOpen)}
         className={`${triggerClass} ${className}`}
         title="Bagikan CV"
+        aria-label="Bagikan CV"
       >
         {variant === 'icon-only' ? (
           <Share2 size={18} />
@@ -180,6 +181,7 @@ export function ShareMenu({
               type="button"
               onClick={() => setIsOpen(false)}
               className="share-menu-close"
+              aria-label="Tutup menu bagikan"
             >
               <X size={16} />
             </button>

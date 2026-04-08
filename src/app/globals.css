@@ -11,6 +11,7 @@
   --font-inter:  'Inter', system-ui, sans-serif;
   --font-amiri:  'Amiri', Georgia, serif;
 
+  /* Hex color tokens (for reference & non-alpha usage) */
   --color-sage-50:  #ECFDF5;
   --color-sage-100: #D1FAE5;
   --color-sage-200: #A7F3D0;
@@ -43,6 +44,14 @@
   --color-gold-800: #92400E;
 
   --color-cream-100: #FEF3C7;
+
+  /* RGB triplets — for use with rgba() alpha compositing */
+  --rgb-sage-600: 5, 150, 105;
+  --rgb-sage-900: 6, 78, 59;
+  --rgb-gold-600: 217, 119, 6;
+  --rgb-navy-200: 226, 232, 240;
+  --rgb-navy-800: 30, 41, 59;
+  --rgb-navy-950: 2, 6, 23;
 }
 
 /* ── Base Layer ──────────────────────────────────────────── */
@@ -166,7 +175,7 @@
   }
 
   .glass-card {
-    @apply bg-white/80 backdrop-blur-sm border border-sage-100 rounded-2xl dark:bg-navy-900/80 dark:border-navy-800;
+    @apply rounded-2xl border border-gray-200 bg-white/80 backdrop-blur-sm p-4 dark:border-navy-800 dark:bg-navy-900/80;
   }
 
   .text-arabic-lg {
@@ -178,6 +187,33 @@
   .auth-spinner {
     @apply border-2 border-navy-300 dark:border-white/30 border-t-navy-700 dark:border-t-white rounded-full animate-spin;
   }
+}
+
+/* ── WCAG 2.1: prefers-reduced-motion ───────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  html {
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── PERF: Pause infinite CSS animations when tab is hidden ── */
+/* Modern browsers throttle paint/raster for hidden tabs, but
+   CSS animation timers still consume CPU. This class is toggled
+   via JS (Page Visibility API in ThemeContext.tsx) to pause
+   all infinite animations when the user switches tabs. */
+.tab-hidden *,
+.tab-hidden *::before,
+.tab-hidden *::after {
+  animation-play-state: paused !important;
 }
 
 /* ── PDF Print Styles ────────────────────────────────────── */
@@ -207,14 +243,7 @@
   .dark .text-shadow-sm {
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
   }
-  .animate-step-in {
-    animation: var(--tw-animate-duration, 0.25s) ease-out forwards;
-    animation-name: step-in;
-  }
-  .animate-slide-in-right {
-    animation: var(--tw-animate-duration, 0.25s) ease-out forwards;
-    animation-name: slide-in-right;
-  }
+  /* .animate-step-in and .animate-slide-in-right provided by tailwind.config.ts */
   .pb-safe {
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }

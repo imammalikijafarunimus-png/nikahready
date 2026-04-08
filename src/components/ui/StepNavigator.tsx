@@ -67,8 +67,8 @@ interface StepNavigatorProps {
 // ── Status type untuk setiap langkah ─────────────────────────
 type StepStatus = 'completed' | 'current' | 'upcoming' | 'placeholder'
 
-// ── Main Component ───────────────────────────────────────────
-export function StepNavigator({
+// ── Main Component (memoized — prevents re-render when unrelated form state changes) ──
+export const StepNavigator = React.memo(function StepNavigator({
   isOpen,
   onClose,
   currentStep,
@@ -305,4 +305,4 @@ export function StepNavigator({
       </div>
     </>
   )
-}
+})

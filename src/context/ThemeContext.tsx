@@ -57,9 +57,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     if (theme === 'dark') {
       root.classList.add('dark')
       root.classList.remove('light')
+      root.style.colorScheme = 'dark'
     } else {
       root.classList.remove('dark')
       root.classList.add('light')
+      root.style.colorScheme = 'light'
     }
 
     // Update meta theme-color
@@ -77,6 +79,20 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       // Silently ignore
     }
   }, [theme])
+
+  // PERF: Pause CSS animations when tab is hidden (Page Visibility API)
+  // Saves CPU on form/preview pages with infinite progress bar & shimmer animations
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        document.documentElement.classList.add('tab-hidden')
+      } else {
+        document.documentElement.classList.remove('tab-hidden')
+      }
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
+  }, [])
 
   const toggleTheme = useCallback(() => {
     setThemeState((prev) => (prev === 'light' ? 'dark' : 'light'))

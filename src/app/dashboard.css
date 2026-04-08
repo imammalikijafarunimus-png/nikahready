@@ -41,6 +41,8 @@
 .dashboard-nav {
   @apply sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-navy-200
          dark:bg-navy-900/80 dark:border-navy-800/50;
+  /* PERF: promote to own compositor layer */
+  will-change: backdrop-filter;
 }
 
 .dashboard-nav-inner {
@@ -82,16 +84,12 @@
 }
 
 .dash-card:hover {
-  border-color: rgba(51, 65, 85, 0.3);
-}
-.dark .dash-card:hover {
-  border-color: rgba(51, 65, 85, 0.6);
+  @apply border-gray-300 dark:border-navy-600;
 }
 
 /* ── Completion Card ──────────────────────────────────────── */
 .dash-completion {
-  @apply relative overflow-hidden;
-  animation: dash-fade-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+  @apply relative overflow-hidden animate-fade-in;
 }
 
 /* Gradient accent on left edge */
@@ -290,24 +288,17 @@
 }
 
 .dash-footer-brand {
-  @apply text-[10px] text-navy-400 dark:text-navy-600 tracking-wide;
+  /* WCAG AA: navy-400/white=2.55:1❌→navy-500=4.71:1✅; navy-600/dark=2.64:1❌→navy-400=7.71:1✅ */
+  @apply text-[10px] text-navy-500 dark:text-navy-400 tracking-wide;
 }
 
 .dash-footer-values {
-  @apply text-[10px] text-navy-400/60 mt-0.5 dark:text-navy-600/60;
+  /* WCAG AA: same contrast fix with reduced opacity */
+  @apply text-[10px] text-navy-500/60 mt-0.5 dark:text-navy-400/60;
 }
 
 /* ── Animations ───────────────────────────────────────────── */
-@keyframes dash-fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+/* dash-fade-up consolidated — use animate-fade-in from tailwind.config.ts */
 
 @keyframes progress-shimmer {
   0% { transform: translateX(-100%); }

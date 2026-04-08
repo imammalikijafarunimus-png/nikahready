@@ -43,6 +43,8 @@
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+  /* PERF: promote to own compositor layer — backdrop-filter fires every scroll frame */
+  will-change: backdrop-filter;
 }
 .dark .form-header {
   border-color: rgba(30, 41, 59, 0.5);
@@ -167,6 +169,8 @@
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
+  /* PERF: promote to own compositor layer */
+  will-change: backdrop-filter;
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 .dark .form-bottom-nav {
@@ -178,51 +182,30 @@
   @apply max-w-2xl mx-auto px-4 py-3 flex items-center gap-3;
 }
 
+/* ── Form Navigation Buttons ─────────────────────────── */
+/* Aligned with design-system.ts components.buttons tokens */
+
 .form-btn-prev {
-  @apply flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-medium border
-         transition-all duration-200 active:scale-95;
-  border-color: rgba(226, 232, 240, 0.8);
-  color: #475569;
-}
-.form-btn-prev:hover {
-  border-color: rgba(5, 150, 105, 0.5);
-  color: #047857;
-}
-.dark .form-btn-prev {
-  border-color: rgba(51, 65, 85, 0.5);
-  color: #CBD5E1;
-}
-.dark .form-btn-prev:hover {
-  border-color: rgba(6, 78, 59, 0.5);
-  color: #6EE7B7;
+  @apply flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-sm font-medium
+         bg-transparent border border-gray-200 text-navy-700
+         cursor-pointer transition-all duration-200 active:scale-95
+         hover:border-navy-400 hover:bg-navy-100/10
+         dark:border-navy-600/50 dark:text-navy-300 dark:hover:border-navy-400 dark:hover:bg-navy-100/5;
 }
 
 .form-btn-next {
   @apply flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-semibold
-         transition-all duration-200 active:scale-95;
-  background: linear-gradient(135deg, #059669, #10B981);
-  color: white;
-}
-.dark .form-btn-next {
-  background: linear-gradient(135deg, #064E3B, #047857);
-}
-
-.form-btn-next:hover {
-  box-shadow: 0 4px 20px -4px rgba(5, 150, 105, 0.4);
-}
-.dark .form-btn-next:hover {
-  box-shadow: 0 4px 20px -4px rgba(6, 78, 59, 0.4);
+         bg-gradient-to-r from-sage-700 to-sage-600 text-white
+         border-0 cursor-pointer transition-all duration-200 active:scale-95
+         hover:-translate-y-px hover:shadow-card
+         dark:from-sage-900 dark:to-sage-700;
 }
 
 .form-btn-submit {
   @apply flex items-center gap-1.5 px-5 py-2.5 rounded-xl text-sm font-semibold
-         transition-all duration-200 active:scale-95;
-  background: linear-gradient(135deg, #D97706, #F59E0B);
-  color: white;
-}
-
-.form-btn-submit:hover {
-  box-shadow: 0 4px 20px -4px rgba(217, 119, 6, 0.4);
+         bg-gradient-to-r from-gold-600 to-gold-500 text-white shadow-gold
+         border-0 cursor-pointer transition-all duration-200 active:scale-95
+         hover:-translate-y-px;
 }
 
 /* ── Step Dots ───────────────────────────────────────────── */
@@ -370,34 +353,13 @@
 }
 
 /* ── Step Enter Animation ────────────────────────────────── */
+/* Uses tailwind.config.ts animate-step-in (translateY 8px, 0.25s ease-out) */
 .form-step-enter {
-  animation: form-step-enter-anim 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-@keyframes form-step-enter-anim {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  @apply animate-step-in;
 }
 
 /* ── Slide-in animation for navigator ────────────────────── */
-.form-navigator-slide-in {
-  animation: form-navigator-slide 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-@keyframes form-navigator-slide {
-  from {
-    transform: translateX(100%);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
+/* Uses tailwind.config.ts animate-slide-in-right (translateX 100%, 0.25s) */
 
 /* ── Print ────────────────────────────────────────────────── */
 @media print {
