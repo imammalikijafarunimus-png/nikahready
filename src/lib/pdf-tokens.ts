@@ -17,7 +17,7 @@ export const PAGE_H = 1123
 // ── Spacing Scale ─────────────────────────────────────────────
 export const SPACING = {
   /** Free templates (compact) */
-  pagePadFree: 32,
+  pagePadFree: 22,
   /** Standard templates */
   pagePad: 40,
   /** Premium templates with ornamental corners */

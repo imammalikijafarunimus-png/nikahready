@@ -27,7 +27,6 @@ import {
   PAGE_H,
   STATUS_LABELS,
   SHALAT_LABELS,
-  TIPE_LABELS,
   hitungUsia,
   formatTTL,
 } from '@/lib/pdf-tokens'
@@ -196,19 +195,6 @@ export function TemplateMinimalIslami({ state }: { state: FormState }) {
                 <PdfInfoRow label="Tilawah Rutin" value={state.ibadah.tilawah_rutin ? 'Ya' : undefined} />
                 <PdfInfoRow label="Kajian Rutin" value={state.ibadah.kajian_rutin ? 'Ya' : undefined} />
               </div>
-
-              {/* Gaya Hidup compact */}
-              {(state.gayaHidup.gaya_hidup || state.gayaHidup.tipe_kepribadian) && (
-                <div style={{ marginTop: 10 }}>
-                  <PdfSectionTitle title="Gaya Hidup" color={T.primary} accentColor={T.gold} />
-                  <PdfInfoRow label="Gaya Hidup" value={state.gayaHidup.gaya_hidup} />
-                  <PdfInfoRow label="Tipe Kepribadian" value={
-                    TIPE_LABELS[state.gayaHidup.tipe_kepribadian]
-                    || state.gayaHidup.tipe_kepribadian || undefined
-                  } />
-                  <PdfInfoRow label="Kebiasaan Positif" value={state.gayaHidup.kebiasaan_positif} />
-                </div>
-              )}
             </div>
 
             {/* RIGHT COLUMN: Pendidikan + Karakter + Kriteria */}
@@ -319,6 +305,31 @@ export function TemplateMinimalIslami({ state }: { state: FormState }) {
               )}
             </div>
           </div>
+
+          {/* ─── Anggota Keluarga (FREE step, compact) ─── */}
+          {state.anggotaKeluarga.length > 0 && (
+            <>
+              <PdfOrnDivider color={T.gold} />
+              <PdfSectionTitle title="Anggota Keluarga" color={T.primary} accentColor={T.gold} />
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 12px', marginBottom: 6 }}>
+                {state.anggotaKeluarga
+                  .slice()
+                  .sort((a, b) => (a.urutan ?? 0) - (b.urutan ?? 0))
+                  .slice(0, 6)
+                  .map((item) => (
+                    <div key={item.id} style={{ minWidth: 100 }}>
+                      <span style={{ fontSize: 7.5, color: T.textMuted, fontWeight: 600, textTransform: 'uppercase', display: 'block' }}>
+                        {item.hubungan}
+                      </span>
+                      <span style={{ fontSize: 9.5, fontWeight: 600, color: T.text }}>{item.nama}</span>
+                      {item.pekerjaan && (
+                        <span style={{ fontSize: 8, color: T.textMid, display: 'block' }}>{item.pekerjaan}</span>
+                      )}
+                    </div>
+                  ))}
+              </div>
+            </>
+          )}
 
           {/* ─── 4. BOTTOM: VISI + SOSMED ─── */}
           <PdfOrnDivider color={T.gold} />

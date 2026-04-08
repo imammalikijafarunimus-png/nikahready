@@ -40,7 +40,7 @@ const FREE_FEATURES = [
 
 const PRO_FEATURES = [
   'Semua 22 langkah pengenalan diri',
-  '6 template premium (Amanah Pro, Syar\'i Elegant, Modern Dark Bold)',
+  '6 template premium (Amanah Pro, Syar\'i Elegant, Modern Bold)',
   'Financial Planning & alokasi keuangan',
   'Pandangan Isu (parenting, poligami, karir istri)',
   'Perjalanan Hidup & Riwayat Organisasi',

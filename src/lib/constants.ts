@@ -474,7 +474,7 @@ export const OPTIONS_TEMPLATE = [
   },
   {
     value: 'modern_dark',
-    label: 'Modern Dark Bold',
+    label: 'Modern Bold',
     description: '4 halaman. Sidebar gelap, personal branding modern.',
     subtitle: 'Bold',
     isPremiumOnly: true,

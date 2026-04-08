@@ -140,13 +140,15 @@ export function PdfSectionTitle({
   title,
   color = '#064E3B',
   accentColor = '#D97706',
+  mb = 6,
 }: {
   title: string
   color?: string
   accentColor?: string
+  mb?: number
 }) {
   return (
-    <div style={{ marginBottom: 6 }}>
+    <div style={{ marginBottom: mb }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
         {/* Small diamond */}
         <span
@@ -187,16 +189,18 @@ export function PdfInfoRow({
   fullWidth = false,
   labelSize = FONT.micro,
   valueSize = FONT.body,
+  mb = 5,
 }: {
   label: string
   value: string | number | undefined | null
   fullWidth?: boolean
   labelSize?: number
   valueSize?: number
+  mb?: number
 }) {
   if (!value && value !== 0) return null
   return (
-    <div style={{ marginBottom: 5, width: fullWidth ? '100%' : undefined }}>
+    <div style={{ marginBottom: mb, width: fullWidth ? '100%' : undefined }}>
       <span style={{
         fontSize: labelSize,
         color: '#94A3B8',
@@ -227,12 +231,13 @@ export function PdfTag({
   variant = 'primary',
 }: {
   text: string
-  variant?: 'primary' | 'accent' | 'muted'
+  variant?: 'primary' | 'accent' | 'muted' | 'green'
 }) {
   const styles = {
     primary: { bg: '#EFF6FF', border: '#BFDBFE', color: '#1E40AF' },
     accent:  { bg: '#FEF3C7', border: '#FDE68A', color: '#B45309' },
     muted:   { bg: '#F1F5F9', border: '#CBD5E1', color: '#334155' },
+    green:   { bg: '#E8F5EE', border: '#B7DFC9', color: '#1A6640' },
   }[variant]
 
   return (

@@ -86,7 +86,7 @@ const TEMPLATES = [
   },
   {
     id: "modern_dark",
-    name: "Modern Dark Bold",
+    name: "Modern Bold",
     desc: "4 halaman, personal branding modern",
     badge: "Premium",
     badgeColor: "bg-gold-600",

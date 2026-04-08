@@ -87,7 +87,7 @@ const TEMPLATE_LABEL: Record<string, string> = {
   minimal_islami: 'Sakinah Soft',
   akademik: 'Amanah Pro',
   elegant_islamic: "Syar'i Elegant",
-  modern_dark: 'Modern Dark Bold',
+  modern_dark: 'Modern Bold',
 }
 
 const templateMap: Record<string, React.ComponentType<{ state: FormState }>> = {
@@ -172,6 +172,7 @@ function ScaleWrapper({
     <div ref={containerRef} className="w-full">
       <div style={{ height: `${scaledHeight}px` }} className="relative flex justify-center">
         <div
+          data-print-wrapper
           style={{
             transform: `scale(${scale})`,
             transformOrigin: 'top center',

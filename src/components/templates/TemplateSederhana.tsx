@@ -18,6 +18,7 @@ import type {
   FormState,
   RiwayatPendidikanItem,
   RiwayatPekerjaanItem,
+  AnggotaKeluargaItem,
 } from '@/types'
 
 import {
@@ -27,7 +28,6 @@ import {
   FONT,
   THEME_SAGE,
   SHALAT_LABELS,
-  TIPE_LABELS,
   STATUS_LABELS,
   hitungUsia,
   formatTTL,
@@ -42,6 +42,7 @@ import {
   PdfPageFooter,
   PdfDivider,
   PdfTimelineItem,
+  PdfFamilyCard,
 } from '@/lib/pdf-shared-components'
 
 // ── Shorthand for theme colors ───────────────────────────────
@@ -236,6 +237,33 @@ function Page1({ state }: { state: FormState }) {
 
         <PdfDivider color={T.divider} />
 
+        {/* Anggota Keluarga (FREE step 14) */}
+        {state.anggotaKeluarga.length > 0 && (
+          <>
+            <PdfSectionHeading
+              title="Anggota Keluarga"
+              color={T.primary}
+              accentColor={T.accentGold}
+            />
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px 16px', marginBottom: SPACING.sectionGap }}>
+              {state.anggotaKeluarga
+                .sort((a: AnggotaKeluargaItem, b: AnggotaKeluargaItem) => (a.urutan ?? 0) - (b.urutan ?? 0))
+                .slice(0, 6)
+                .map((anggota: AnggotaKeluargaItem) => (
+                  <PdfFamilyCard
+                    key={anggota.id}
+                    hubungan={anggota.hubungan}
+                    nama={anggota.nama}
+                    pekerjaan={anggota.pekerjaan}
+                    pendidikan={anggota.pendidikan}
+                    accentColor={T.accent}
+                  />
+                ))}
+            </div>
+            <PdfDivider color={T.divider} />
+          </>
+        )}
+
         {/* Riwayat Pendidikan (timeline) */}
         {state.riwayatPendidikan.length > 0 && (
           <>
@@ -352,13 +380,12 @@ function Page1({ state }: { state: FormState }) {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// PAGE 2: Karakter + Ibadah + Gaya Hidup + Visi + Kriteria + Doa
+// PAGE 2: Karakter + Ibadah + Visi + Kriteria + Doa
 // ═══════════════════════════════════════════════════════════════
 function Page2({ state }: { state: FormState }) {
   const nama   = state.dataPribadi.nama_lengkap || 'Nama'
   const k      = state.karakter
   const ibadah = state.ibadah
-  const gl     = state.gayaHidup
   const vm     = state.visiMisi
   const kr     = state.kriteria
 
@@ -431,12 +458,7 @@ function Page2({ state }: { state: FormState }) {
         )}
         <div style={{ width: 160, flexShrink: 0 }}>
           {k.mbti_type && <PdfInfoRow label="Tipe MBTI" value={k.mbti_type} />}
-          {gl.tipe_kepribadian && (
-            <PdfInfoRow
-              label="Tipe Kepribadian"
-              value={TIPE_LABELS[gl.tipe_kepribadian] ?? gl.tipe_kepribadian}
-            />
-          )}
+          {k.bahasa_cinta && <PdfInfoRow label="Bahasa Cinta" value={k.bahasa_cinta.replace(/_/g, ' ')} />}
         </div>
       </div>
 
@@ -464,27 +486,6 @@ function Page2({ state }: { state: FormState }) {
       </div>
 
       <PdfDivider color={T.divider} margin="8px 0 14px" />
-
-      {/* ── Gaya Hidup ───────────────────────────────────── */}
-      <PdfSectionHeading
-        title="Gaya Hidup"
-        color={T.primary}
-        accentColor={T.accentGold}
-      />
-
-      <div style={{ display: 'flex', gap: 24, marginBottom: 4 }}>
-        <div style={{ flex: 1 }}>
-          {gl.gaya_hidup && <PdfInfoRow label="Gaya Hidup" value={gl.gaya_hidup} />}
-          {gl.pola_makan && <PdfInfoRow label="Pola Makan" value={gl.pola_makan} />}
-          <PdfInfoRow label="Olahraga Rutin" value={gl.olahraga_rutin ? 'Ya' : 'Belum rutin'} />
-        </div>
-        <div style={{ flex: 1 }}>
-          {gl.kebiasaan_positif && <PdfInfoRow label="Kebiasaan Positif" value={gl.kebiasaan_positif} />}
-          {gl.hal_tidak_disukai && <PdfInfoRow label="Hal yang Tidak Disukai" value={gl.hal_tidak_disukai} />}
-        </div>
-      </div>
-
-      <PdfDivider color={T.divider} margin="14px 0" />
 
       {/* ── Visi Pernikahan (card) ───────────────────────── */}
       {(vm.visi || vm.misi_suami || vm.misi_istri) && (

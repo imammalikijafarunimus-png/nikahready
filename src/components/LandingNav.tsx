@@ -11,7 +11,7 @@
 // Nav links: Cara Kerja, Template, FAQ (anchor ke section)
 // ============================================================
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -23,6 +23,21 @@ export function LandingNav() {
   const { status, userEmail, user } = useAuthState()
   const { signOut } = useAuthActions()
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  // Close mobile menu on route change / resize
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) setMobileMenuOpen(false)
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  // Close mobile menu on anchor click
+  const handleAnchorClick = useCallback(() => {
+    setMobileMenuOpen(false)
+  }, [])
 
   const userName = user?.user_metadata?.nama || userEmail?.split('@')[0] || 'User'
 
@@ -49,13 +64,14 @@ export function LandingNav() {
             <span className="landing-logo-text">NikahReady</span>
           </Link>
 
-          {/* ── Center nav links (desktop) ──────────────── */}
+          {/* ── Center nav links (desktop only) ────────── */}
           <div className="landing-nav-links">
             <a href="#cara-kerja" className="landing-nav-link">Cara Kerja</a>
             <a href="#preview" className="landing-nav-link">Template</a>
             <a href="#faq" className="landing-nav-link">FAQ</a>
           </div>
 
+          {/* ── Desktop actions ──────────────────────────────── */}
           <div className="landing-nav-actions">
             {isLoading ? (
               // Loading skeleton
@@ -102,7 +118,52 @@ export function LandingNav() {
               </>
             )}
           </div>
+
+          {/* ── Hamburger button (mobile only) ──────────────── */}
+          <button
+            type="button"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="landing-hamburger"
+            aria-label={mobileMenuOpen ? 'Tutup menu' : 'Buka menu'}
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              {mobileMenuOpen ? (
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              ) : (
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M3.75 17.25h16.5" />
+              )}
+            </svg>
+          </button>
         </div>
+
+        {/* ── Mobile dropdown menu ──────────────────────────── */}
+        {mobileMenuOpen && (
+          <div className="landing-mobile-menu">
+            <a href="#cara-kerja" className="landing-mobile-link" onClick={handleAnchorClick}>Cara Kerja</a>
+            <a href="#preview" className="landing-mobile-link" onClick={handleAnchorClick}>Template</a>
+            <a href="#faq" className="landing-mobile-link" onClick={handleAnchorClick}>FAQ</a>
+            <div className="landing-mobile-divider" />
+            {isLoading ? (
+              <div className="w-full h-8 rounded-lg bg-navy-700/40 animate-pulse" />
+            ) : isAuthenticated ? (
+              <>
+                <Link href="/create" className="landing-mobile-link" onClick={handleAnchorClick}>Edit Profil</Link>
+                <Link href="/dashboard" className="landing-mobile-link" onClick={handleAnchorClick}>Dashboard</Link>
+                <button
+                  onClick={() => { setShowLogoutConfirm(true); setMobileMenuOpen(false) }}
+                  className="landing-mobile-link landing-mobile-link-danger"
+                >
+                  Keluar
+                </button>
+              </>
+            ) : (
+              <>
+                <Link href="/create" className="landing-mobile-link" onClick={handleAnchorClick}>Mulai Gratis</Link>
+                <Link href="/login" className="landing-mobile-link" onClick={handleAnchorClick}>Masuk</Link>
+              </>
+            )}
+          </div>
+        )}
       </nav>
 
       {/* ── Logout Confirmation Modal ───────────────────────── */}

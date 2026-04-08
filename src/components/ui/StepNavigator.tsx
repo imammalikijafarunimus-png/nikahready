@@ -227,6 +227,7 @@ export const StepNavigator = React.memo(function StepNavigator({
                         ? 'form-navigator-item form-navigator-item-current'
                         : 'form-navigator-item form-navigator-item-hover'
                     }
+                    style={isLocked ? { opacity: 0.5 } : undefined}
                   >
                     {/* Step number / status icon */}
                     <span
@@ -242,17 +243,13 @@ export const StepNavigator = React.memo(function StepNavigator({
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                         </svg>
-                      ) : status === 'placeholder' ? (
-                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
-                        </svg>
                       ) : (
                         stepDef.step
                       )}
                     </span>
 
                     {/* Icon: decorative emoji */}
-                    <span className="text-base flex-shrink-0" aria-hidden="true" style={isLocked ? { opacity: 0.5 } : undefined}>
+                    <span className="text-base flex-shrink-0" aria-hidden="true">
                       {stepDef.icon}
                     </span>
 
