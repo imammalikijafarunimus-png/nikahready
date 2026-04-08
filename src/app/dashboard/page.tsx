@@ -30,8 +30,6 @@ import {
   Pencil,
   Eye as EyeIcon,
   Download,
-  ArrowRight,
-  Sparkles,
   CheckCircle2,
   ChevronRight,
  LayoutDashboard,
@@ -291,41 +289,19 @@ export default function DashboardPage() {
             <ChevronRight size={14} className="text-navy-600 mt-auto" />
           </Link>
 
-          {/* Download PDF */}
-          {plan === 'premium' ? (
-            <Link href="/preview" className="dash-action-card hover:border-navy-700">
-              <div className="dash-action-icon dash-action-icon-navy">
-                <Download className="text-navy-300" size={22} />
-              </div>
-              <span className="dash-action-title">
-                Download PDF
-              </span>
-              <span className="dash-action-desc">
-                Download PDF siap dibagikan ke wali atau murabbi
-              </span>
-              <ChevronRight size={14} className="text-navy-600 mt-auto" />
-            </Link>
-          ) : (
-            <button
-              type="button"
-              onClick={() => router.push('/upgrade')}
-              className="dash-action-card hover:border-navy-700 cursor-pointer text-left"
-            >
-              <div className="dash-action-icon dash-action-icon-navy">
-                <Download className="text-navy-300" size={22} />
-              </div>
-              <span className="dash-action-title flex items-center gap-2">
-                Download PDF
-                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-gold-900/40 text-gold-400 border border-gold-700/40">
-                  PRO
-                </span>
-              </span>
-              <span className="dash-action-desc">
-                Download PDF siap dibagikan ke wali atau murabbi
-              </span>
-              <Sparkles size={14} className="text-gold-500/60 mt-auto" />
-            </button>
-          )}
+          {/* Download PDF — available for all users */}
+          <Link href="/preview" className="dash-action-card hover:border-navy-700">
+            <div className="dash-action-icon dash-action-icon-navy">
+              <Download className="text-navy-300" size={22} />
+            </div>
+            <span className="dash-action-title">
+              Download PDF
+            </span>
+            <span className="dash-action-desc">
+              Download PDF siap dibagikan ke wali atau murabbi
+            </span>
+            <ChevronRight size={14} className="text-navy-600 mt-auto" />
+          </Link>
         </div>
 
         {/* ── Steps Overview (Organized) ───────────────────── */}

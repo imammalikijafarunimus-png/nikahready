@@ -765,7 +765,7 @@
 
 /* ── Print ────────────────────────────────────────────────── */
 @media print {
-  /* Hide all UI chrome */
+  /* ── 1. Hide all UI chrome ─────────────────────────────── */
   .preview-pattern,
   .preview-glow,
   .preview-topbar,
@@ -776,59 +776,119 @@
   .preview-success-overlay,
   .preview-error-toast,
   .preview-btn-share,
-  .preview-btn-share-icon {
+  .preview-btn-share-icon,
+  .preview-btn-print,
+  .preview-btn-download,
+  .h-12 {
     display: none !important;
   }
 
+  /* ── 2. Reset page & body ──────────────────────────────── */
   .preview-page {
     background: white !important;
-    min-height: auto;
+    min-height: auto !important;
   }
 
-  /* Reset body */
   body {
     background: white !important;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
   }
 
-  /* Remove ScaleWrapper transform — render at native 794px */
-  .preview-page .relative {
-    position: static !important;
-  }
-
+  /* ── 3. Reset main & ScaleWrapper containers ───────────── */
   .preview-page main {
     padding: 0 !important;
+    margin: 0 !important;
   }
 
-  /* Template at full A4 width, no scaling */
-  #taaruf-template,
-  #taaruf-template > div {
+  .preview-page .relative {
+    position: static !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* CRITICAL: Remove ScaleWrapper scale transform.
+     data-print-wrapper is on the inner div that holds
+     transform: scale(X) as inline style.
+     Without this, the template prints at ~60% size. */
+  [data-print-wrapper] {
+    transform: none !important;
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+  }
+
+  /* Also reset the outer containers so nothing constrains flow */
+  .preview-page .w-full {
+    width: auto !important;
+  }
+
+  /* ── 4. Template: exact A4 page sizing ─────────────────── */
+  #taaruf-template {
     width: 794px !important;
-    min-height: 1123px !important;
     transform: none !important;
     transform-origin: top left !important;
     position: relative !important;
     top: auto !important;
+    left: auto !important;
+    box-sizing: border-box !important;
     overflow: visible !important;
-    page-break-inside: avoid;
-    page-break-after: always;
   }
 
+  #taaruf-template > div {
+    width: 794px !important;
+    height: 1123px !important;
+    min-height: 1123px !important;
+    max-height: 1123px !important;
+    transform: none !important;
+    transform-origin: top left !important;
+    position: relative !important;
+    top: auto !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    page-break-inside: avoid !important;
+    page-break-after: always !important;
+    break-inside: avoid !important;
+    break-after: page !important;
+  }
+
+  /* Last page: no page-break after */
   #taaruf-template > div:last-child {
-    page-break-after: auto;
+    page-break-after: auto !important;
+    break-after: auto !important;
   }
 
-  /* Force A4 page size */
+  /* ── 5. Force A4 page size & margins ───────────────────── */
   @page {
     size: A4 portrait;
     margin: 0;
   }
 
-  /* Prevent page breaks inside sections */
+  /* ── 6. Prevent awkward breaks inside components ────────── */
   .mini-timeline,
   .info-row,
   .tag {
-    page-break-inside: avoid;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* ── 7. Ensure images print properly ────────────────────── */
+  img {
+    max-width: 100% !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* ── 8. Hide any remaining interactive elements ─────────── */
+  button,
+  a[href^="/"] {
+    display: none !important;
   }
 }

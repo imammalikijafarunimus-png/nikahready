@@ -73,7 +73,7 @@ describe('OPTIONS_TEMPLATE', () => {
     expect(premium[1].subtitle).toBe('Elegant')
 
     expect(premium[2].value).toBe('modern_dark')
-    expect(premium[2].label).toBe('Modern Dark Bold')
+    expect(premium[2].label).toBe('Modern Bold')
     expect(premium[2].subtitle).toBe('Bold')
   })
 

@@ -286,6 +286,7 @@ function ScaleWrapper({
       <div style={{ height: `${scaledHeight}px` }} className="relative flex justify-center">
         <div
           ref={innerRef}
+          data-print-wrapper
           style={{
             transform:       `scale(${scale})`,
             transformOrigin: 'top center',
